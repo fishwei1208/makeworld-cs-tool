@@ -352,9 +352,13 @@ C.跟客戶要收件資訊`
     label: "下單連結",
     title: "少量客製化快速下單",
     text: `少量客製化快速下單：
-https://reurl.cc/YDlman
-
-大量訂製請 FB 私訊或 LINE@
+https://reurl.cc/YDlman`
+  },
+  {
+    category: "links",
+    label: "下單連結",
+    title: "大量訂製聯絡方式",
+    text: `大量訂製請 FB 私訊或 LINE@
 https://lin.ee/qmMYCJr`
   }
 ];
