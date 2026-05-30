@@ -360,6 +360,34 @@ https://reurl.cc/YDlman`
     title: "大量訂製聯絡方式",
     text: `大量訂製請 FB 私訊或 LINE@
 https://lin.ee/qmMYCJr`
+  },
+  {
+    category: "lookup",
+    label: "查詢",
+    title: "新竹物流",
+    text: `新竹物流
+https://apsweb.hct.com.tw/SCTM/default.aspx`
+  },
+  {
+    category: "lookup",
+    label: "查詢",
+    title: "TOMS",
+    text: `TOMS
+https://www.toms-taiwan.com/index.php`
+  },
+  {
+    category: "lookup",
+    label: "查詢",
+    title: "愛力",
+    text: `愛力
+https://www.inni.com.tw/`
+  },
+  {
+    category: "lookup",
+    label: "查詢",
+    title: "UA",
+    text: `UA
+https://www.unitedathle-weborder.com/web/account/login`
   }
 ];
 
@@ -393,7 +421,8 @@ const categoryNames = {
   rush: "急件",
   shipping: "出貨",
   order: "內部流程",
-  links: "連結"
+  links: "連結",
+  lookup: "查詢"
 };
 
 const SITE_PASSWORD = "f56602476";
