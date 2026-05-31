@@ -1,0 +1,5 @@
+/node_modules
+/outputs/
+.DS_Store
+/classify_products.py
+/inspect_product_export.mjs

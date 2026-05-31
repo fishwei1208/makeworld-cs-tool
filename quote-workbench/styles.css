@@ -25,10 +25,6 @@ body {
   color: var(--ink);
 }
 
-body.locked .app-shell {
-  display: none;
-}
-
 button,
 input,
 select,
@@ -80,63 +76,6 @@ p {
   color: white;
   font-weight: 800;
   letter-spacing: 0;
-}
-
-.lock-screen {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: none;
-  place-items: center;
-  padding: 24px;
-  background: var(--paper);
-}
-
-body.locked .lock-screen {
-  display: grid;
-}
-
-.lock-panel {
-  width: min(380px, 100%);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: white;
-  box-shadow: var(--shadow);
-  padding: 26px;
-}
-
-.lock-logo {
-  margin-bottom: 18px;
-}
-
-.lock-panel h1 {
-  font-size: 26px;
-}
-
-.lock-panel p {
-  margin-top: 6px;
-  color: var(--muted);
-}
-
-.lock-panel label {
-  margin-top: 22px;
-}
-
-.lock-panel .primary-button,
-.lock-panel input {
-  width: 100%;
-}
-
-.lock-panel .primary-button {
-  margin-top: 14px;
-}
-
-.lock-error {
-  display: block;
-  min-height: 20px;
-  margin-top: 10px;
-  color: var(--danger);
-  font-size: 14px;
 }
 
 .brand h1 {

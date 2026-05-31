@@ -36,30 +36,11 @@ const escapeHtml = (value) =>
   String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 
 function init() {
-  initLock();
   setDefaultDates();
   bindEvents();
   renderPricing();
   updateProductVisibility();
   render();
-}
-
-function initLock() {
-  const unlocked = sessionStorage.getItem("mw_quote_auth") === "1";
-  document.body.classList.toggle("locked", !unlocked);
-  $("lockForm").addEventListener("submit", (event) => {
-    event.preventDefault();
-    if ($("passwordInput").value === "f56602476") {
-      sessionStorage.setItem("mw_quote_auth", "1");
-      document.body.classList.remove("locked");
-      $("passwordInput").value = "";
-      $("lockError").textContent = "";
-    } else {
-      $("lockError").textContent = "密碼錯誤，請重試";
-      $("passwordInput").value = "";
-      $("passwordInput").focus();
-    }
-  });
 }
 
 function bindEvents() {
