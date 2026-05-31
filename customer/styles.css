@@ -5,11 +5,11 @@
   --line: #dce5df;
   --panel: #ffffff;
   --paper: #f7f8f3;
-  --accent: #176b5b;
-  --accent-strong: #0d4d42;
-  --warm: #b45f3c;
-  --blue: #315b8f;
-  --shadow: 0 18px 50px rgba(23, 33, 28, 0.11);
+  --accent: #59636a;
+  --accent-strong: #333b40;
+  --warm: #8b6f5d;
+  --blue: #59636a;
+  --shadow: 0 18px 50px rgba(48, 56, 61, 0.11);
 }
 
 * {
@@ -21,7 +21,7 @@ body {
   min-height: 100vh;
   font-family: Inter, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
   background:
-    linear-gradient(120deg, rgba(23, 107, 91, 0.08), rgba(180, 95, 60, 0.08)),
+    linear-gradient(120deg, rgba(89, 99, 106, 0.12), rgba(170, 177, 181, 0.12)),
     var(--paper);
   color: var(--ink);
 }
@@ -139,7 +139,7 @@ h1 {
 
 .tab:hover,
 .tab.active {
-  border-color: rgba(23, 107, 91, 0.2);
+  border-color: rgba(89, 99, 106, 0.24);
   background: white;
   color: var(--accent-strong);
 }

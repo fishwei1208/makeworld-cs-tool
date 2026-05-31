@@ -2,15 +2,15 @@
   color-scheme: light;
   --ink: #18201c;
   --muted: #66736c;
-  --soft: #eef1f5;
-  --line: #d9e1dc;
+  --soft: #eef5ff;
+  --line: #d6e2f1;
   --panel: #ffffff;
-  --paper: #f5f6f8;
-  --accent: #146c5c;
+  --paper: #f5f8fc;
+  --accent: #2f6fae;
   --accent-2: #1f5d92;
   --danger: #b64235;
   --warning: #b8862f;
-  --shadow: 0 18px 48px rgba(20, 37, 31, 0.1);
+  --shadow: 0 18px 48px rgba(28, 72, 119, 0.1);
 }
 
 * {
