@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>客服快捷台</title>
+    <link rel="stylesheet" href="styles.css?v=20260531-platform-home" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace">
+        <aside class="sidebar" aria-label="常見問題分類">
+          <div class="brand">
+            <div class="brand-mark" aria-hidden="true">CS</div>
+            <div>
+              <h1>客服快捷台</h1>
+              <p>常用回覆與圖片素材</p>
+            </div>
+          </div>
+
+          <div class="search-wrap">
+            <label for="searchInput">搜尋</label>
+            <input id="searchInput" type="search" placeholder="輸入關鍵字" autocomplete="off" />
+          </div>
+
+          <div class="tabs" id="tabs" role="tablist" aria-label="分類"></div>
+        </aside>
+
+        <section class="content-panel" aria-label="客服素材">
+          <div class="toolbar">
+            <div>
+              <h2>快速回覆</h2>
+              <p id="resultCount">載入中</p>
+            </div>
+            <button class="icon-button" id="copyAllButton" type="button" title="複製目前顯示的全部回覆" aria-label="複製目前顯示的全部回覆">
+              <span aria-hidden="true">⧉</span>
+            </button>
+          </div>
+
+          <div class="faq-grid" id="faqGrid"></div>
+
+          <div class="asset-header">
+            <div>
+              <h2>圖片素材</h2>
+              <p>點一下即可下載 PNG，直接傳給客戶。</p>
+            </div>
+          </div>
+          <div class="asset-grid" id="assetGrid"></div>
+        </section>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="script.js?v=20260531-platform-home"></script>
+  </body>
+</html>

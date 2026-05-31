@@ -3,55 +3,60 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>客服快捷台</title>
-    <link rel="stylesheet" href="styles.css?v=20260531-cloudflare-access" />
+    <title>MakeWorld 內部工具台</title>
+    <link rel="stylesheet" href="platform.css?v=20260531-internal-tools" />
   </head>
   <body>
-    <main class="app-shell">
-      <section class="workspace">
-        <aside class="sidebar" aria-label="常見問題分類">
-          <div class="brand">
-            <div class="brand-mark" aria-hidden="true">CS</div>
-            <div>
-              <h1>客服快捷台</h1>
-              <p>常用回覆與圖片素材</p>
-            </div>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">MW</div>
+          <div>
+            <h1>MakeWorld 內部工具台</h1>
+            <p>客服、報價、訂單與後續營運工具入口</p>
           </div>
+        </div>
+        <div class="status-pill">Cloudflare Access 保護中</div>
+      </header>
 
-          <div class="search-wrap">
-            <label for="searchInput">搜尋</label>
-            <input id="searchInput" type="search" placeholder="輸入關鍵字" autocomplete="off" />
-          </div>
+      <section class="tool-grid" aria-label="工具列表">
+        <a class="tool-card" href="customer/">
+          <span class="tool-icon" aria-hidden="true">CS</span>
+          <span class="tool-content">
+            <strong>客服快捷台</strong>
+            <small>常見話術、圖片素材、查詢連結</small>
+          </span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
 
-          <div class="tabs" id="tabs" role="tablist" aria-label="分類"></div>
-        </aside>
+        <a class="tool-card" href="quote/">
+          <span class="tool-icon" aria-hidden="true">QT</span>
+          <span class="tool-content">
+            <strong>報價工作台</strong>
+            <small>商品報價、條件試算、內部估價流程</small>
+          </span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
 
-        <section class="content-panel" aria-label="客服素材">
-          <div class="toolbar">
-            <div>
-              <h2>快速回覆</h2>
-              <p id="resultCount">載入中</p>
-            </div>
-            <button class="icon-button" id="copyAllButton" type="button" title="複製目前顯示的全部回覆" aria-label="複製目前顯示的全部回覆">
-              <span aria-hidden="true">⧉</span>
-            </button>
-          </div>
+        <a class="tool-card" href="orders/">
+          <span class="tool-icon" aria-hidden="true">OR</span>
+          <span class="tool-content">
+            <strong>人工訂單系統</strong>
+            <small>手動建單、訂單資料整理、作業入口</small>
+          </span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </section>
 
-          <div class="faq-grid" id="faqGrid"></div>
-
-          <div class="asset-header">
-            <div>
-              <h2>圖片素材</h2>
-              <p>點一下即可下載 PNG，直接傳給客戶。</p>
-            </div>
-          </div>
-          <div class="asset-grid" id="assetGrid"></div>
-        </section>
+      <section class="coming-soon" aria-label="後續工具">
+        <h2>後續可加入</h2>
+        <div class="placeholder-grid">
+          <div>對帳系統</div>
+          <div>實體通路系統</div>
+          <div>庫存 / 製作進度</div>
+          <div>客服資料管理</div>
+        </div>
       </section>
     </main>
-
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-    <script src="script.js?v=20260531-cloudflare-access"></script>
   </body>
 </html>
