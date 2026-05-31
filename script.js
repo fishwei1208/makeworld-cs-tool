@@ -425,31 +425,16 @@ const categoryNames = {
   lookup: "查詢"
 };
 
-const SITE_PASSWORD = "f56602476";
-const AUTH_KEY = "makeworld-cs-tool-authenticated";
-
 let activeCategory = "all";
 let searchTerm = "";
 
-const lockForm = document.querySelector("#lockForm");
-const lockScreen = document.querySelector("#lockScreen");
-const passwordInput = document.querySelector("#passwordInput");
-const lockError = document.querySelector("#lockError");
 const faqGrid = document.querySelector("#faqGrid");
 const assetGrid = document.querySelector("#assetGrid");
 const resultCount = document.querySelector("#resultCount");
 const searchInput = document.querySelector("#searchInput");
 const copyAllButton = document.querySelector("#copyAllButton");
-const logoutButton = document.querySelector("#logoutButton");
 const toast = document.querySelector("#toast");
 const tabs = document.querySelector("#tabs");
-
-function setLockedState() {
-  const authenticated = localStorage.getItem(AUTH_KEY) === "true";
-  document.body.classList.toggle("locked", !authenticated);
-  lockScreen.setAttribute("aria-hidden", authenticated ? "true" : "false");
-  if (!authenticated) passwordInput.focus();
-}
 
 function escapeHtml(value) {
   return String(value)
@@ -604,25 +589,6 @@ copyAllButton.addEventListener("click", () => {
   if (allText) copyText(allText);
 });
 
-lockForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  if (passwordInput.value === SITE_PASSWORD) {
-    localStorage.setItem(AUTH_KEY, "true");
-    passwordInput.value = "";
-    lockError.textContent = "";
-    setLockedState();
-    showToast("已進入");
-    return;
-  }
-  lockError.textContent = "密碼不正確";
-  passwordInput.select();
-});
-
-logoutButton.addEventListener("click", () => {
-  localStorage.removeItem(AUTH_KEY);
-  setLockedState();
-});
-
 assetGrid.addEventListener("click", (event) => {
   const copyButton = event.target.closest("[data-copy-asset-index]");
   if (!copyButton) return;
@@ -631,4 +597,3 @@ assetGrid.addEventListener("click", (event) => {
 });
 
 rerender();
-setLockedState();
