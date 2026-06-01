@@ -20,7 +20,7 @@ const companies = {
 };
 
 const quoteLogos = {
-  makeworld: { label: "地圖製造", src: "assets/makeworld-logo.jpg", className: "makeworld" },
+  makeworld: { label: "地圖製造", src: "assets/makeworld-logo-stack.jpg", className: "makeworld" },
   buma: { label: "布碼科技", src: "assets/buma-logo.png", className: "buma" },
   none: { label: "無 logo", src: "", className: "none" }
 };
@@ -29,6 +29,11 @@ const quoteStamps = {
   deshui: { label: "得水實業", src: "assets/deshui-stamp.png" },
   chimei: { label: "奇美廣告", src: "assets/chimei-stamp.png" },
   none: { label: "無印章", src: "" }
+};
+
+const quoteContacts = {
+  wei: { name: "魏先生", phone: "0492653166", address: "南投縣竹山鎮下橫街54-2號" },
+  lan: { name: "藍小姐", phone: "0939299535", address: "南投縣竹山鎮林圯街64號" }
 };
 
 const state = {
@@ -452,6 +457,7 @@ function calculateQuote() {
   const company = companies[state.company] || companies.deshui;
   const stampChoice = $("outputStamp")?.value || "auto";
   const stamp = resolveQuoteStamp(company, stampChoice);
+  const contact = quoteContacts[$("outputContact")?.value] || quoteContacts.wei;
   const tax = company.taxType === "invoice" ? subtotal * 0.05 : 0;
   return {
     id: makeId(),
@@ -473,6 +479,8 @@ function calculateQuote() {
     stamp: stamp.src,
     stampLabel: stamp.label,
     logoChoice: $("outputLogo")?.value || "makeworld",
+    contactChoice: $("outputContact")?.value || "wei",
+    companyContact: contact,
     currentItem,
     items: itemsForPreview,
     subtotal,
@@ -523,6 +531,7 @@ function renderQuoteSheet(quote) {
   const stampHtml = quote.stamp
     ? `<div class="quote-stamp"><img class="quote-stamp-img" src="${quote.stamp}" alt="${escapeHtml(quote.stampLabel || quote.companyName || "")} 印章"></div>`
     : "";
+  const contact = quote.companyContact || quoteContacts.wei;
   $("quoteSheetMeta").innerHTML = `
     <div><span>報價日期</span><strong>${escapeHtml(quote.quoteDate || "未設定")}</strong></div>
     <div><span>有效期限</span><strong>${escapeHtml(quote.validUntil || "未設定")}</strong></div>
@@ -531,15 +540,15 @@ function renderQuoteSheet(quote) {
   `;
 
   $("quoteSheet").querySelector(".quote-sheet-head").innerHTML = `
-    <div class="quote-brand-block">
-      ${logoHtml}
+    <div class="quote-logo-row">${logoHtml}</div>
+    <div class="quote-title-row">
       <div>
         <p class="eyebrow">Quotation</p>
         <h3>${escapeHtml(docTitle)}</h3>
         <p class="quote-company-name">${escapeHtml(quote.companyName || "")}</p>
       </div>
+      <div class="quote-sheet-meta" id="quoteSheetMeta">${$("quoteSheetMeta").innerHTML}</div>
     </div>
-    <div class="quote-sheet-meta" id="quoteSheetMeta">${$("quoteSheetMeta").innerHTML}</div>
   `;
 
   $("quoteCustomerBlock").innerHTML = [
@@ -572,11 +581,21 @@ function renderQuoteSheet(quote) {
     .join("");
 
   $("quoteTotalBox").innerHTML = `
-    <div class="quote-total-line"><span>品項小計</span><strong>${money(quote.subtotal)}</strong></div>
-    <div class="quote-total-line"><span>${quote.taxType === "invoice" ? "營業稅 5%" : "營業稅"}</span><strong>${money(quote.tax)}</strong></div>
-    <div class="quote-total-line grand"><span>報價總額</span><strong>${money(quote.grandTotal)}</strong></div>
-    <div class="quote-total-line"><span>稅別</span><strong>${quote.taxType === "invoice" ? "含稅" : "未稅"}</strong></div>
-    ${stampHtml}
+    <div class="quote-signature">
+      <div><span>客戶簽名</span><b></b></div>
+      <div><span>日期</span><b></b></div>
+    </div>
+    <div class="quote-stamp-slot">${stampHtml}</div>
+    <div class="quote-total-stack">
+      <div class="quote-total-line"><span>品項小計</span><strong>${money(quote.subtotal)}</strong></div>
+      <div class="quote-total-line"><span>${quote.taxType === "invoice" ? "營業稅 5%" : "營業稅"}</span><strong>${money(quote.tax)}</strong></div>
+      <div class="quote-total-line grand"><span>報價總額</span><strong>${money(quote.grandTotal)}</strong></div>
+      <div class="quote-total-line"><span>稅別</span><strong>${quote.taxType === "invoice" ? "含稅" : "未稅"}</strong></div>
+      <div class="quote-contact">
+        <strong>${escapeHtml(contact.name)} ${escapeHtml(contact.phone)}</strong>
+        <span>${escapeHtml(contact.address)}</span>
+      </div>
+    </div>
   `;
 }
 

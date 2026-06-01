@@ -638,20 +638,23 @@ textarea:focus {
 }
 
 .quote-sheet-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 18px;
+  display: grid;
+  gap: 16px;
   padding: 20px;
   border-bottom: 1px solid var(--line);
   background: #fff;
 }
 
-.quote-brand-block {
+.quote-logo-row {
   display: flex;
-  align-items: center;
-  gap: 16px;
-  min-width: 0;
+  justify-content: center;
+}
+
+.quote-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 18px;
 }
 
 .quote-sheet-head h3 {
@@ -669,16 +672,15 @@ textarea:focus {
 
 .quote-output-logo {
   display: block;
-  width: 168px;
-  height: 58px;
+  width: min(360px, 72%);
+  height: 132px;
   object-fit: contain;
-  object-position: left center;
-  flex: 0 0 auto;
+  object-position: center;
 }
 
 .quote-output-logo.buma {
-  width: 72px;
-  height: 74px;
+  width: 150px;
+  height: 116px;
 }
 
 .quote-output-logo.empty {
@@ -773,10 +775,17 @@ textarea:focus {
 .quote-total-box {
   position: relative;
   display: grid;
+  grid-template-columns: minmax(180px, 1fr) 148px minmax(260px, auto);
+  align-items: end;
+  gap: 18px;
+  min-height: 172px;
+  padding: 16px 20px 28px;
+}
+
+.quote-total-stack {
+  display: grid;
   justify-content: end;
   gap: 8px;
-  min-height: 164px;
-  padding: 16px 20px 28px;
 }
 
 .quote-total-line {
@@ -801,13 +810,17 @@ textarea:focus {
 }
 
 .quote-stamp {
-  position: absolute;
-  left: 34px;
-  bottom: 24px;
   width: 128px;
   height: 128px;
   transform: rotate(-7deg);
   opacity: 0.9;
+}
+
+.quote-stamp-slot {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  min-height: 128px;
 }
 
 .quote-stamp-img {
@@ -853,6 +866,48 @@ textarea:focus {
 .quote-stamp-fallback b {
   margin-top: -14px;
   font-size: 14px;
+}
+
+.quote-signature {
+  display: grid;
+  align-self: end;
+  gap: 16px;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.quote-signature div {
+  display: grid;
+  grid-template-columns: auto minmax(130px, 1fr);
+  align-items: end;
+  gap: 10px;
+}
+
+.quote-signature b {
+  display: block;
+  height: 1px;
+  border-bottom: 1.5px solid var(--ink);
+}
+
+.quote-contact {
+  margin-top: 8px;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  color: var(--muted);
+  text-align: right;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.quote-contact strong,
+.quote-contact span {
+  display: block;
+}
+
+.quote-contact strong {
+  color: var(--ink);
+  font-size: 13px;
 }
 
 .item-list-panel {
@@ -1182,6 +1237,11 @@ textarea:focus {
     padding: 0 0 18px;
   }
 
+  .quote-output-logo {
+    width: 330px;
+    height: 150px;
+  }
+
   .quote-customer-block,
   .quote-table th,
   .quote-table td,
@@ -1193,5 +1253,9 @@ textarea:focus {
   .quote-stamp {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
+  }
+
+  .quote-total-box {
+    grid-template-columns: minmax(180px, 1fr) 140px minmax(250px, auto);
   }
 }
