@@ -19,6 +19,12 @@ const companies = {
   buma: { name: "布碼科技", docType: "收據", taxType: "receipt" }
 };
 
+const quoteLogos = {
+  makeworld: { label: "地圖製造", src: "assets/makeworld-logo.jpg", className: "makeworld" },
+  buma: { label: "布碼科技", src: "assets/buma-logo.png", className: "buma" },
+  none: { label: "無 logo", src: "", className: "none" }
+};
+
 const state = {
   view: "workspace",
   step: "customer",
@@ -455,6 +461,7 @@ function calculateQuote() {
     companyName: company.name,
     docType: company.docType,
     taxType: company.taxType,
+    logoChoice: $("outputLogo")?.value || "makeworld",
     currentItem,
     items: itemsForPreview,
     subtotal,
@@ -468,7 +475,7 @@ function calculateQuote() {
 
 function captureQuoteForm() {
   const values = {};
-  document.querySelectorAll("#stepCustomer input, #stepQuote input, #stepQuote textarea").forEach((el) => {
+  document.querySelectorAll("#stepCustomer input, #stepQuote input, #stepQuote textarea, #stepQuote select").forEach((el) => {
     if (el.id) values[el.id] = el.value;
   });
   return { company: state.company, values };
@@ -489,12 +496,29 @@ function render() {
 }
 
 function renderQuoteSheet(quote) {
+  const logo = quoteLogos[quote.logoChoice] || quoteLogos.makeworld;
+  const logoHtml = logo.src
+    ? `<img class="quote-output-logo ${logo.className}" src="${logo.src}" alt="${escapeHtml(logo.label)}">`
+    : "";
+  const docTitle = quote.taxType === "invoice" ? "報價單" : "報價單 / 收據";
   $("quoteSheetMeta").innerHTML = `
-    <div>出單公司：${escapeHtml(quote.companyName || "")}</div>
-    <div>單據類型：${escapeHtml(quote.docType || "")}</div>
-    <div>報價日期：${escapeHtml(quote.quoteDate || "未設定")}</div>
-    <div>有效期限：${escapeHtml(quote.validUntil || "未設定")}</div>
-    <div>稅別：${quote.taxType === "invoice" ? "含 5% 營業稅" : "未稅 / 收據"}</div>
+    <div><span>報價日期</span><strong>${escapeHtml(quote.quoteDate || "未設定")}</strong></div>
+    <div><span>有效期限</span><strong>${escapeHtml(quote.validUntil || "未設定")}</strong></div>
+    <div><span>單據類型</span><strong>${escapeHtml(quote.docType || "")}</strong></div>
+    <div><span>稅別</span><strong>${quote.taxType === "invoice" ? "含 5% 營業稅" : "未稅 / 收據"}</strong></div>
+  `;
+
+  $("quoteSheet").style.setProperty("--stamp-company", `"${quote.companyName || "MakeWorld"}"`);
+  $("quoteSheet").querySelector(".quote-sheet-head").innerHTML = `
+    <div class="quote-brand-block">
+      ${logoHtml}
+      <div>
+        <p class="eyebrow">Quotation</p>
+        <h3>${escapeHtml(docTitle)}</h3>
+        <p class="quote-company-name">${escapeHtml(quote.companyName || "")}</p>
+      </div>
+    </div>
+    <div class="quote-sheet-meta" id="quoteSheetMeta">${$("quoteSheetMeta").innerHTML}</div>
   `;
 
   $("quoteCustomerBlock").innerHTML = [
@@ -531,6 +555,7 @@ function renderQuoteSheet(quote) {
     <div class="quote-total-line"><span>${quote.taxType === "invoice" ? "營業稅 5%" : "營業稅"}</span><strong>${money(quote.tax)}</strong></div>
     <div class="quote-total-line grand"><span>報價總額</span><strong>${money(quote.grandTotal)}</strong></div>
     <div class="quote-total-line"><span>稅別</span><strong>${quote.taxType === "invoice" ? "含稅" : "未稅"}</strong></div>
+    <div class="quote-stamp" aria-label="${escapeHtml(quote.companyName || "")} 印章"><span>${escapeHtml(quote.companyName || "")}</span><b>${escapeHtml(quote.docType || "報價")}</b></div>
   `;
 }
 

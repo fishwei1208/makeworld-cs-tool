@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MakeWorld 報價工作台</title>
-    <link rel="stylesheet" href="styles.css?v=20260531-tool-theme" />
+    <link rel="stylesheet" href="styles.css?v=20260601-quote-output" />
   </head>
   <body>
     <main class="app-shell">
@@ -291,6 +291,15 @@
                 </div>
 
                 <div class="quote-sheet" id="quoteSheet">
+                  <div class="form-grid two output-options">
+                    <label>報價單 Logo
+                      <select id="outputLogo">
+                        <option value="makeworld">地圖製造 logo</option>
+                        <option value="buma">布碼科技 logo</option>
+                        <option value="none">無 logo</option>
+                      </select>
+                    </label>
+                  </div>
                   <div class="quote-sheet-head">
                     <div>
                       <p class="eyebrow">Quotation</p>
@@ -407,6 +416,6 @@
     </main>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="script.js?v=20260531-tool-theme"></script>
+    <script src="script.js?v=20260601-quote-output"></script>
   </body>
 </html>
