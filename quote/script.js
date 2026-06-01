@@ -25,6 +25,12 @@ const quoteLogos = {
   none: { label: "無 logo", src: "", className: "none" }
 };
 
+const quoteStamps = {
+  deshui: { label: "得水實業", src: "assets/deshui-stamp.png" },
+  chimei: { label: "奇美廣告", src: "assets/chimei-stamp.png" },
+  none: { label: "無印章", src: "" }
+};
+
 const state = {
   view: "workspace",
   step: "customer",
@@ -444,6 +450,8 @@ function calculateQuote() {
   const subtotal = itemsForPreview.reduce((sum, item) => sum + item.subtotal, 0);
   const costTotal = itemsForPreview.reduce((sum, item) => sum + item.costTotal, 0);
   const company = companies[state.company] || companies.deshui;
+  const stampChoice = $("outputStamp")?.value || "auto";
+  const stamp = resolveQuoteStamp(company, stampChoice);
   const tax = company.taxType === "invoice" ? subtotal * 0.05 : 0;
   return {
     id: makeId(),
@@ -461,7 +469,9 @@ function calculateQuote() {
     companyName: company.name,
     docType: company.docType,
     taxType: company.taxType,
-    stamp: company.stamp,
+    stampChoice,
+    stamp: stamp.src,
+    stampLabel: stamp.label,
     logoChoice: $("outputLogo")?.value || "makeworld",
     currentItem,
     items: itemsForPreview,
@@ -472,6 +482,14 @@ function calculateQuote() {
     totalProfit: subtotal - costTotal,
     form: captureQuoteForm()
   };
+}
+
+function resolveQuoteStamp(company, choice) {
+  if (choice === "auto") {
+    if (company.stamp) return { label: company.name, src: company.stamp };
+    return quoteStamps.none;
+  }
+  return quoteStamps[choice] || quoteStamps.none;
 }
 
 function captureQuoteForm() {
@@ -503,8 +521,8 @@ function renderQuoteSheet(quote) {
     : "";
   const docTitle = quote.taxType === "invoice" ? "報價單" : "報價單 / 收據";
   const stampHtml = quote.stamp
-    ? `<img class="quote-stamp-img" src="${quote.stamp}" alt="${escapeHtml(quote.companyName || "")} 印章">`
-    : `<div class="quote-stamp-fallback" aria-label="${escapeHtml(quote.companyName || "")} 印章"><span>${escapeHtml(quote.companyName || "")}</span><b>${escapeHtml(quote.docType || "報價")}</b></div>`;
+    ? `<div class="quote-stamp"><img class="quote-stamp-img" src="${quote.stamp}" alt="${escapeHtml(quote.stampLabel || quote.companyName || "")} 印章"></div>`
+    : "";
   $("quoteSheetMeta").innerHTML = `
     <div><span>報價日期</span><strong>${escapeHtml(quote.quoteDate || "未設定")}</strong></div>
     <div><span>有效期限</span><strong>${escapeHtml(quote.validUntil || "未設定")}</strong></div>
@@ -558,7 +576,7 @@ function renderQuoteSheet(quote) {
     <div class="quote-total-line"><span>${quote.taxType === "invoice" ? "營業稅 5%" : "營業稅"}</span><strong>${money(quote.tax)}</strong></div>
     <div class="quote-total-line grand"><span>報價總額</span><strong>${money(quote.grandTotal)}</strong></div>
     <div class="quote-total-line"><span>稅別</span><strong>${quote.taxType === "invoice" ? "含稅" : "未稅"}</strong></div>
-    <div class="quote-stamp">${stampHtml}</div>
+    ${stampHtml}
   `;
 }
 

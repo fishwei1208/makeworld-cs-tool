@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MakeWorld 報價工作台</title>
-    <link rel="stylesheet" href="styles.css?v=20260601-quote-output" />
+    <link rel="stylesheet" href="styles.css?v=20260601-stamp-choice" />
   </head>
   <body>
     <main class="app-shell">
@@ -299,6 +299,14 @@
                         <option value="none">無 logo</option>
                       </select>
                     </label>
+                    <label>報價單印章
+                      <select id="outputStamp">
+                        <option value="auto">依出單公司自動選擇</option>
+                        <option value="deshui">得水實業印章</option>
+                        <option value="chimei">奇美廣告印章</option>
+                        <option value="none">無印章</option>
+                      </select>
+                    </label>
                   </div>
                   <div class="quote-sheet-head">
                     <div>
@@ -416,6 +424,6 @@
     </main>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="script.js?v=20260601-quote-output"></script>
+    <script src="script.js?v=20260601-stamp-choice"></script>
   </body>
 </html>
