@@ -831,6 +831,8 @@ const COLOR_HEX={'白色':'#fff','黑色':'#1e1e1e','紅色':'#e74c3c','藍色':
   '湖水綠':'#4db6ac','咖啡':'#795548'};
 const WDAYS=['日','一','二','三','四','五','六'];
 const CAT_LABEL={shirt:'衣服',towel:'毛巾',tissue:'面紙',other:'其他'};
+const SYNC_API_URL='https://script.google.com/macros/s/AKfycbzf8wAMKhFjdaG6C1_RsMWKZi9CFcQsoGKZhAhWpZJFzwz4GxkGsgxbzAEKji4JAr5Y/exec';
+const SYNC_SECRET='mw_sync_6jQ8pV3xL2rT9sD4';
 let orders=[];try{orders=JSON.parse(localStorage.getItem('mw3_orders')||'[]')}catch(e){}
 let pendingImgs=[];
 let orderItems=[];
@@ -846,6 +848,7 @@ save();
 function esc(v){return String(v??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]))}
 function getItems(o){return Array.isArray(o.items)?o.items:normalizeOrder(o).items}
 function itemQty(it){return parseInt(it.qty)||1}
+function imgSrc(img){return img?.dataUrl||img?.thumbUrl||img?.url||''}
 function itemMatches(it,f){
   if(f==='all')return true;
   if(['shirt','towel','tissue','other'].includes(f))return it.category===f;
@@ -874,6 +877,56 @@ function normalizeOrder(o){
   }
   const item={id:o?.id||Date.now(),category:o?.category||'other',supplier:o?.supplier||'',style:o?.style||'',color:o?.color||'',size:o?.size||'',qty:o?.qty||1,note:o?.note||''};
   return {id:o?.id||Date.now(),source:o?.source||'',customer:o?.customer||o?.name||'',recipientName:o?.recipientName||o?.name||'',recipientPhone:o?.recipientPhone||o?.phone||'',paymentStatus:o?.paymentStatus||'paid',paymentAmount:o?.paymentAmount||'',orderStatus:o?.orderStatus||'pending',editedAt:o?.editedAt||'',name:o?.name||'',phone:o?.phone||'',date:o?.date||todayVal(),delivery:o?.delivery||{type:'cvs',brand:'',store:''},imgs:o?.imgs||[],items:[item]};
+}
+function cleanOrderForSync(order){
+  return {
+    ...order,
+    imgs:(order.imgs||[]).map(img=>({
+      name:img.name||'',
+      dataUrl:img.dataUrl||'',
+      fileId:img.fileId||'',
+      url:img.url||'',
+      thumbUrl:img.thumbUrl||''
+    })),
+    syncUpdatedAt:new Date().toISOString()
+  };
+}
+function mergeOrders(localRows,cloudRows){
+  const byId=new Map();
+  [...localRows,...cloudRows].forEach(row=>{
+    if(String(row?.id||'').startsWith('test-'))return;
+    if(row?._deleted){byId.delete(row.id);return}
+    const order=normalizeOrder(row);
+    byId.set(order.id,order);
+  });
+  return Array.from(byId.values()).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||((Number(b.id)||0)-(Number(a.id)||0)));
+}
+async function loadCloudOrders(){
+  try{
+    const res=await fetch(`${SYNC_API_URL}?type=orders&secret=${encodeURIComponent(SYNC_SECRET)}`);
+    const json=await res.json();
+    if(!json.ok||!Array.isArray(json.data))throw new Error(json.error||'sync failed');
+    orders=mergeOrders(orders,json.data);
+    save();updateStats();renderProcessOrders();renderOrders();renderSummary();
+    toast('已同步雲端訂單');
+  }catch(err){
+    console.warn('cloud sync read failed',err);
+    toast('雲端同步讀取失敗，先使用本機資料');
+  }
+}
+async function syncCloudOrder(order){
+  const payload={secret:SYNC_SECRET,type:'orders',record:cleanOrderForSync(order)};
+  try{
+    await fetch(SYNC_API_URL,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+      body:`payload=${encodeURIComponent(JSON.stringify(payload))}`
+    });
+  }catch(err){
+    console.warn('cloud sync write failed',err);
+    toast('雲端同步寫入失敗，已先存在本機');
+  }
 }
 function orderCode(o){
   const date=(o.date||todayVal()).replace(/-/g,'');
@@ -1076,7 +1129,7 @@ function handleFiles(files){
 }
 function renderPreviews(){
   const c=document.getElementById('img-previews');
-  c.innerHTML=pendingImgs.map((img,i)=>`<div class="img-thumb"><img src="${img.dataUrl}" alt="${esc(img.name)}"><button class="rm-img" onclick="removeImg(${i})">✕</button></div>`).join('');
+  c.innerHTML=pendingImgs.map((img,i)=>`<div class="img-thumb"><img src="${imgSrc(img)}" alt="${esc(img.name)}"><button class="rm-img" onclick="removeImg(${i})">✕</button></div>`).join('');
 }
 function removeImg(i){pendingImgs.splice(i,1);renderPreviews()}
 
@@ -1193,12 +1246,15 @@ function addOrder(){
   }else{
     orders.push(payload);
   }
-  save();updateStats();renderProcessOrders();clearForm();toast(wasEditing?'✓ 訂單已重新編輯！':'✓ 訂單已建立為未處理！');
+  save();updateStats();renderProcessOrders();clearForm();toast(wasEditing?'✓ 訂單已重新編輯，正在同步雲端':'✓ 訂單已建立，正在同步雲端');
+  syncCloudOrder(payload).then(loadCloudOrders);
 }
 function deleteOrder(id){
   if(!confirm('確定要刪除這筆訂單？'))return;
+  const tombstone={id,_deleted:true,syncUpdatedAt:new Date().toISOString()};
   orders=orders.filter(o=>o.id!==id);
   save();updateStats();renderProcessOrders();renderOrders();renderSummary();
+  syncCloudOrder(tombstone);
 }
 function save(){localStorage.setItem('mw3_orders',JSON.stringify(orders))}
 
@@ -1301,6 +1357,8 @@ function buildProcessTable(list){
 function setOrderStatus(id,status){
   orders=orders.map(o=>o.id===id?{...o,orderStatus:status,statusUpdatedAt:new Date().toISOString()}:o);
   save();updateStats();renderProcessOrders();
+  const order=orders.find(o=>o.id===id);
+  if(order)syncCloudOrder(order);
   if(status==='done')toast('已移到歷史紀錄');
   else toast('訂單已改為處理中');
 }
@@ -1309,6 +1367,7 @@ function bulkSetStatus(status){
   if(!ids.length){toast('請先勾選要更新的訂單');return}
   orders=orders.map(o=>ids.includes(o.id)?{...o,orderStatus:status,statusUpdatedAt:new Date().toISOString()}:o);
   save();updateStats();renderProcessOrders();
+  orders.filter(o=>ids.includes(o.id)).forEach(syncCloudOrder);
   toast(status==='done'?'已將勾選訂單移到歷史紀錄':'已將勾選訂單改為處理中');
 }
 function toggleAllChecks(page){
@@ -1350,7 +1409,7 @@ function buildTable(list,del,filter='all'){
   let h=`<table class="order-table"><thead><tr>${del?'<th class="pick-cell">列印</th>':''}<th>#</th><th>狀態</th><th>日期</th><th>來源</th><th>圖</th><th>客戶</th><th>付款</th><th>收件人</th><th>配送</th><th>商品明細</th><th>總件數</th>${del?'<th></th>':''}</tr></thead><tbody>`;
   list.forEach((o,i)=>{
     const dStr=o.delivery.type==='cvs'?`<span class="del-b db-cvs">超商</span><br><small style="color:var(--text-dim)">${esc(o.delivery.brand||'')} ${esc(o.delivery.store||'')}</small>`:`<span class="del-b db-home">宅配</span><br><small style="color:var(--text-dim)">${esc(o.delivery.address||'')}</small>`;
-    const imgCell=o.imgs&&o.imgs.length?`<img class="tbl-thumb" src="${o.imgs[0].dataUrl}" onclick="openOrderImage(${o.id},0)" title="點擊放大">`:`<div class="tbl-nothumb">—</div>`;
+    const imgCell=o.imgs&&o.imgs.length?`<img class="tbl-thumb" src="${imgSrc(o.imgs[0])}" onclick="openOrderImage(${o.id},0)" title="點擊放大">`:`<div class="tbl-nothumb">—</div>`;
     const delBtn=del?`<td><button class="edit-btn" onclick="editOrder(${o.id})">編輯</button><button class="rm-btn" onclick="deleteOrder(${o.id})">✕</button></td>`:'';
     const dp=o.date?o.date.split('-'):[];
     const dLabel=dp.length===3?`${dp[0]}/${dp[1]}/${dp[2]}<br><span style="font-size:9px;color:var(--text-dim)">${WDAYS[new Date(o.date+'T00:00:00').getDay()]}</span>`:(o.date||'');
@@ -1397,7 +1456,7 @@ function buildSummaryCards(items,mode='summ'){
 }
 
 // ══ LIGHTBOX / EXPORT ══
-function openOrderImage(orderId,imgIndex){const o=orders.find(x=>x.id===orderId);if(!o||!o.imgs||!o.imgs[imgIndex])return;document.getElementById('lb-img').src=o.imgs[imgIndex].dataUrl;document.getElementById('lightbox').classList.add('show')}
+function openOrderImage(orderId,imgIndex){const o=orders.find(x=>x.id===orderId);if(!o||!o.imgs||!o.imgs[imgIndex])return;document.getElementById('lb-img').src=imgSrc(o.imgs[imgIndex]);document.getElementById('lightbox').classList.add('show')}
 function closeLightbox(){document.getElementById('lightbox').classList.remove('show')}
 function exportCSV(){
   const exportOrders=orders.filter(o=>(o.orderStatus||'pending')==='done');
@@ -1484,11 +1543,11 @@ function printItemRows(o,scope='all'){
 }
 function printDesignImages(o,items){
   const needsDesign=items.some(it=>['shirt','towel','tissue'].includes(it.category));
-  const imgs=Array.isArray(o.imgs)?o.imgs.filter(img=>img&&img.dataUrl):[];
+  const imgs=Array.isArray(o.imgs)?o.imgs.filter(img=>img&&imgSrc(img)):[];
   if(!needsDesign||!imgs.length)return '';
   return `<div class="design-block">
     <h3>客人設計圖</h3>
-    <div class="design-grid">${imgs.map((img,i)=>`<figure><img src="${img.dataUrl}" alt="${esc(img.name||`設計圖 ${i+1}`)}"><figcaption>${esc(img.name||`設計圖 ${i+1}`)}</figcaption></figure>`).join('')}</div>
+    <div class="design-grid">${imgs.map((img,i)=>`<figure><img src="${imgSrc(img)}" alt="${esc(img.name||`設計圖 ${i+1}`)}"><figcaption>${esc(img.name||`設計圖 ${i+1}`)}</figcaption></figure>`).join('')}</div>
   </div>`;
 }
 function buildQuoteOrdersHtml(list,scope='all'){
@@ -1553,6 +1612,7 @@ function dl(content,filename,type){const blob=new Blob([content],{type});const u
 // init
 renderLineItems();
 updateStats();
+loadCloudOrders();
 document.querySelectorAll('#page-new input,#page-new select,#page-new textarea').forEach(el=>{
   el.addEventListener('input',()=>{clearMissing(el);renderOrderPreview()});
   el.addEventListener('change',()=>{clearMissing(el);renderOrderPreview()});
