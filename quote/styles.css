@@ -1183,8 +1183,16 @@ textarea:focus {
 }
 
 @media print {
+  @page {
+    size: A4;
+    margin: 8mm;
+  }
+
   body {
     background: white;
+    width: 210mm;
+    min-height: 297mm;
+    overflow: hidden;
   }
 
   .side-nav,
@@ -1231,15 +1239,20 @@ textarea:focus {
     border: 0;
     border-radius: 0;
     overflow: visible;
+    transform: scale(0.86);
+    transform-origin: top left;
+    width: 116%;
+    max-height: 326mm;
   }
 
   .quote-sheet-head {
-    padding: 0 0 18px;
+    padding: 0 0 10px;
+    gap: 8px;
   }
 
   .quote-output-logo {
-    width: 330px;
-    height: 150px;
+    width: 300px;
+    height: 120px;
   }
 
   .quote-customer-block,
@@ -1257,5 +1270,17 @@ textarea:focus {
 
   .quote-total-box {
     grid-template-columns: minmax(180px, 1fr) 140px minmax(250px, auto);
+    min-height: 132px;
+    padding-bottom: 0;
+  }
+
+  .quote-table {
+    font-size: 12px;
+  }
+
+  .quote-table th,
+  .quote-table td {
+    padding-top: 7px;
+    padding-bottom: 7px;
   }
 }
