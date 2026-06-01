@@ -211,6 +211,20 @@ ID：@tkc3939y`
   {
     category: "common",
     label: "常見問題",
+    title: "一件衣服即可印製",
+    text: `一件衣服就可以印製
+直接下單連結：
+https://reurl.cc/1K2Ro9
+
+下單後來信圖檔即可
+--來信mail標題為訂單編號+姓名--
+makeworld.design@gmail.com
+
+或者私訊跟我下單也可以～`
+  },
+  {
+    category: "common",
+    label: "常見問題",
     title: "毛巾表面逆毛或露白",
     text: `熱昇華毛巾是藉由熱加壓滾印，
 因此新品表面會比較平整。
