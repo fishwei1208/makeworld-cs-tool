@@ -14,9 +14,9 @@ const towelPricing = {
 };
 
 const companies = {
-  deshui: { name: "得水實業", docType: "發票", taxType: "invoice" },
-  chimei: { name: "奇美廣告", docType: "收據", taxType: "receipt" },
-  buma: { name: "布碼科技", docType: "收據", taxType: "receipt" }
+  deshui: { name: "得水實業", docType: "發票", taxType: "invoice", stamp: "assets/deshui-stamp.png" },
+  chimei: { name: "奇美廣告", docType: "收據", taxType: "receipt", stamp: "assets/chimei-stamp.png" },
+  buma: { name: "布碼科技", docType: "收據", taxType: "receipt", stamp: "" }
 };
 
 const quoteLogos = {
@@ -461,6 +461,7 @@ function calculateQuote() {
     companyName: company.name,
     docType: company.docType,
     taxType: company.taxType,
+    stamp: company.stamp,
     logoChoice: $("outputLogo")?.value || "makeworld",
     currentItem,
     items: itemsForPreview,
@@ -501,6 +502,9 @@ function renderQuoteSheet(quote) {
     ? `<img class="quote-output-logo ${logo.className}" src="${logo.src}" alt="${escapeHtml(logo.label)}">`
     : "";
   const docTitle = quote.taxType === "invoice" ? "報價單" : "報價單 / 收據";
+  const stampHtml = quote.stamp
+    ? `<img class="quote-stamp-img" src="${quote.stamp}" alt="${escapeHtml(quote.companyName || "")} 印章">`
+    : `<div class="quote-stamp-fallback" aria-label="${escapeHtml(quote.companyName || "")} 印章"><span>${escapeHtml(quote.companyName || "")}</span><b>${escapeHtml(quote.docType || "報價")}</b></div>`;
   $("quoteSheetMeta").innerHTML = `
     <div><span>報價日期</span><strong>${escapeHtml(quote.quoteDate || "未設定")}</strong></div>
     <div><span>有效期限</span><strong>${escapeHtml(quote.validUntil || "未設定")}</strong></div>
@@ -508,7 +512,6 @@ function renderQuoteSheet(quote) {
     <div><span>稅別</span><strong>${quote.taxType === "invoice" ? "含 5% 營業稅" : "未稅 / 收據"}</strong></div>
   `;
 
-  $("quoteSheet").style.setProperty("--stamp-company", `"${quote.companyName || "MakeWorld"}"`);
   $("quoteSheet").querySelector(".quote-sheet-head").innerHTML = `
     <div class="quote-brand-block">
       ${logoHtml}
@@ -555,7 +558,7 @@ function renderQuoteSheet(quote) {
     <div class="quote-total-line"><span>${quote.taxType === "invoice" ? "營業稅 5%" : "營業稅"}</span><strong>${money(quote.tax)}</strong></div>
     <div class="quote-total-line grand"><span>報價總額</span><strong>${money(quote.grandTotal)}</strong></div>
     <div class="quote-total-line"><span>稅別</span><strong>${quote.taxType === "invoice" ? "含稅" : "未稅"}</strong></div>
-    <div class="quote-stamp" aria-label="${escapeHtml(quote.companyName || "")} 印章"><span>${escapeHtml(quote.companyName || "")}</span><b>${escapeHtml(quote.docType || "報價")}</b></div>
+    <div class="quote-stamp">${stampHtml}</div>
   `;
 }
 
