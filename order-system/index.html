@@ -731,6 +731,7 @@ input,select,textarea{font-size:16px;padding:12px 14px;border-radius:10px}
       </div>
       <div class="export-btns">
         <button class="btn-exp pdf" onclick="toggleAllChecks('process')">全選 / 取消</button>
+        <button class="btn-exp pick" onclick="printSelectedOrders('process')">☑ 列印勾選</button>
         <button class="btn-exp pick" onclick="bulkSetStatus('processing')">勾選改處理中</button>
         <button class="btn-exp csv" onclick="bulkSetStatus('done')">勾選改已完成</button>
       </div>
@@ -1397,11 +1398,12 @@ function exportCSV(){
 // ══ PDF / PRINT ══
 function openPdfModal(){if(!orders.some(o=>(o.orderStatus||'pending')==='done')){toast('尚無已完成訂單資料');return}document.getElementById('pdf-overlay').classList.add('show')}
 function closePdfModal(){document.getElementById('pdf-overlay').classList.remove('show')}
-function printSelectedOrders(){
-  const ids=Array.from(document.querySelectorAll('#page-history .print-check:checked')).map(el=>Number(el.value));
+function printSelectedOrders(page='history'){
+  const root=page==='process'?document.getElementById('page-process'):document.getElementById('page-history');
+  const ids=Array.from(root.querySelectorAll('.print-check:checked')).map(el=>Number(el.value));
   if(!ids.length){toast('請先勾選要列印的訂單');return}
   const selected=orders.filter(o=>ids.includes(o.id));
-  printOrderList(selected,'MakeWorld 訂單明細','','all',false);
+  printOrderList(selected,page==='process'?'MakeWorld 待處理訂單明細':'MakeWorld 訂單明細','','all',false);
 }
 function deliveryText(o){
   if(o.delivery?.type==='cvs')return `超商取貨：${o.delivery.brand||''} ${o.delivery.store||''}`.trim();
