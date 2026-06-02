@@ -318,6 +318,14 @@ makeworld.design@gmail.com
   {
     category: "shipping",
     label: "出貨時間",
+    title: "本週正常出貨說明",
+    text: `我們是每週二彙整上一週的訂單，
+並且於當週四五寄出，
+因此您下單的時間正常出貨是本週沒錯喔！`
+  },
+  {
+    category: "shipping",
+    label: "出貨時間",
     title: "掛布 / 行李箱套 / 全彩排汗衫",
     text: `掛布、行李箱保護套、全彩排汗衫製作時間約2-3週。
 
