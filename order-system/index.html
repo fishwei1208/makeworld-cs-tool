@@ -442,12 +442,6 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
       <div class="section-label">ORDER</div>
       <div class="field-row r2">
         <div>
-          <label>訂單日期 / 時刻</label>
-          <input id="f-date" type="hidden">
-          <input id="f-created-at" type="hidden">
-          <div class="date-display" id="date-display">—</div>
-        </div>
-        <div>
           <label>來源管道<span class="req">*</span></label>
           <select id="f-source" onchange="onSourceChange()">
             <option value="FB">FB</option>
@@ -460,31 +454,17 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
             <input id="f-source-other" type="text" placeholder="請輸入來源，例如 IG、現場、朋友介紹">
           </div>
         </div>
+        <div>
+          <label>訂單日期 / 時刻</label>
+          <input id="f-date" type="hidden">
+          <input id="f-created-at" type="hidden">
+          <div class="date-display" id="date-display">—</div>
+        </div>
       </div>
 
       <div>
-        <label>客戶名稱<span class="req">*</span></label>
+        <label>客戶暱稱<span class="req">*</span></label>
         <input id="f-customer" type="text" placeholder="客戶暱稱 / 粉專名稱 / 聯絡人">
-      </div>
-      <div>
-        <label>付款狀態</label>
-        <div class="payment-options">
-          <label class="pay-option">
-            <input type="radio" name="payment-status" value="paid" checked onchange="onPaymentChange()">
-            已付款
-          </label>
-          <label class="pay-option cod">
-            <input type="radio" name="payment-status" value="cod" onchange="onPaymentChange()">
-            超商貨到付款
-          </label>
-          <label class="pay-option">
-            <input type="radio" name="payment-status" value="onsite" onchange="onPaymentChange()">
-            現場付款
-          </label>
-        </div>
-        <div class="payment-amount" id="payment-amount-wrap">
-          <input id="f-payment-amount" type="number" min="0" placeholder="請輸入現場付款金額">
-        </div>
       </div>
     </div>
 
@@ -523,6 +503,26 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
       </div>
       <div id="home-fields" class="field-group">
         <div><label>收件地址</label><input id="f-address" type="text" placeholder="台中市西屯區…"></div>
+      </div>
+      <div>
+        <label>付款狀態</label>
+        <div class="payment-options">
+          <label class="pay-option">
+            <input type="radio" name="payment-status" value="paid" checked onchange="onPaymentChange()">
+            已付款
+          </label>
+          <label class="pay-option cod">
+            <input type="radio" name="payment-status" value="cod" onchange="onPaymentChange()">
+            超商貨到付款
+          </label>
+          <label class="pay-option">
+            <input type="radio" name="payment-status" value="onsite" onchange="onPaymentChange()">
+            現場付款
+          </label>
+        </div>
+        <div class="payment-amount" id="payment-amount-wrap">
+          <input id="f-payment-amount" type="number" min="0" placeholder="請輸入現場付款金額">
+        </div>
       </div>
     </div>
 
