@@ -183,6 +183,8 @@ textarea.tall{min-height:100px}
 .source-other.show{display:block}
 .style-other{display:none;margin-top:8px}
 .style-other.show{display:block}
+.towel-other{display:none;margin-top:8px}
+.towel-other.show{display:block}
 .tissue-custom{display:none;margin-top:8px}
 .tissue-custom.show{display:block}
 .payment-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -623,8 +625,28 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
           <textarea id="f-towel-style" class="tall" placeholder="例：30×110cm 運動毛巾，純棉，雙面可用，吸水性佳，素色款，適合健身房使用…"></textarea>
         </div>
         <div class="field-row r3">
-          <div><label>顏色</label><input id="f-towel-color" type="text" placeholder="白色、藍條…"></div>
-          <div><label>尺寸 / 規格</label><input id="f-towel-size" type="text" placeholder="30×110cm…"></div>
+          <div>
+            <label>材質</label>
+            <select id="f-towel-material" onchange="onTowelMaterialChange()">
+              <option value="基礎材質">基礎材質</option>
+              <option value="複合材質">複合材質</option>
+              <option value="環保材質">環保材質</option>
+              <option value="純棉材質">純棉材質</option>
+              <option value="其他">其他（自填）</option>
+            </select>
+            <input class="towel-other" id="f-towel-material-other" type="text" placeholder="請輸入材質">
+          </div>
+          <div>
+            <label>尺寸</label>
+            <select id="f-towel-size-select" onchange="onTowelSizeChange()">
+              <option value="110*28">110*28</option>
+              <option value="130*75">130*75</option>
+              <option value="80*28">80*28</option>
+              <option value="25*25">25*25</option>
+              <option value="其他">其他（自填）</option>
+            </select>
+            <input class="towel-other" id="f-towel-size-other" type="text" placeholder="請輸入尺寸">
+          </div>
           <div><label>數量</label><input id="f-towel-qty" type="number" min="1" value="1"></div>
         </div>
         <div><label>備註</label><textarea id="f-towel-note" placeholder="印花位置、特殊需求…"></textarea></div>
@@ -854,6 +876,11 @@ save();
 function esc(v){return String(v??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]))}
 function getItems(o){return Array.isArray(o.items)?o.items:normalizeOrder(o).items}
 function itemQty(it){return parseInt(it.qty)||1}
+function colorMetaLabel(it){
+  if(it.category==='towel')return '材質';
+  if(it.category==='other')return '規格';
+  return '顏色';
+}
 function imgSrc(img){return img?.dataUrl||img?.thumbUrl||img?.url||''}
 function itemMatches(it,f){
   if(f==='all')return true;
@@ -1067,6 +1094,26 @@ function getStyleValue(){
 function shirtStyleText(it){
   return it.category==='shirt'?(it.shirtStyle||it.clothingStyle||''):'';
 }
+function onTowelMaterialChange(){
+  const isOther=document.getElementById('f-towel-material').value==='其他';
+  document.getElementById('f-towel-material-other').classList.toggle('show',isOther);
+  if(isOther)setTimeout(()=>document.getElementById('f-towel-material-other').focus(),0);
+  renderOrderPreview();
+}
+function getTowelMaterialValue(){
+  const material=document.getElementById('f-towel-material').value;
+  return material==='其他'?(document.getElementById('f-towel-material-other').value.trim()||'其他'):material;
+}
+function onTowelSizeChange(){
+  const isOther=document.getElementById('f-towel-size-select').value==='其他';
+  document.getElementById('f-towel-size-other').classList.toggle('show',isOther);
+  if(isOther)setTimeout(()=>document.getElementById('f-towel-size-other').focus(),0);
+  renderOrderPreview();
+}
+function getTowelSizeValue(){
+  const size=document.getElementById('f-towel-size-select').value;
+  return size==='其他'?(document.getElementById('f-towel-size-other').value.trim()||'其他'):size;
+}
 function onTissueQtyChange(){
   const isCustom=document.getElementById('f-tissue-qty-preset').value==='custom';
   document.getElementById('tissue-custom-wrap').classList.toggle('show',isCustom);
@@ -1169,7 +1216,7 @@ function collectCurrentItem(silent=false){
   if(currentCat==='towel'){
     const style=document.getElementById('f-towel-style').value.trim();
     if(!style){if(!silent){markMissing('f-towel-style');focusFirstMissing([document.getElementById('f-towel-style')]);toast('請填寫毛巾款式')}return null}
-    return {id:Date.now()+Math.random(),category:'towel',supplier:document.getElementById('f-towel-supplier').value,style,color:document.getElementById('f-towel-color').value.trim()||'—',size:document.getElementById('f-towel-size').value.trim()||'—',qty:parseInt(document.getElementById('f-towel-qty').value)||1,note:document.getElementById('f-towel-note').value.trim()};
+    return {id:Date.now()+Math.random(),category:'towel',supplier:document.getElementById('f-towel-supplier').value,style,color:getTowelMaterialValue(),size:getTowelSizeValue(),qty:parseInt(document.getElementById('f-towel-qty').value)||1,note:document.getElementById('f-towel-note').value.trim()};
   }
   if(currentCat==='tissue'){
     const qty=getTissueQty();
@@ -1209,7 +1256,7 @@ function itemDetailText(it){
   const parts=[];
   const ss=shirtStyleText(it);
   if(ss)parts.push(`款式：${esc(ss)}`);
-  if(it.color&&it.color!=='—')parts.push(`${it.category==='other'?'規格':'顏色'}：${esc(it.color)}`);
+  if(it.color&&it.color!=='—')parts.push(`${colorMetaLabel(it)}：${esc(it.color)}`);
   if(it.size&&it.size!=='—')parts.push(`尺寸：${esc(it.size)}`);
   return parts.join('　')||'—';
 }
@@ -1224,8 +1271,12 @@ function clearItemFields(cat){
     document.querySelectorAll('.cswatch').forEach(s=>s.classList.remove('active'));
     document.querySelectorAll('.sz-btn').forEach(b=>b.classList.remove('active'));
   }else if(cat==='towel'){
-    ['f-towel-style','f-towel-color','f-towel-size','f-towel-note'].forEach(id=>document.getElementById(id).value='');
+    ['f-towel-style','f-towel-material-other','f-towel-size-other','f-towel-note'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('f-towel-supplier').value='酷頂';
+    document.getElementById('f-towel-material').value='基礎材質';
+    document.getElementById('f-towel-size-select').value='110*28';
+    onTowelMaterialChange();
+    onTowelSizeChange();
     document.getElementById('f-towel-qty').value=1;
   }else if(cat==='tissue'){
     ['f-tissue-name','f-tissue-qty-custom','f-tissue-note'].forEach(id=>document.getElementById(id).value='');
@@ -1450,7 +1501,7 @@ function lineItemHtml(it){
   const detail=[];
   const ss=shirtStyleText(it);
   if(ss)detail.push(`款式：${esc(ss)}`);
-  if(it.color&&it.color!=='—')detail.push(`${it.category==='other'?'規格':'顏色'}：${esc(it.color)}`);
+  if(it.color&&it.color!=='—')detail.push(`${colorMetaLabel(it)}：${esc(it.color)}`);
   if(it.size&&it.size!=='—')detail.push(`尺寸：${esc(it.size)}`);
   return `<div class="line-item"><div class="line-title">${CATB[it.category]||''}${sup} ${esc(it.style)} <span style="color:var(--accent);font-family:'DM Mono',monospace">×${itemQty(it)}</span></div><div class="line-meta">${detail.join('　')||'—'}${it.note?`<br>備註：${esc(it.note)}`:''}</div></div>`;
 }
@@ -1485,7 +1536,7 @@ function closeLightbox(){document.getElementById('lightbox').classList.remove('s
 function exportCSV(){
   const exportOrders=orders.filter(o=>(o.orderStatus||'pending')==='done');
   if(!exportOrders.length){toast('尚無已完成訂單資料');return}
-  const h=['訂單編號','明細序','訂單狀態','日期','重新編輯日期','星期','來源管道','客戶名稱','付款狀態','現場付款金額','類別','收件人','收件人電話','配送','超商品牌','門市','地址','廠商','衣服款式','品名/商品','顏色/規格','尺寸','數量','備註'];
+  const h=['訂單編號','明細序','訂單狀態','日期','重新編輯日期','星期','來源管道','客戶名稱','付款狀態','現場付款金額','類別','收件人','收件人電話','配送','超商品牌','門市','地址','廠商','衣服款式','品名/商品','顏色/材質/規格','尺寸','數量','備註'];
   const rows=[];
   exportOrders.forEach(o=>{const d=o.date?new Date(o.date+'T00:00:00'):null;getItems(o).forEach((it,idx)=>rows.push([orderCode(o),idx+1,orderStatusLabel(o),o.date||'',formatDateTime(o.editedAt),d?WDAYS[d.getDay()]:'',o.source||'',o.customer||o.name||'',paymentLabel(o),o.paymentAmount||'',CAT_LABEL[it.category]||it.category,o.recipientName||o.name||'',o.recipientPhone||o.phone||'',o.delivery.type==='cvs'?'超商':'宅配',o.delivery.brand||'',o.delivery.store||'',o.delivery.address||'',it.supplier||'',shirtStyleText(it),it.style,it.color||'',it.size||'',itemQty(it),it.note||'']))});
   const csv=[h,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
@@ -1516,7 +1567,7 @@ function previewItemHtml(it,isDraft=false){
   if(it.supplier)detail.push(`廠商：${esc(it.supplier)}`);
   const ss=shirtStyleText(it);
   if(ss)detail.push(`款式：${esc(ss)}`);
-  if(it.color&&it.color!=='—')detail.push(`${it.category==='other'?'規格':'顏色'}：${esc(it.color)}`);
+  if(it.color&&it.color!=='—')detail.push(`${colorMetaLabel(it)}：${esc(it.color)}`);
   if(it.size&&it.size!=='—')detail.push(`尺寸：${esc(it.size)}`);
   if(it.note)detail.push(`備註：${esc(it.note)}`);
   return `<div class="preview-item"><div class="preview-item-title">${isDraft?'尚未加入 - ':''}${esc(CAT_LABEL[it.category]||it.category)}｜${esc(it.style)} ×${itemQty(it)}</div><div class="preview-item-meta">${detail.join('　')||'—'}</div></div>`;
@@ -1592,7 +1643,7 @@ function buildQuoteOrdersHtml(list,scope='all'){
         <div class="info-box"><h3>收件資訊</h3><p><b>收件人</b>${esc(o.recipientName||o.name||'—')}</p><p><b>電話</b>${esc(o.recipientPhone||o.phone||'—')}</p><p><b>配送</b>${esc(deliveryText(o)||'—')}</p></div>
       </div>
       <div class="pick-sheet">
-        <table class="quote-table"><thead><tr><th>#</th><th>類別</th><th>廠商</th><th>衣服款式</th><th>品名 / 商品</th><th>顏色 / 規格</th><th>尺寸</th><th>數量</th></tr></thead><tbody>${printItemRows(o,scope)}</tbody></table>
+        <table class="quote-table"><thead><tr><th>#</th><th>類別</th><th>廠商</th><th>衣服款式</th><th>品名 / 商品</th><th>顏色 / 材質 / 規格</th><th>尺寸</th><th>數量</th></tr></thead><tbody>${printItemRows(o,scope)}</tbody></table>
         <div class="quote-total"><span>合計品項 ${items.length} 項</span><strong>總件數 ${total}</strong></div>
         ${printDesignImages(o,items)}
       </div>
