@@ -118,7 +118,9 @@ function bindEvents() {
   $("mailButton").addEventListener("click", openMailDraft);
   $("historySearch").addEventListener("input", renderHistory);
   $("historyList").addEventListener("click", handleHistoryAction);
-  window.addEventListener("beforeprint", prepareQuotePrint);
+  window.addEventListener("beforeprint", () => {
+    if (!document.getElementById("printQuoteStage")) prepareQuotePrint();
+  });
   window.addEventListener("afterprint", cleanupQuotePrint);
 }
 
@@ -130,17 +132,27 @@ function printQuoteSheet() {
 function prepareQuotePrint() {
   render();
   document.body.classList.add("is-printing-quote");
+  cleanupQuotePrint(false);
   const sheet = $("quoteSheet");
   if (!sheet) return;
-  sheet.style.setProperty("--quote-print-scale", "1");
-  const availableHeight = 1060;
-  const scale = Math.min(1, Math.max(0.72, availableHeight / Math.max(sheet.scrollHeight, 1)));
-  sheet.style.setProperty("--quote-print-scale", scale.toFixed(3));
+  const stage = document.createElement("div");
+  stage.id = "printQuoteStage";
+  const clone = sheet.cloneNode(true);
+  clone.removeAttribute("id");
+  clone.classList.add("print-quote-sheet");
+  stage.appendChild(clone);
+  document.body.appendChild(stage);
+  requestAnimationFrame(() => {
+    const availableHeight = 1048;
+    const scale = Math.min(1, Math.max(0.72, availableHeight / Math.max(clone.scrollHeight, 1)));
+    clone.style.setProperty("--quote-print-scale", scale.toFixed(3));
+  });
 }
 
-function cleanupQuotePrint() {
+function cleanupQuotePrint(removeClass = true) {
+  document.getElementById("printQuoteStage")?.remove();
+  if (!removeClass) return;
   document.body.classList.remove("is-printing-quote");
-  $("quoteSheet")?.style.removeProperty("--quote-print-scale");
 }
 
 function setView(view) {
@@ -166,6 +178,7 @@ function setQuoteMode(mode) {
 function setManualStep(step) {
   state.manualStep = Math.min(4, Math.max(1, Number(step) || 1));
   updateManualStepClass();
+  updateMobileQuotePreviewScale();
   document.querySelector(".main-area")?.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -577,6 +590,7 @@ function render() {
   const quote = calculateQuote();
   renderPartSummaries(quote.currentItem);
   renderQuoteSheet(quote);
+  updateMobileQuotePreviewScale();
   $("unitCost").textContent = money(quote.currentItem.unitCost);
   $("unitPrice").textContent = money(quote.currentItem.unitPrice);
   $("grandTotal").textContent = money(quote.grandTotal);
@@ -584,6 +598,26 @@ function render() {
   $("quoteStatus").textContent = quote.items.length ? `${quote.items.length} 項` : "草稿";
   $("quotePreview").innerHTML = buildPreview(quote);
   renderItemList(quote);
+}
+
+function updateMobileQuotePreviewScale() {
+  const sheet = $("quoteSheet");
+  const stepQuote = $("stepQuote");
+  if (!sheet || !stepQuote) return;
+  const isMobileManualPreview =
+    window.matchMedia("(max-width: 720px)").matches &&
+    document.body.classList.contains("manual-mode") &&
+    (document.body.classList.contains("manual-step-3") || document.body.classList.contains("manual-step-4"));
+  if (!isMobileManualPreview) {
+    sheet.style.removeProperty("--mobile-quote-scale");
+    sheet.style.removeProperty("zoom");
+    return;
+  }
+  const availableWidth = Math.max(260, stepQuote.clientWidth - 28);
+  const naturalWidth = 720;
+  const scale = Math.min(1, availableWidth / naturalWidth);
+  sheet.style.setProperty("--mobile-quote-scale", scale.toFixed(3));
+  sheet.style.zoom = scale.toFixed(3);
 }
 
 function renderQuoteSheet(quote) {
