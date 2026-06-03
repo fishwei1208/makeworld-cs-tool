@@ -134,7 +134,7 @@ function prepareQuotePrint() {
   if (!sheet) return;
   sheet.style.removeProperty("zoom");
   requestAnimationFrame(() => {
-    const availableHeight = 1062;
+    const availableHeight = 1010;
     const scale = Math.min(1, Math.max(0.72, availableHeight / Math.max(sheet.scrollHeight, 1)));
     sheet.style.setProperty("--quote-print-scale", scale.toFixed(3));
   });

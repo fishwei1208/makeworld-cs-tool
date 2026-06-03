@@ -1833,23 +1833,23 @@ textarea:focus {
 @media print {
   @page {
     size: A4;
-    margin: 0;
+    margin: 7mm;
   }
 
   html {
-    width: 210mm;
-    min-height: 0;
+    width: auto;
+    height: auto;
     margin: 0;
     background: white;
-    overflow: hidden;
+    overflow: visible;
   }
 
   body {
     background: white;
-    width: 210mm;
-    height: 297mm;
+    width: auto;
+    height: auto;
     margin: 0;
-    overflow: hidden;
+    overflow: visible;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
@@ -1885,13 +1885,11 @@ textarea:focus {
   }
 
   #quoteSheet {
-    position: fixed !important;
-    top: 7mm !important;
-    left: 7mm !important;
+    position: static !important;
     display: block !important;
     width: 196mm !important;
     max-width: none !important;
-    max-height: 278mm !important;
+    max-height: 276mm !important;
     margin: 0 !important;
     border: 0 !important;
     border-radius: 0 !important;
@@ -1903,6 +1901,8 @@ textarea:focus {
     zoom: 1 !important;
     break-after: avoid !important;
     page-break-after: avoid !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 
   .output-options {
