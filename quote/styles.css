@@ -1155,12 +1155,21 @@ textarea:focus {
 }
 
 @media (max-width: 720px) {
+  :root {
+    --mobile-quote-header: 112px;
+    --mobile-quote-preview: max(176px, 25vh);
+  }
+
   html {
-    scroll-padding-top: 132px;
+    height: 100%;
+    overflow: hidden;
+    scroll-padding-top: var(--mobile-quote-header);
   }
 
   body {
-    padding-bottom: 27vh;
+    height: 100%;
+    overflow: hidden;
+    padding-bottom: 0;
   }
 
   .main-area,
@@ -1171,19 +1180,30 @@ textarea:focus {
 
   .app-shell {
     display: block;
+    min-height: 100dvh;
+    height: 100dvh;
+    overflow: hidden;
   }
 
   .side-nav {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 30;
+    height: var(--mobile-quote-header);
+    overflow: hidden;
     gap: 8px;
     padding: 9px 12px 10px;
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
   }
 
   .main-area {
+    height: calc(100dvh - var(--mobile-quote-header) - var(--mobile-quote-preview));
+    margin-top: var(--mobile-quote-header);
     padding-top: 14px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .brand {
@@ -1282,7 +1302,7 @@ textarea:focus {
   .manual-mode #stepCustomer,
   .manual-mode #stepQuote {
     display: block;
-    scroll-margin-top: 132px;
+    scroll-margin-top: 16px;
   }
 
   .manual-mode .editor-panel {
@@ -1363,8 +1383,8 @@ textarea:focus {
     right: 0;
     bottom: 0;
     z-index: 40;
-    height: 25vh;
-    min-height: 176px;
+    height: var(--mobile-quote-preview);
+    min-height: 0;
     overflow: auto;
     border-radius: 14px 14px 0 0;
     padding: 12px 14px;
