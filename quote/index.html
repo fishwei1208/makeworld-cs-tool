@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MakeWorld 報價工作台</title>
-    <link rel="stylesheet" href="styles.css?v=20260603-mobile-sticky-steps" />
+    <link rel="stylesheet" href="styles.css?v=20260603-fixed-mobile-quote-nav" />
   </head>
   <body>
     <main class="app-shell">
@@ -88,9 +88,9 @@
 
                 <div class="form-grid two">
                   <label>客戶名稱<input id="customerName" type="text" placeholder="例：某某有限公司" /></label>
+                  <label>統一編號<input id="taxId" type="text" placeholder="開發票時填寫" /></label>
                   <label>聯絡人<input id="contactName" type="text" placeholder="例：王小姐" /></label>
                   <label>電話<input id="customerPhone" type="text" placeholder="選填" /></label>
-                  <label>統一編號<input id="taxId" type="text" placeholder="開發票時填寫" /></label>
                   <label class="wide">地址<input id="address" type="text" placeholder="選填" /></label>
                   <label class="wide">聯絡管道
                     <select id="channel">
@@ -327,30 +327,31 @@
                   </div>
                 </div>
 
+                <div class="form-grid two output-options">
+                  <label>報價單 Logo
+                    <select id="outputLogo">
+                      <option value="makeworld">地圖製造 logo</option>
+                      <option value="buma">布碼科技 logo</option>
+                      <option value="none">無 logo</option>
+                    </select>
+                  </label>
+                  <label>報價單印章
+                    <select id="outputStamp">
+                      <option value="auto">依出單公司自動選擇</option>
+                      <option value="deshui">得水實業印章</option>
+                      <option value="chimei">奇美廣告印章</option>
+                      <option value="none">無印章</option>
+                    </select>
+                  </label>
+                  <label>公司聯絡人
+                    <select id="outputContact">
+                      <option value="wei">魏先生 0492653166</option>
+                      <option value="lan">藍小姐 0939299535</option>
+                    </select>
+                  </label>
+                </div>
+
                 <div class="quote-sheet" id="quoteSheet">
-                  <div class="form-grid two output-options">
-                    <label>報價單 Logo
-                      <select id="outputLogo">
-                        <option value="makeworld">地圖製造 logo</option>
-                        <option value="buma">布碼科技 logo</option>
-                        <option value="none">無 logo</option>
-                      </select>
-                    </label>
-                    <label>報價單印章
-                      <select id="outputStamp">
-                        <option value="auto">依出單公司自動選擇</option>
-                        <option value="deshui">得水實業印章</option>
-                        <option value="chimei">奇美廣告印章</option>
-                        <option value="none">無印章</option>
-                      </select>
-                    </label>
-                    <label>公司聯絡人
-                      <select id="outputContact">
-                        <option value="wei">魏先生 0492653166</option>
-                        <option value="lan">藍小姐 0939299535</option>
-                      </select>
-                    </label>
-                  </div>
                   <div class="quote-sheet-head">
                     <div>
                       <p class="eyebrow">Quotation</p>
@@ -475,6 +476,6 @@
     </main>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="script.js?v=20260603-a4-quote-print"></script>
+    <script src="script.js?v=20260603-fixed-mobile-quote-nav"></script>
   </body>
 </html>

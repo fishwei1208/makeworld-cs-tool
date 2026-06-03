@@ -614,33 +614,34 @@ function renderQuoteSheet(quote) {
     </div>
   `;
 
-  $("quoteCustomerBlock").innerHTML = [
-    ["客戶名稱", quote.customerName || "未填"],
-    ["聯絡人", quote.contactName || "未填"],
-    ["電話", quote.customerPhone || "未填"],
-    ["統一編號", quote.taxId || "未填"],
-    ["聯絡管道", quote.channel || "未填"],
-    ["地址", quote.address || "未填"]
-  ]
-    .map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`)
-    .join("");
+  $("quoteCustomerBlock").innerHTML = `
+    <div class="quote-customer-line quote-customer-pair">
+      <span>客戶名稱</span><strong>${escapeHtml(quote.customerName || "未填")}</strong>
+      <span>統編</span><strong>${escapeHtml(quote.taxId || "未填")}</strong>
+    </div>
+    <div class="quote-customer-line"><span>聯絡人</span><strong>${escapeHtml(quote.contactName || "未填")}</strong></div>
+    <div class="quote-customer-line"><span>電話</span><strong>${escapeHtml(quote.customerPhone || "未填")}</strong></div>
+    <div class="quote-customer-line"><span>地址</span><strong>${escapeHtml(quote.address || "未填")}</strong></div>
+    <div class="quote-customer-line"><span>聯絡管道</span><strong>${escapeHtml(quote.channel || "未填")}</strong></div>
+  `;
 
   const rows = quote.items.length ? quote.items : [quote.currentItem];
   $("quoteTableBody").innerHTML = rows
-    .map(
-      (item) => `
+    .map((item) => {
+      const itemTypeNote = item.productType === "manual" ? "" : item.product.type;
+      return `
         <tr>
           <td>
             <strong>${escapeHtml(item.product.name)}</strong>
-            <small>${escapeHtml(item.product.type)}${state.items.length ? "" : "（目前編輯，尚未加入品項清單）"}</small>
+            ${itemTypeNote ? `<small>${escapeHtml(itemTypeNote)}</small>` : ""}
           </td>
           <td>${escapeHtml(item.product.spec || "")}</td>
           <td class="num">${item.product.qty || 0}</td>
           <td class="num">${money(item.unitPrice)}</td>
           <td class="num">${money(item.subtotal)}</td>
         </tr>
-      `
-    )
+      `;
+    })
     .join("");
 
   $("quoteTotalBox").innerHTML = `
