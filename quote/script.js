@@ -114,10 +114,33 @@ function bindEvents() {
   $("quoteItems").addEventListener("click", handleItemAction);
   $("saveButton").addEventListener("click", saveCurrentQuote);
   $("resetButton").addEventListener("click", resetAll);
-  $("printButton").addEventListener("click", () => window.print());
+  $("printButton").addEventListener("click", printQuoteSheet);
   $("mailButton").addEventListener("click", openMailDraft);
   $("historySearch").addEventListener("input", renderHistory);
   $("historyList").addEventListener("click", handleHistoryAction);
+  window.addEventListener("beforeprint", prepareQuotePrint);
+  window.addEventListener("afterprint", cleanupQuotePrint);
+}
+
+function printQuoteSheet() {
+  prepareQuotePrint();
+  requestAnimationFrame(() => window.print());
+}
+
+function prepareQuotePrint() {
+  render();
+  document.body.classList.add("is-printing-quote");
+  const sheet = $("quoteSheet");
+  if (!sheet) return;
+  sheet.style.setProperty("--quote-print-scale", "1");
+  const availableHeight = 1060;
+  const scale = Math.min(1, Math.max(0.72, availableHeight / Math.max(sheet.scrollHeight, 1)));
+  sheet.style.setProperty("--quote-print-scale", scale.toFixed(3));
+}
+
+function cleanupQuotePrint() {
+  document.body.classList.remove("is-printing-quote");
+  $("quoteSheet")?.style.removeProperty("--quote-print-scale");
 }
 
 function setView(view) {

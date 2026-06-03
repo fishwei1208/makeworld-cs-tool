@@ -1643,102 +1643,227 @@ textarea:focus {
 @media print {
   @page {
     size: A4;
-    margin: 8mm;
+    margin: 0;
+  }
+
+  html {
+    width: 210mm;
+    height: 297mm;
+    margin: 0;
+    background: white;
+    overflow: hidden;
   }
 
   body {
     background: white;
     width: 210mm;
-    min-height: 297mm;
+    height: 297mm;
+    margin: 0;
     overflow: hidden;
-  }
-
-  .side-nav,
-  .topbar,
-  .flow-strip,
-  .output-options,
-  .summary-panel,
-  .toast {
-    display: none !important;
-  }
-
-  .app-shell,
-  .main-area,
-  .work-grid {
-    display: block;
-    min-height: auto;
-    padding: 0;
-  }
-
-  .editor-panel {
-    display: block !important;
-    border: 0;
-    box-shadow: none;
-    padding: 0;
-  }
-
-  .step-panel {
-    display: none !important;
-  }
-
-  #stepQuote.step-panel.active {
-    display: block !important;
-  }
-
-  #stepQuote > :not(.quote-sheet) {
-    display: none !important;
-  }
-
-  .quote-preview {
-    border: 0;
-  }
-
-  .quote-sheet {
-    border: 0;
-    border-radius: 0;
-    overflow: visible;
-    transform: scale(0.86);
-    transform-origin: top left;
-    width: 116%;
-    max-height: 326mm;
-  }
-
-  .quote-sheet-head {
-    padding: 0 0 10px;
-    gap: 8px;
-  }
-
-  .quote-output-logo {
-    width: 300px;
-    height: 120px;
-  }
-
-  .quote-customer-block,
-  .quote-table th,
-  .quote-table td,
-  .quote-total-box {
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .quote-stamp {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
 
-  .quote-total-box {
-    grid-template-columns: minmax(180px, 1fr) 140px minmax(250px, auto);
-    min-height: 132px;
-    padding-bottom: 0;
+  body * {
+    visibility: hidden !important;
   }
 
-  .quote-table {
-    font-size: 12px;
+  #quoteSheet,
+  #quoteSheet * {
+    visibility: visible !important;
   }
 
-  .quote-table th,
-  .quote-table td {
-    padding-top: 7px;
-    padding-bottom: 7px;
+  .app-shell,
+  .main-area,
+  #workspaceView,
+  .work-grid,
+  .editor-panel,
+  #stepQuote {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  #stepQuote > :not(#quoteSheet) {
+    display: none !important;
+  }
+
+  #quoteSheet {
+    position: fixed !important;
+    top: 8mm;
+    left: 8mm;
+    display: block !important;
+    width: 194mm;
+    max-height: 281mm;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: white !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+    transform: scale(var(--quote-print-scale, 1));
+    transform-origin: top left;
+  }
+
+  #quoteSheet .output-options {
+    display: none !important;
+  }
+
+  #quoteSheet .quote-sheet-head {
+    display: block;
+    padding: 0 0 4mm;
+    border-bottom: 0.35mm solid #111827;
+    background: white;
+  }
+
+  #quoteSheet .quote-logo-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3mm;
+  }
+
+  #quoteSheet .quote-title-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8mm;
+  }
+
+  #quoteSheet .quote-output-logo {
+    width: 132mm;
+    height: 34mm;
+    object-fit: contain;
+  }
+
+  #quoteSheet .quote-output-logo.buma {
+    width: 42mm;
+    height: 30mm;
+  }
+
+  #quoteSheet .quote-sheet-head h3 {
+    margin: 0;
+    font-size: 18pt;
+    line-height: 1.15;
+  }
+
+  #quoteSheet .eyebrow,
+  #quoteSheet .quote-company-name,
+  #quoteSheet .quote-sheet-meta,
+  #quoteSheet .quote-customer-block,
+  #quoteSheet .quote-table,
+  #quoteSheet .quote-total-box,
+  #quoteSheet .quote-contact {
+    font-size: 9pt;
+  }
+
+  #quoteSheet .quote-sheet-meta {
+    gap: 1.5mm;
+    text-align: right;
+  }
+
+  #quoteSheet .quote-sheet-meta div {
+    gap: 3mm;
+  }
+
+  #quoteSheet .quote-customer-block {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2mm 6mm;
+    padding: 4mm 0;
+    border-bottom: 0.2mm solid #d7dde6;
+  }
+
+  #quoteSheet .quote-customer-block div {
+    font-size: 9pt;
+  }
+
+  #quoteSheet .quote-table-wrap {
+    overflow: visible;
+  }
+
+  #quoteSheet .quote-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
+
+  #quoteSheet .quote-table th,
+  #quoteSheet .quote-table td {
+    padding: 2mm 2.2mm;
+    font-size: 9pt;
+    line-height: 1.35;
+    border-bottom: 0.2mm solid #d7dde6;
+  }
+
+  #quoteSheet .quote-table th {
+    background: #f6f8fb;
+    font-size: 8pt;
+  }
+
+  #quoteSheet .quote-table th:nth-child(1),
+  #quoteSheet .quote-table td:nth-child(1) {
+    width: 38%;
+  }
+
+  #quoteSheet .quote-table th:nth-child(2),
+  #quoteSheet .quote-table td:nth-child(2) {
+    width: 24%;
+  }
+
+  #quoteSheet .quote-table small {
+    margin-top: 1mm;
+    font-size: 7.5pt;
+  }
+
+  #quoteSheet .quote-total-box {
+    display: grid;
+    grid-template-columns: 1fr 30mm 58mm;
+    align-items: end;
+    gap: 5mm;
+    min-height: 35mm;
+    padding: 5mm 0 0;
+  }
+
+  #quoteSheet .quote-signature {
+    gap: 4mm;
+    font-size: 9.5pt;
+  }
+
+  #quoteSheet .quote-stamp-slot {
+    min-height: 25mm;
+  }
+
+  #quoteSheet .quote-stamp {
+    width: 2.5cm;
+    height: 2.5cm;
+    transform: rotate(-7deg);
+    opacity: 0.9;
+  }
+
+  #quoteSheet .quote-total-stack {
+    gap: 2mm;
+  }
+
+  #quoteSheet .quote-total-line {
+    grid-template-columns: 22mm 32mm;
+    gap: 3mm;
+    font-size: 9pt;
+  }
+
+  #quoteSheet .quote-total-line.grand {
+    margin-top: 1mm;
+    padding-top: 2mm;
+    font-size: 12pt;
+  }
+
+  #quoteSheet .quote-contact {
+    margin-top: 2mm;
+    padding-top: 2mm;
+    line-height: 1.45;
   }
 }
