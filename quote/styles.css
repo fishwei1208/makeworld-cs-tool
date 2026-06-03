@@ -1483,6 +1483,87 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 
+  .manual-mode {
+    --mobile-quote-header: 78px;
+    --mobile-quote-preview: 0px;
+  }
+
+  .manual-mode .side-nav {
+    height: var(--mobile-quote-header);
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .manual-mode .brand {
+    display: none;
+  }
+
+  .manual-mode .mobile-quote-controls {
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 6px;
+  }
+
+  .manual-mode .mobile-quote-controls label {
+    font-size: 10px;
+  }
+
+  .manual-mode .mobile-quote-controls select {
+    min-height: 34px;
+    margin-top: 2px;
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+
+  .manual-mode .main-area {
+    height: calc(100dvh - var(--mobile-quote-header));
+    margin-top: var(--mobile-quote-header);
+    padding: 10px;
+  }
+
+  .manual-mode .summary-panel {
+    display: none;
+  }
+
+  .manual-mode .mobile-manual-flow {
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .manual-mode .mobile-manual-flow button {
+    min-height: 34px;
+    gap: 0;
+    padding: 5px 2px;
+    border-radius: 7px;
+    font-size: 10px;
+  }
+
+  .manual-mode .mobile-manual-flow button span {
+    display: none;
+  }
+
+  .manual-mode #stepCustomer,
+  .manual-mode #stepQuote {
+    padding: 14px;
+  }
+
+  .manual-mode .section-title,
+  .manual-mode .compact-title {
+    margin-bottom: 12px;
+  }
+
+  .manual-mode .section-title h3,
+  .manual-mode .compact-title h3 {
+    font-size: 18px;
+  }
+
+  .manual-mode .form-grid {
+    gap: 10px;
+  }
+
+  .manual-mode .quote-sheet {
+    max-height: none;
+  }
+
   .mobile-wizard-actions {
     display: flex;
     gap: 8px;

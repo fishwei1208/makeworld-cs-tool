@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MakeWorld 報價工作台</title>
-    <link rel="stylesheet" href="styles.css?v=20260603-mobile-manual-wizard" />
+    <link rel="stylesheet" href="styles.css?v=20260603-mobile-simple-manual" />
   </head>
   <body>
     <main class="app-shell">
@@ -27,7 +27,7 @@
           </label>
           <label>模式
             <select id="mobileModeSelect">
-              <option value="manual">直接手動建立訂單模式</option>
+              <option value="manual">手機手動報價單模式</option>
               <option value="cost">成本計算建立訂單模式</option>
             </select>
           </label>
@@ -69,10 +69,10 @@
           </div>
 
           <div class="mobile-manual-flow" id="mobileManualFlow" aria-label="手機手動報價流程">
-            <button class="active" type="button" data-manual-step="1"><span>1</span>客戶資訊</button>
-            <button type="button" data-manual-step="2"><span>2</span>購買品項</button>
-            <button type="button" data-manual-step="3"><span>3</span>預覽設定</button>
-            <button type="button" data-manual-step="4"><span>4</span>產生 PDF</button>
+            <button class="active" type="button" data-manual-step="1"><span>1</span>客戶</button>
+            <button type="button" data-manual-step="2"><span>2</span>品項</button>
+            <button type="button" data-manual-step="3"><span>3</span>設定</button>
+            <button type="button" data-manual-step="4"><span>4</span>PDF</button>
           </div>
 
           <div class="work-grid">
