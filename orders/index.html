@@ -232,6 +232,10 @@ textarea.tall{min-height:100px}
 .rm-item{background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;
   border-radius:5px;padding:3px 6px}
 .rm-item:hover{color:var(--red);background:var(--red-lt)}
+.item-actions{display:flex;align-items:center;gap:4px;margin-left:auto}
+.line-edit-btn{background:var(--accent-lt);border:1px solid var(--accent);color:var(--accent);
+  cursor:pointer;font-size:11px;padding:3px 7px;border-radius:5px;font-weight:700}
+.line-edit-btn:hover{background:var(--accent);color:#fff}
 .order-code{font-family:'DM Mono',monospace;color:var(--text-muted);font-size:10px}
 .order-items-cell{display:flex;flex-direction:column;gap:7px;min-width:260px}
 .line-item{border-bottom:1px solid var(--border);padding-bottom:6px}
@@ -260,6 +264,8 @@ textarea.tall{min-height:100px}
 .hist-left{flex:1;overflow-y:auto;padding:18px 16px}
 .hist-toolbar{display:flex;align-items:center;justify-content:space-between;
   margin-bottom:14px;flex-wrap:wrap;gap:8px}
+#page-process .hist-toolbar{position:sticky;top:0;z-index:30;background:rgba(246,247,251,.96);
+  backdrop-filter:blur(10px);padding:10px 0 12px;margin-top:-6px;border-bottom:1px solid var(--border)}
 .filter-bar{display:flex;gap:5px;flex-wrap:wrap}
 .fbtn{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);
   background:var(--surface);color:var(--text-dim);cursor:pointer;font-size:11px;
@@ -711,7 +717,7 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
     <div class="img-previews" id="img-previews"></div>
 
     <div style="height:18px"></div>
-    <button class="btn-add-item" onclick="addLineItem()">＋ 加入商品明細</button>
+    <button class="btn-add-item" id="btn-add-line" onclick="addLineItem()">＋ 加入商品明細</button>
 
     <div class="divider" style="margin:18px 0"></div>
 
@@ -864,6 +870,7 @@ const SYNC_SECRET='mw_sync_6jQ8pV3xL2rT9sD4';
 let orders=[];try{orders=JSON.parse(localStorage.getItem('mw3_orders')||'[]')}catch(e){}
 let pendingImgs=[];
 let orderItems=[];
+let editingLineIndex=null;
 let currentCat='shirt';
 let delMode='cvs';
 let currentFilter='all';
@@ -1239,18 +1246,121 @@ function hasCurrentItemDraft(){
 function addLineItem(){
   const item=collectCurrentItem(false);
   if(!item)return;
-  orderItems.push(item);
+  if(editingLineIndex!==null&&orderItems[editingLineIndex]){
+    item.id=orderItems[editingLineIndex].id||item.id;
+    orderItems[editingLineIndex]=item;
+    editingLineIndex=null;
+    updateLineItemButton();
+    toast('已更新商品明細');
+  }else{
+    orderItems.push(item);
+    toast('已加入商品明細');
+  }
   renderLineItems();
   clearItemFields(currentCat);
   renderOrderPreview();
-  toast('已加入商品明細');
 }
-function removeLineItem(i){orderItems.splice(i,1);renderLineItems();renderOrderPreview()}
+function removeLineItem(i){
+  orderItems.splice(i,1);
+  if(editingLineIndex===i){
+    editingLineIndex=null;
+    updateLineItemButton();
+    clearItemFields(currentCat);
+  }else if(editingLineIndex!==null&&editingLineIndex>i){
+    editingLineIndex--;
+  }
+  renderLineItems();renderOrderPreview()
+}
 function renderLineItems(){
   const c=document.getElementById('line-items');
   document.getElementById('line-count').textContent=`${orderItems.length} ITEMS`;
   if(!orderItems.length){c.innerHTML='<div class="item-empty">先在上方填一項商品，再按「加入商品明細」。同一筆訂單可混搭衣服、毛巾、面紙與其他商品。</div>';return}
-  c.innerHTML=orderItems.map((it,i)=>`<div class="item-card"><div class="item-main"><div class="item-head">${CATB[it.category]||esc(CAT_LABEL[it.category]||it.category)}${it.supplier?`<span class="tag ${SUPCLS[it.supplier]||''}">${esc(it.supplier)}</span>`:''}<button class="rm-item" onclick="removeLineItem(${i})">✕</button></div><div class="item-name">${esc(it.style)}</div><div class="item-meta">${itemDetailText(it)}${it.note?`<br>備註：${esc(it.note)}`:''}</div></div><div class="item-qty">×${itemQty(it)}</div></div>`).join('');
+  c.innerHTML=orderItems.map((it,i)=>`<div class="item-card"><div class="item-main"><div class="item-head">${CATB[it.category]||esc(CAT_LABEL[it.category]||it.category)}${it.supplier?`<span class="tag ${SUPCLS[it.supplier]||''}">${esc(it.supplier)}</span>`:''}<div class="item-actions"><button class="line-edit-btn" onclick="editLineItem(${i})">${editingLineIndex===i?'編輯中':'編輯'}</button><button class="rm-item" onclick="removeLineItem(${i})">✕</button></div></div><div class="item-name">${esc(it.style)}</div><div class="item-meta">${itemDetailText(it)}${it.note?`<br>備註：${esc(it.note)}`:''}</div></div><div class="item-qty">×${itemQty(it)}</div></div>`).join('');
+}
+function updateLineItemButton(){
+  const btn=document.getElementById('btn-add-line');
+  if(!btn)return;
+  btn.textContent=editingLineIndex===null?'＋ 加入商品明細':'↻ 更新商品明細';
+}
+function editLineItem(i){
+  const it=orderItems[i];
+  if(!it)return;
+  editingLineIndex=i;
+  setCat(it.category||'other');
+  clearItemFields(currentCat);
+  fillItemFields(it);
+  updateLineItemButton();
+  renderLineItems();
+  document.getElementById('f-item-type').scrollIntoView({behavior:'smooth',block:'center'});
+  toast('已載入商品明細，可修改後按「更新商品明細」');
+}
+function fillItemFields(it){
+  if(it.category==='shirt'){
+    document.getElementById('f-supplier').value=it.supplier||'TOMS';
+    const style=it.shirtStyle||it.clothingStyle||'短Ｔ';
+    const styleSelect=document.getElementById('f-style');
+    if([...styleSelect.options].some(o=>o.value===style)){
+      styleSelect.value=style;
+      document.getElementById('f-style-other').value='';
+    }else{
+      styleSelect.value='其他';
+      document.getElementById('f-style-other').value=style;
+    }
+    onStyleChange();
+    document.getElementById('f-product-name').value=it.style||'';
+    document.getElementById('f-color').value=(it.color&&it.color!=='（未填）')?it.color:'';
+    document.getElementById('f-size').value=(it.size&&it.size!=='（未填）')?it.size:'';
+    document.getElementById('f-qty-shirt').value=itemQty(it);
+    document.getElementById('f-note-shirt').value=it.note||'';
+    document.querySelectorAll('.sz-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim()===it.size));
+    return;
+  }
+  if(it.category==='towel'){
+    document.getElementById('f-towel-supplier').value=it.supplier||'酷頂';
+    document.getElementById('f-towel-style').value=it.style||'';
+    const material=it.color||'基礎材質';
+    const materialSelect=document.getElementById('f-towel-material');
+    if([...materialSelect.options].some(o=>o.value===material)){
+      materialSelect.value=material;
+      document.getElementById('f-towel-material-other').value='';
+    }else{
+      materialSelect.value='其他';
+      document.getElementById('f-towel-material-other').value=material==='—'?'':material;
+    }
+    onTowelMaterialChange();
+    const size=it.size||'110*28';
+    const sizeSelect=document.getElementById('f-towel-size-select');
+    if([...sizeSelect.options].some(o=>o.value===size)){
+      sizeSelect.value=size;
+      document.getElementById('f-towel-size-other').value='';
+    }else{
+      sizeSelect.value='其他';
+      document.getElementById('f-towel-size-other').value=size==='—'?'':size;
+    }
+    onTowelSizeChange();
+    document.getElementById('f-towel-qty').value=itemQty(it);
+    document.getElementById('f-towel-note').value=it.note||'';
+    return;
+  }
+  if(it.category==='tissue'){
+    document.getElementById('f-tissue-name').value=it.style&&it.style!=='面紙'?it.style:'';
+    const qty=String(itemQty(it));
+    const preset=document.getElementById('f-tissue-qty-preset');
+    if(['100','200','300','400','500'].includes(qty)){
+      preset.value=qty;
+      document.getElementById('f-tissue-qty-custom').value='';
+    }else{
+      preset.value='custom';
+      document.getElementById('f-tissue-qty-custom').value=qty;
+    }
+    onTissueQtyChange();
+    document.getElementById('f-tissue-note').value=it.note||'';
+    return;
+  }
+  document.getElementById('f-other-name').value=it.style||'';
+  document.getElementById('f-other-spec').value=it.color&&it.color!=='—'?it.color:'';
+  document.getElementById('f-other-qty').value=itemQty(it);
+  document.getElementById('f-other-note').value=it.note||'';
 }
 function itemDetailText(it){
   const parts=[];
@@ -1309,6 +1419,16 @@ function addOrder(){
   if(delMode==='home'&&!document.getElementById('f-address').value.trim())missing.push(markMissing('f-address'));
   if(missing.length){focusFirstMissing(missing);toast('請補齊紅框欄位');return}
 
+  if(editingLineIndex!==null){
+    const editedItem=collectCurrentItem(false);
+    if(!editedItem)return;
+    editedItem.id=orderItems[editingLineIndex]?.id||editedItem.id;
+    orderItems[editingLineIndex]=editedItem;
+    editingLineIndex=null;
+    updateLineItemButton();
+    clearItemFields(currentCat);
+    renderLineItems();
+  }
   const draft=(orderItems.length===0||hasCurrentItemDraft())?collectCurrentItem(true):null;
   if(draft){orderItems.push(draft);clearItemFields(currentCat)}
   if(!orderItems.length){markMissingGroup('line-items');focusFirstMissing([document.getElementById('line-items')]);toast('請至少加入一項商品明細');return}
@@ -1358,6 +1478,8 @@ function editOrder(id){
     document.getElementById('f-cvs-store').value=o.delivery?.store||'';
   }
   orderItems=getItems(o).map(it=>({...it}));
+  editingLineIndex=null;
+  updateLineItemButton();
   pendingImgs=[...(o.imgs||[])];
   renderLineItems();renderPreviews();
   ['shirt','towel','tissue','other'].forEach(clearItemFields);
@@ -1374,7 +1496,7 @@ function clearForm(){
   document.querySelector('input[name="payment-status"][value="paid"]').checked=true;
   onPaymentChange();
   ['shirt','towel','tissue','other'].forEach(clearItemFields);
-  orderItems=[];renderLineItems();pendingImgs=[];renderPreviews();
+  orderItems=[];editingLineIndex=null;updateLineItemButton();renderLineItems();pendingImgs=[];renderPreviews();
   document.getElementById('f-created-at').value=nowIso();updateDateLabel();
   editingOrderId=null;
   document.querySelector('.btn-submit').textContent='✓ 儲存整筆訂單';
