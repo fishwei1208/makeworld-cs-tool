@@ -94,6 +94,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .r2{grid-template-columns:1fr 1fr}
 .r3{grid-template-columns:1fr 1fr 1fr}
 .r4{grid-template-columns:1fr 1fr 1fr 1fr}
+.other-item-row{grid-template-columns:minmax(180px,1.35fr) minmax(180px,1.35fr) minmax(88px,.55fr)}
 
 label{font-size:11px;color:var(--text-dim);font-weight:600;letter-spacing:.4px;display:block;margin-bottom:4px}
 .req{color:var(--red);margin-left:2px}
@@ -187,13 +188,14 @@ textarea.tall{min-height:100px}
 .towel-other.show{display:block}
 .tissue-custom{display:none;margin-top:8px}
 .tissue-custom.show{display:block}
-.payment-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.payment-options{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .pay-option{position:relative;display:flex;align-items:center;justify-content:center;min-height:46px;
   padding:10px;border:1.5px solid var(--border);background:var(--surface2);border-radius:10px;
   cursor:pointer;color:var(--text-dim);font-size:15px;font-weight:700;text-align:center}
 .pay-option input{position:absolute;opacity:0;pointer-events:none}
 .pay-option:has(input:checked){border-color:var(--accent);background:var(--accent-lt);color:var(--accent)}
 .pay-option.cod:has(input:checked){border-color:var(--red);background:var(--red-lt);color:var(--red)}
+.pay-option.unpaid:has(input:checked){border-color:var(--amber);background:var(--amber-lt);color:var(--amber)}
 .payment-amount{display:none;margin-top:8px}
 .payment-amount.show{display:block}
 .compact-order-info,.compact-recipient{gap:8px}
@@ -533,6 +535,10 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
             <input type="radio" name="payment-status" value="paid" checked onchange="onPaymentChange()">
             已付款
           </label>
+          <label class="pay-option unpaid">
+            <input type="radio" name="payment-status" value="unpaid" onchange="onPaymentChange()">
+            未付款
+          </label>
           <label class="pay-option cod">
             <input type="radio" name="payment-status" value="cod" onchange="onPaymentChange()">
             超商貨到付款
@@ -708,12 +714,12 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
         <div><div class="card-title">商品資訊</div></div>
       </div>
       <div class="field-group">
-        <div><label>商品名稱<span class="req">*</span></label><input id="f-other-name" type="text" placeholder="任意商品名稱"></div>
-        <div><label>規格 / 說明</label><textarea id="f-other-spec" placeholder="顏色、尺寸、型號、數量說明…"></textarea></div>
-        <div class="field-row r2">
+        <div class="field-row other-item-row">
+          <div><label>商品名稱<span class="req">*</span></label><input id="f-other-name" type="text" placeholder="任意商品名稱"></div>
+          <div><label>規格 / 說明</label><input id="f-other-spec" type="text" placeholder="顏色、尺寸、型號…"></div>
           <div><label>數量</label><input id="f-other-qty" type="number" min="1" value="1"></div>
-          <div><label>備註</label><input id="f-other-note" type="text" placeholder="特殊需求…"></div>
         </div>
+        <div><label>備註</label><input id="f-other-note" type="text" placeholder="特殊需求…"></div>
       </div>
     </div>
 
@@ -1089,6 +1095,7 @@ function getPaymentInfo(){
 function paymentLabel(o){
   if(o.paymentStatus==='cod')return '超商貨到付款';
   if(o.paymentStatus==='onsite')return `現場付款${o.paymentAmount?` $${o.paymentAmount}`:''}`;
+  if(o.paymentStatus==='unpaid')return '未付款';
   return '已付款';
 }
 function moneyLabel(v){
