@@ -350,12 +350,6 @@
                         <option value="lan">藍小姐 0939299535</option>
                       </select>
                     </label>
-                    <label>稅別
-                      <select id="manualTaxType">
-                        <option value="invoice">含稅</option>
-                        <option value="receipt">未稅</option>
-                      </select>
-                    </label>
                   </div>
                   <div class="quote-sheet-head">
                     <div>
@@ -391,7 +385,6 @@
                       <p class="eyebrow">Manual Item</p>
                       <h3>手動新增報價項目</h3>
                     </div>
-                    <button class="secondary-button" type="button" id="addManualItemButton">加入手動項目</button>
                   </div>
                   <div class="form-grid two">
                     <label>品名<input id="manualName" type="text" placeholder="例：急件費、設計費、特殊包裝" /></label>
@@ -400,14 +393,14 @@
                     <label>單價<input id="manualPrice" type="number" min="0" placeholder="0" /></label>
                   </div>
                   <div class="mobile-wizard-actions">
-                    <button class="ghost-button" type="button" data-manual-back="1">回客戶資訊</button>
+                    <button class="secondary-button" type="button" id="addManualItemButton">加入手動項目</button>
                     <button class="primary-button" type="button" data-manual-next="3">完成，下一步：預覽設定</button>
                   </div>
                 </div>
 
                 <div class="form-grid two">
-                  <label>報價日期<input id="quoteDate" type="date" /></label>
-                  <label>有效期限<input id="validUntil" type="date" /></label>
+                  <input id="quoteDate" type="date" hidden />
+                  <input id="validUntil" type="date" hidden />
                   <label class="wide">備註<textarea id="quoteNote" rows="4" placeholder="例：報價未含特殊急件費，實際交期依確認稿件後排程。"></textarea></label>
                 </div>
                 <div class="mobile-wizard-actions manual-preview-actions">
@@ -482,6 +475,6 @@
     </main>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="script.js?v=20260603-mobile-manual-wizard"></script>
+    <script src="script.js?v=20260603-mobile-quote-cleanup"></script>
   </body>
 </html>

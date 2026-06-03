@@ -416,7 +416,7 @@ function addManualItem() {
       type: "手動項目",
       name,
       internalName: name,
-      spec: spec || "手動新增",
+      spec,
       qty,
       unitBase: 0,
       extraUnit: 0,
@@ -498,7 +498,7 @@ function calculateQuote() {
   const stampChoice = $("outputStamp")?.value || "auto";
   const stamp = resolveQuoteStamp(company, stampChoice);
   const contact = quoteContacts[$("outputContact")?.value] || quoteContacts.wei;
-  const selectedTaxType = $("manualTaxType")?.value || company.taxType;
+  const selectedTaxType = company.taxType;
   const tax = selectedTaxType === "invoice" ? subtotal * 0.05 : 0;
   return {
     id: makeId(),
@@ -577,7 +577,6 @@ function renderQuoteSheet(quote) {
     <div><span>報價日期</span><strong>${escapeHtml(quote.quoteDate || "未設定")}</strong></div>
     <div><span>有效期限</span><strong>${escapeHtml(quote.validUntil || "未設定")}</strong></div>
     <div><span>單據類型</span><strong>${escapeHtml(quote.docType || "")}</strong></div>
-    <div><span>稅別</span><strong>${quote.taxType === "invoice" ? "含 5% 營業稅" : "未稅 / 收據"}</strong></div>
   `;
 
   $("quoteSheet").querySelector(".quote-sheet-head").innerHTML = `
@@ -612,7 +611,7 @@ function renderQuoteSheet(quote) {
             <strong>${escapeHtml(item.product.name)}</strong>
             <small>${escapeHtml(item.product.type)}${state.items.length ? "" : "（目前編輯，尚未加入品項清單）"}</small>
           </td>
-          <td>${escapeHtml(item.product.spec)}</td>
+          <td>${escapeHtml(item.product.spec || "")}</td>
           <td class="num">${item.product.qty || 0}</td>
           <td class="num">${money(item.unitPrice)}</td>
           <td class="num">${money(item.subtotal)}</td>
@@ -631,7 +630,6 @@ function renderQuoteSheet(quote) {
       <div class="quote-total-line"><span>品項小計</span><strong>${money(quote.subtotal)}</strong></div>
       <div class="quote-total-line"><span>${quote.taxType === "invoice" ? "營業稅 5%" : "營業稅"}</span><strong>${money(quote.tax)}</strong></div>
       <div class="quote-total-line grand"><span>報價總額</span><strong>${money(quote.grandTotal)}</strong></div>
-      <div class="quote-total-line"><span>稅別</span><strong>${quote.taxType === "invoice" ? "含稅" : "未稅"}</strong></div>
       <div class="quote-contact">
         <strong>${escapeHtml(contact.name)} ${escapeHtml(contact.phone)}</strong>
         <span>${escapeHtml(contact.address)}</span>
