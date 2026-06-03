@@ -143,7 +143,7 @@ function prepareQuotePrint() {
   stage.appendChild(clone);
   document.body.appendChild(stage);
   requestAnimationFrame(() => {
-    const availableHeight = 1048;
+    const availableHeight = stage.clientHeight || 1048;
     const scale = Math.min(1, Math.max(0.72, availableHeight / Math.max(clone.scrollHeight, 1)));
     clone.style.setProperty("--quote-print-scale", scale.toFixed(3));
   });

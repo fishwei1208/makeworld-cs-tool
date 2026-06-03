@@ -1856,7 +1856,7 @@ textarea:focus {
 
   html {
     width: 210mm;
-    height: 297mm;
+    min-height: 0;
     margin: 0;
     background: white;
     overflow: hidden;
@@ -1865,7 +1865,7 @@ textarea:focus {
   body {
     background: white;
     width: 210mm;
-    height: 297mm;
+    min-height: 0;
     margin: 0;
     overflow: hidden;
     print-color-adjust: exact;
@@ -1879,15 +1879,17 @@ textarea:focus {
 
   #printQuoteStage {
     display: block !important;
-    position: fixed !important;
-    inset: 0 !important;
+    position: relative !important;
     width: 210mm !important;
     height: 297mm !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 8mm !important;
+    box-sizing: border-box !important;
     overflow: hidden !important;
     background: white !important;
     visibility: visible !important;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
   }
 
   #printQuoteStage * {
@@ -1895,9 +1897,7 @@ textarea:focus {
   }
 
   #printQuoteStage .print-quote-sheet {
-    position: fixed !important;
-    top: 8mm;
-    left: 8mm;
+    position: static !important;
     display: block !important;
     width: 194mm;
     max-height: 281mm;
