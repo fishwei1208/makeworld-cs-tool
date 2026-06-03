@@ -316,6 +316,12 @@ textarea.tall{min-height:100px}
 .edit-btn{background:var(--accent-lt);border:1px solid var(--accent);color:var(--accent);cursor:pointer;
   font-size:13px;padding:5px 9px;border-radius:6px;font-weight:700;margin-right:4px}
 .edit-btn:hover{background:var(--accent);color:#fff}
+.status-cell{display:flex;align-items:center;gap:6px;min-width:156px}
+.status-select{border:1px solid var(--border);border-radius:7px;background:#fff;
+  padding:5px 8px;font-size:12px;font-family:'Noto Sans TC',sans-serif;font-weight:700;color:var(--text)}
+.quick-print-btn{background:#fff;border:1px solid var(--accent);color:var(--accent);
+  cursor:pointer;font-size:12px;padding:5px 8px;border-radius:7px;font-weight:700;white-space:nowrap}
+.quick-print-btn:hover{background:var(--accent);color:#fff}
 
 /* thumb in table */
 .tbl-thumb{width:36px;height:36px;border-radius:6px;object-fit:cover;
@@ -757,7 +763,7 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
     <div class="hist-toolbar">
       <div class="filter-bar">
         <button class="fbtn active" onclick="setProcessFilter('active',this)">未完成</button>
-        <button class="fbtn" onclick="setProcessFilter('pending',this)">未處理</button>
+        <button class="fbtn" onclick="setProcessFilter('pending',this)">待處理</button>
         <button class="fbtn" onclick="setProcessFilter('processing',this)">處理中</button>
         <button class="fbtn" onclick="setProcessFilter('shirt',this)">👕 衣服</button>
         <button class="fbtn" onclick="setProcessFilter('towel',this)">🏖 毛巾</button>
@@ -1090,7 +1096,7 @@ function orderStatusLabel(o){
   const st=o.orderStatus||'pending';
   if(st==='processing')return '處理中';
   if(st==='done')return '已完成';
-  return '未處理';
+  return '待處理';
 }
 function orderStatusClass(o){
   const st=o.orderStatus||'pending';
@@ -1551,7 +1557,7 @@ function renderProcessOrders(){
   const list=getProcessList();
   const pending=orders.filter(o=>(o.orderStatus||'pending')==='pending').length;
   const processing=orders.filter(o=>(o.orderStatus||'pending')==='processing').length;
-  document.getElementById('process-summary').innerHTML=`<div class="summ-card"><h4 class="h-other">未處理</h4><div class="sku-row"><span class="sku-k">待確認訂單</span><span class="sku-v">×${pending}</span></div></div><div class="summ-card"><h4 class="h-towel">處理中</h4><div class="sku-row"><span class="sku-k">製作 / 出貨中</span><span class="sku-v">×${processing}</span></div></div>`;
+  document.getElementById('process-summary').innerHTML=`<div class="summ-card"><h4 class="h-other">待處理</h4><div class="sku-row"><span class="sku-k">待確認訂單</span><span class="sku-v">×${pending}</span></div></div><div class="summ-card"><h4 class="h-towel">處理中</h4><div class="sku-row"><span class="sku-k">製作 / 出貨中</span><span class="sku-v">×${processing}</span></div></div>`;
   if(!list.length){container.innerHTML=`<div class="empty-state"><div class="ei">☑</div><p>目前沒有待處理訂單</p></div>`;return}
   container.innerHTML=buildProcessTable(list);
 }
@@ -1562,7 +1568,7 @@ function buildProcessTable(list){
     const items=getItems(o);
     const total=items.reduce((s,it)=>s+itemQty(it),0);
     const itemHtml=items.map(it=>lineItemHtml(it)).join('');
-    h+=`<tr><td class="pick-cell"><input class="print-check status-check" type="checkbox" value="${o.id}" aria-label="選擇處理 ${orderCode(o)}"></td><td><div class="order-code">${String(i+1).padStart(2,'0')}</div><div class="order-code">${orderCode(o)}</div></td><td><span class="tag ${orderStatusClass(o)}">${orderStatusLabel(o)}</span></td><td style="font-family:'DM Mono',monospace;font-size:13px;white-space:nowrap">${orderDateLabel(o)}</td><td><div style="font-weight:600;font-size:14px">${esc(o.customer||o.name||'')}</div><div style="font-size:12px;color:var(--text-dim)">${esc(o.recipientName||o.name||'')}</div></td><td style="font-family:'DM Mono',monospace;font-weight:700;color:var(--accent)">${esc(moneyLabel(o.orderAmount))}</td><td><span class="tag ${o.paymentStatus==='cod'?'cb-other':'t-size'}">${esc(paymentLabel(o))}</span></td><td>${dStr}</td><td><div class="order-items-cell">${itemHtml}</div></td><td style="font-family:'DM Mono',monospace;font-weight:700;color:var(--accent);font-size:16px">${total}</td><td><button class="edit-btn" onclick="setOrderStatus(${o.id},'processing')">處理中</button><button class="edit-btn" onclick="setOrderStatus(${o.id},'done')">已完成</button><button class="rm-btn" onclick="editOrder(${o.id})">編輯</button></td></tr>`;
+    h+=`<tr><td class="pick-cell"><input class="print-check status-check" type="checkbox" value="${o.id}" aria-label="選擇處理 ${orderCode(o)}"></td><td><div class="order-code">${String(i+1).padStart(2,'0')}</div><div class="order-code">${orderCode(o)}</div></td><td><div class="status-cell"><select class="status-select ${orderStatusClass(o)}" onchange="setOrderStatus(${o.id},this.value)"><option value="pending" ${(o.orderStatus||'pending')==='pending'?'selected':''}>待處理</option><option value="processing" ${(o.orderStatus||'pending')==='processing'?'selected':''}>處理中</option><option value="done" ${(o.orderStatus||'pending')==='done'?'selected':''}>已完成</option></select><button class="quick-print-btn" onclick="printSingleOrder(${o.id})">列印</button></div></td><td style="font-family:'DM Mono',monospace;font-size:13px;white-space:nowrap">${orderDateLabel(o)}</td><td><div style="font-weight:600;font-size:14px">${esc(o.customer||o.name||'')}</div><div style="font-size:12px;color:var(--text-dim)">${esc(o.recipientName||o.name||'')}</div></td><td style="font-family:'DM Mono',monospace;font-weight:700;color:var(--accent)">${esc(moneyLabel(o.orderAmount))}</td><td><span class="tag ${o.paymentStatus==='cod'?'cb-other':'t-size'}">${esc(paymentLabel(o))}</span></td><td>${dStr}</td><td><div class="order-items-cell">${itemHtml}</div></td><td style="font-family:'DM Mono',monospace;font-weight:700;color:var(--accent);font-size:16px">${total}</td><td><button class="edit-btn" onclick="editOrder(${o.id})">編輯</button></td></tr>`;
   });
   return h+'</tbody></table>';
 }
@@ -1572,7 +1578,12 @@ function setOrderStatus(id,status){
   const order=orders.find(o=>o.id===id);
   if(order)syncCloudOrder(order);
   if(status==='done')toast('已移到歷史紀錄');
-  else toast('訂單已改為處理中');
+  else toast(status==='processing'?'訂單已改為處理中':'訂單已改為待處理');
+}
+function printSingleOrder(id){
+  const order=orders.find(o=>o.id===id);
+  if(!order){toast('找不到這筆訂單');return}
+  printOrderList([order],'MakeWorld 單筆訂單明細','','all',false);
 }
 function bulkSetStatus(status){
   const ids=Array.from(document.querySelectorAll('#page-process .status-check:checked')).map(el=>Number(el.value));
@@ -1580,7 +1591,7 @@ function bulkSetStatus(status){
   orders=orders.map(o=>ids.includes(o.id)?{...o,orderStatus:status,statusUpdatedAt:new Date().toISOString()}:o);
   save();updateStats();renderProcessOrders();
   orders.filter(o=>ids.includes(o.id)).forEach(syncCloudOrder);
-  toast(status==='done'?'已將勾選訂單移到歷史紀錄':'已將勾選訂單改為處理中');
+  toast(status==='done'?'已將勾選訂單移到歷史紀錄':status==='processing'?'已將勾選訂單改為處理中':'已將勾選訂單改為待處理');
 }
 function toggleAllChecks(page){
   const root=page==='process'?document.getElementById('page-process'):document.getElementById('page-history');
