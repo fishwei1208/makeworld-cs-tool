@@ -460,6 +460,7 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
             <option value="LINE@">LINE@</option>
             <option value="threads">threads</option>
             <option value="電話">電話</option>
+            <option value="布碼科技">布碼科技</option>
             <option value="其他">其他（自填）</option>
           </select>
           <div class="source-other" id="source-other-wrap">
@@ -1479,8 +1480,8 @@ function editOrder(id){
   editingOrderId=id;
   switchPage('new');
   document.getElementById('f-created-at').value=o.createdAt||`${o.date||todayVal()}T00:00:00`;updateDateLabel();
-  document.getElementById('f-source').value=['FB','LINE@','threads','電話'].includes(o.source)?o.source:'其他';
-  document.getElementById('f-source-other').value=['FB','LINE@','threads','電話'].includes(o.source)?'':(o.source||'');
+  document.getElementById('f-source').value=['FB','LINE@','threads','電話','布碼科技'].includes(o.source)?o.source:'其他';
+  document.getElementById('f-source-other').value=['FB','LINE@','threads','電話','布碼科技'].includes(o.source)?'':(o.source||'');
   onSourceChange();
   document.getElementById('f-customer').value=o.customer||o.name||'';
   document.getElementById('f-recipient-name').value=o.recipientName||o.name||'';
@@ -1583,7 +1584,7 @@ function setOrderStatus(id,status){
 function printSingleOrder(id){
   const order=orders.find(o=>o.id===id);
   if(!order){toast('找不到這筆訂單');return}
-  printOrderList([order],'MakeWorld 單筆訂單明細','','all',false);
+  printOrderList([order],printTitleForOrders([order],'MakeWorld 單筆訂單明細'),'','all',false);
 }
 function bulkSetStatus(status){
   const ids=Array.from(document.querySelectorAll('#page-process .status-check:checked')).map(el=>Number(el.value));
@@ -1698,7 +1699,14 @@ function printSelectedOrders(page='history'){
   const ids=Array.from(root.querySelectorAll('.print-check:checked')).map(el=>Number(el.value));
   if(!ids.length){toast('請先勾選要列印的訂單');return}
   const selected=orders.filter(o=>ids.includes(o.id));
-  printOrderList(selected,page==='process'?'MakeWorld 待處理訂單明細':'MakeWorld 訂單明細','','all',false);
+  const defaultTitle=page==='process'?'MakeWorld 待處理訂單明細':'MakeWorld 訂單明細';
+  printOrderList(selected,printTitleForOrders(selected,defaultTitle),'','all',false);
+}
+function isBumaOrder(o){
+  return String(o?.source||'').trim()==='布碼科技';
+}
+function printTitleForOrders(list,defaultTitle){
+  return list.length&&list.every(isBumaOrder)?'布碼科技':defaultTitle;
 }
 function deliveryText(o){
   if(o.delivery?.type==='cvs')return `超商取貨：${o.delivery.brand||''} ${o.delivery.store||''}`.trim();
@@ -1805,11 +1813,15 @@ function printOrderList(list,title,note='',scope='all',summaryOnly=false){
   const now=new Date().toLocaleString('zh-TW');
   const ordersH=summaryOnly?'':buildQuoteOrdersHtml(list,scope);
   const summaryH=summaryOnly?`<h2 class="summary-title">備貨統計</h2><div class="sg">${sumH}</div>`:'';
+  const isBumaTitle=title==='布碼科技';
+  const cover=isBumaTitle
+    ?`<div class="print-cover brand-buma"><h1>布碼科技</h1></div>`
+    :`<div class="print-cover"><div><h1>${esc(title)}</h1><div class="print-meta">列印時間：${esc(now)}　共 ${list.length} 筆訂單 · ${sumItems.length} 項明細 · ${sumItems.reduce((s,it)=>s+itemQty(it),0)} 件</div></div></div>`;
   const doc=`<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8"><title>${esc(title)}</title><style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap');
-    @page{size:A4;margin:8mm}*{box-sizing:border-box}body{font-family:'Noto Sans TC',sans-serif;color:#151827;background:#fff;margin:0;padding:0;font-size:11px;line-height:1.38}.print-cover{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #1f3f8f;padding-bottom:12px;margin-bottom:16px}h1{font-size:18px;margin:0}.print-meta{color:#6b7280;font-size:11px}.extra-note{background:#fff7ed;border-left:4px solid #f59e0b;padding:8px 12px;margin:10px 0 16px;border-radius:4px}.quote-card{page-break-after:always;break-after:page;page-break-inside:avoid;border:1px solid #d8deec;border-radius:8px;padding:9px;margin-bottom:10px}.quote-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px}.brand{font-family:'DM Mono',monospace;color:#3d6ef6;font-weight:700;letter-spacing:1.8px;text-transform:uppercase}.quote-head h2{font-size:15px;margin:2px 0 0}.order-no{text-align:right;border:1px solid #d8deec;border-radius:8px;padding:8px 12px;min-width:132px}.order-no span{display:block;color:#6b7280;font-size:10px}.order-no strong{font-family:'DM Mono',monospace;font-size:15px}.cod-alert{border:4px solid #dc2626;color:#dc2626;background:#fff1f2;text-align:center;font-size:32px;font-weight:900;letter-spacing:4px;padding:8px;margin:0 0 8px;border-radius:10px}.info-grid{display:grid;grid-template-columns:1fr 1fr 1.35fr;gap:6px;margin-bottom:8px}.info-box{background:#f6f8fc;border:1px solid #e1e6f0;border-radius:6px;padding:6px}.info-box h3{font-size:10px;color:#3d6ef6;margin:0 0 4px}.info-box p{margin:3px 0}.info-box b{display:inline-block;min-width:70px;color:#6b7280}.pick-sheet{break-inside:avoid;page-break-inside:avoid}.quote-table{width:100%;border-collapse:collapse}.quote-table th{background:#edf2ff;color:#334155;font-size:10px;text-align:left;padding:4px;border:1px solid #d8deec}.quote-table td{padding:4px;border:1px solid #d8deec;vertical-align:top}.quote-table .num,.quote-table .qty{text-align:center;font-family:'DM Mono',monospace;font-weight:700}.note{color:#6b7280;font-size:11px;margin-top:2px}.quote-total{display:flex;justify-content:flex-end;gap:12px;align-items:center;background:#f6f8fc;border:1px solid #d8deec;border-top:none;padding:6px 8px;border-radius:0 0 8px 8px}.quote-total strong{font-size:16px;color:#3d6ef6}.design-block{margin-top:7px;border:1px solid #f59e0b;border-radius:8px;padding:7px;background:#fffaf0;break-inside:avoid;page-break-inside:avoid}.design-block h3{font-size:13px;margin:0 0 6px;color:#92400e}.design-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.image-one .design-grid,.image-two .design-grid{grid-template-columns:1fr}.design-grid figure{margin:0;border:1px solid #f3d38a;border-radius:8px;background:#fff;padding:6px;break-inside:avoid;page-break-inside:avoid}.design-grid img{display:block;width:100%;max-height:220px;object-fit:contain}.image-one .design-grid img{max-height:430px}.image-two .design-grid img{max-height:270px}.design-grid figcaption{font-size:10px;color:#6b7280;margin-top:4px;word-break:break-word}.summary-title{font-size:12px;color:#3d6ef6;margin:10px 0 5px}.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.sc{border:1px solid #e3e6f0;border-radius:6px;padding:9px 10px}.sc h4{font-size:10px;font-family:'DM Mono',monospace;letter-spacing:1px;margin:0 0 7px;padding-bottom:4px;border-bottom:1px solid #e3e6f0}.h-toms{color:#3d6ef6}.h-al{color:#8b5cf6}.h-ua{color:#0fba7c}.h-towel{color:#f59e0b}.h-tissue{color:#8b5cf6}.h-other{color:#0891b2}.sr{display:flex;justify-content:space-between;gap:8px;padding:2px 0;font-size:10px}.sk{color:#64748b}.sv{font-family:'DM Mono',monospace;font-weight:700;color:#3d6ef6}@media print{body{padding:0}.quote-card{break-inside:avoid;break-after:page;page-break-after:always}.quote-card:last-of-type{break-after:auto;page-break-after:auto}.print-cover{margin-top:0}.pick-sheet{break-inside:avoid;page-break-inside:avoid}.design-grid img{max-height:220px}.image-one .design-grid img{max-height:430px}.image-two .design-grid img{max-height:270px}}
+    @page{size:A4;margin:8mm}*{box-sizing:border-box}body{font-family:'Noto Sans TC',sans-serif;color:#151827;background:#fff;margin:0;padding:0;font-size:11px;line-height:1.38}.print-cover{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #1f3f8f;padding-bottom:12px;margin-bottom:16px}h1{font-size:18px;margin:0}.brand-buma{justify-content:center;text-align:center;border-bottom:4px solid #1f3f8f;padding:8px 0 14px}.brand-buma h1{font-size:34px;letter-spacing:12px;font-weight:900}.print-meta{color:#6b7280;font-size:11px}.extra-note{background:#fff7ed;border-left:4px solid #f59e0b;padding:8px 12px;margin:10px 0 16px;border-radius:4px}.quote-card{page-break-after:always;break-after:page;page-break-inside:avoid;border:1px solid #d8deec;border-radius:8px;padding:9px;margin-bottom:10px}.quote-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px}.brand{font-family:'DM Mono',monospace;color:#3d6ef6;font-weight:700;letter-spacing:1.8px;text-transform:uppercase}.quote-head h2{font-size:15px;margin:2px 0 0}.order-no{text-align:right;border:1px solid #d8deec;border-radius:8px;padding:8px 12px;min-width:132px}.order-no span{display:block;color:#6b7280;font-size:10px}.order-no strong{font-family:'DM Mono',monospace;font-size:15px}.cod-alert{border:4px solid #dc2626;color:#dc2626;background:#fff1f2;text-align:center;font-size:32px;font-weight:900;letter-spacing:4px;padding:8px;margin:0 0 8px;border-radius:10px}.info-grid{display:grid;grid-template-columns:1fr 1fr 1.35fr;gap:6px;margin-bottom:8px}.info-box{background:#f6f8fc;border:1px solid #e1e6f0;border-radius:6px;padding:6px}.info-box h3{font-size:10px;color:#3d6ef6;margin:0 0 4px}.info-box p{margin:3px 0}.info-box b{display:inline-block;min-width:70px;color:#6b7280}.pick-sheet{break-inside:avoid;page-break-inside:avoid}.quote-table{width:100%;border-collapse:collapse}.quote-table th{background:#edf2ff;color:#334155;font-size:10px;text-align:left;padding:4px;border:1px solid #d8deec}.quote-table td{padding:4px;border:1px solid #d8deec;vertical-align:top}.quote-table .num,.quote-table .qty{text-align:center;font-family:'DM Mono',monospace;font-weight:700}.note{color:#6b7280;font-size:11px;margin-top:2px}.quote-total{display:flex;justify-content:flex-end;gap:12px;align-items:center;background:#f6f8fc;border:1px solid #d8deec;border-top:none;padding:6px 8px;border-radius:0 0 8px 8px}.quote-total strong{font-size:16px;color:#3d6ef6}.design-block{margin-top:7px;border:1px solid #f59e0b;border-radius:8px;padding:7px;background:#fffaf0;break-inside:avoid;page-break-inside:avoid}.design-block h3{font-size:13px;margin:0 0 6px;color:#92400e}.design-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.image-one .design-grid,.image-two .design-grid{grid-template-columns:1fr}.design-grid figure{margin:0;border:1px solid #f3d38a;border-radius:8px;background:#fff;padding:6px;break-inside:avoid;page-break-inside:avoid}.design-grid img{display:block;width:100%;max-height:220px;object-fit:contain}.image-one .design-grid img{max-height:430px}.image-two .design-grid img{max-height:270px}.design-grid figcaption{font-size:10px;color:#6b7280;margin-top:4px;word-break:break-word}.summary-title{font-size:12px;color:#3d6ef6;margin:10px 0 5px}.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.sc{border:1px solid #e3e6f0;border-radius:6px;padding:9px 10px}.sc h4{font-size:10px;font-family:'DM Mono',monospace;letter-spacing:1px;margin:0 0 7px;padding-bottom:4px;border-bottom:1px solid #e3e6f0}.h-toms{color:#3d6ef6}.h-al{color:#8b5cf6}.h-ua{color:#0fba7c}.h-towel{color:#f59e0b}.h-tissue{color:#8b5cf6}.h-other{color:#0891b2}.sr{display:flex;justify-content:space-between;gap:8px;padding:2px 0;font-size:10px}.sk{color:#64748b}.sv{font-family:'DM Mono',monospace;font-weight:700;color:#3d6ef6}@media print{body{padding:0}.quote-card{break-inside:avoid;break-after:page;page-break-after:always}.quote-card:last-of-type{break-after:auto;page-break-after:auto}.print-cover{margin-top:0}.pick-sheet{break-inside:avoid;page-break-inside:avoid}.design-grid img{max-height:220px}.image-one .design-grid img{max-height:430px}.image-two .design-grid img{max-height:270px}}
   </style></head><body>
-    <div class="print-cover"><div><h1>${esc(title)}</h1><div class="print-meta">列印時間：${esc(now)}　共 ${list.length} 筆訂單 · ${sumItems.length} 項明細 · ${sumItems.reduce((s,it)=>s+itemQty(it),0)} 件</div></div></div>
+    ${cover}
     ${note?`<div class="extra-note">${esc(note)}</div>`:''}
     ${ordersH}
     ${summaryH}
