@@ -103,6 +103,10 @@ label,
   gap: 8px;
 }
 
+.mobile-quote-controls {
+  display: none;
+}
+
 .nav-item {
   display: grid;
   grid-template-columns: 24px 1fr;
@@ -1151,10 +1155,71 @@ textarea:focus {
 }
 
 @media (max-width: 720px) {
+  body {
+    padding-bottom: 27vh;
+  }
+
   .main-area,
   .side-nav,
   .step-panel {
     padding: 18px;
+  }
+
+  .app-shell {
+    display: block;
+  }
+
+  .side-nav {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    gap: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  }
+
+  .brand {
+    grid-template-columns: 36px 1fr;
+    gap: 10px;
+  }
+
+  .brand-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 7px;
+    font-size: 12px;
+  }
+
+  .brand h1 {
+    font-size: 18px;
+  }
+
+  .brand p,
+  .nav-note,
+  .nav-list {
+    display: none;
+  }
+
+  .mobile-quote-controls {
+    display: grid;
+    grid-template-columns: 0.78fr 1.22fr;
+    gap: 8px;
+  }
+
+  .mobile-quote-controls label {
+    margin: 0;
+    font-size: 11px;
+  }
+
+  .mobile-quote-controls select {
+    margin-top: 4px;
+    min-height: 42px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  .topbar {
+    display: none;
   }
 
   .topbar,
@@ -1179,6 +1244,169 @@ textarea:focus {
 
   .quote-sheet-meta {
     text-align: left;
+  }
+
+  .topbar {
+    display: none;
+  }
+
+  .cost-mode #workspaceView .flow-strip {
+    display: none;
+  }
+
+  .cost-mode #workspaceView .step-panel {
+    display: block;
+  }
+
+  .manual-mode #workspaceView .flow-strip,
+  .manual-mode #stepProduct,
+  .manual-mode #stepProcessing,
+  .manual-mode #stepPricing,
+  .manual-mode .topbar-actions,
+  .manual-mode .summary-panel .summary-header,
+  .manual-mode .summary-panel .metric-grid,
+  .manual-mode .quote-preview .detail-box,
+  .manual-mode .quote-preview .total-row:not(.grand),
+  .manual-mode .item-list-head {
+    display: none;
+  }
+
+  .manual-mode #stepCustomer,
+  .manual-mode #stepQuote {
+    display: block;
+  }
+
+  .manual-mode .editor-panel {
+    display: grid;
+    gap: 14px;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    min-height: 0;
+  }
+
+  .manual-mode #stepCustomer,
+  .manual-mode #stepQuote,
+  .manual-mode .manual-item-box,
+  .manual-mode .quote-sheet {
+    border-radius: 8px;
+  }
+
+  .manual-mode #stepCustomer,
+  .manual-mode #stepQuote {
+    border: 1px solid var(--line);
+    background: var(--panel);
+    box-shadow: var(--shadow);
+  }
+
+  .manual-mode #stepQuote {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .manual-mode #stepQuote .section-title {
+    order: 1;
+  }
+
+  .manual-mode #stepQuote .manual-item-box {
+    order: 2;
+    margin-bottom: 0;
+  }
+
+  .manual-mode #stepQuote .quote-sheet {
+    order: 3;
+    margin-bottom: 0;
+  }
+
+  .manual-mode #stepQuote > .form-grid {
+    order: 4;
+  }
+
+  .manual-mode #stepQuote .action-row {
+    order: 5;
+  }
+
+  .manual-mode .quote-sheet-head,
+  .manual-mode .quote-customer-block,
+  .manual-mode .quote-table-wrap,
+  .manual-mode .quote-total-box {
+    display: none;
+  }
+
+  .manual-mode .output-options {
+    border-bottom: 0;
+  }
+
+  .manual-mode .manual-item-box .section-title {
+    display: flex;
+  }
+
+  .manual-mode .manual-item-box .form-grid,
+  .manual-mode #stepQuote > .form-grid,
+  .manual-mode .output-options {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    height: 25vh;
+    min-height: 176px;
+    overflow: auto;
+    border-radius: 14px 14px 0 0;
+    padding: 12px 14px;
+    box-shadow: 0 -10px 28px rgba(15, 23, 42, 0.18);
+  }
+
+  .quote-preview {
+    margin-top: 8px;
+  }
+
+  .preview-head {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .preview-body {
+    display: grid;
+    gap: 7px;
+  }
+
+  .preview-row,
+  .total-row {
+    font-size: 13px;
+  }
+
+  .quote-items {
+    max-height: 72px;
+    overflow: auto;
+  }
+
+  .cost-mode .summary-panel .summary-header {
+    display: none;
+  }
+
+  .cost-mode .metric-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .cost-mode .metric {
+    min-height: 58px;
+    padding: 8px;
+  }
+
+  .cost-mode .metric span {
+    margin-bottom: 4px;
+    font-size: 10px;
+  }
+
+  .cost-mode .metric strong {
+    font-size: 13px;
   }
 }
 

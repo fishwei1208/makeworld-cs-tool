@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MakeWorld 報價工作台</title>
-    <link rel="stylesheet" href="styles.css?v=20260601-paper-layout" />
+    <link rel="stylesheet" href="styles.css?v=20260603-mobile-flow" />
   </head>
   <body>
     <main class="app-shell">
@@ -15,6 +15,22 @@
             <h1>報價工作台</h1>
             <p>MakeWorld.tw</p>
           </div>
+        </div>
+
+        <div class="mobile-quote-controls" aria-label="手機版報價操作">
+          <label>頁面
+            <select id="mobileViewSelect">
+              <option value="workspace">新增報價</option>
+              <option value="history">歷史報價</option>
+              <option value="pricing">價格資料</option>
+            </select>
+          </label>
+          <label>模式
+            <select id="mobileModeSelect">
+              <option value="manual">直接手動建立訂單模式</option>
+              <option value="cost">成本計算建立訂單模式</option>
+            </select>
+          </label>
         </div>
 
         <nav class="nav-list" id="viewNav">
@@ -68,8 +84,19 @@
                   <label>聯絡人<input id="contactName" type="text" placeholder="例：王小姐" /></label>
                   <label>電話<input id="customerPhone" type="text" placeholder="選填" /></label>
                   <label>統一編號<input id="taxId" type="text" placeholder="開發票時填寫" /></label>
-                  <label class="wide">聯絡管道<input id="channel" type="text" placeholder="Line@ / Email / Instagram / Facebook" /></label>
                   <label class="wide">地址<input id="address" type="text" placeholder="選填" /></label>
+                  <label class="wide">聯絡管道
+                    <select id="channel">
+                      <option value="">未選擇</option>
+                      <option value="LINE@">LINE@</option>
+                      <option value="Facebook">Facebook</option>
+                      <option value="Instagram">Instagram</option>
+                      <option value="Email">Email</option>
+                      <option value="電話">電話</option>
+                      <option value="現場">現場</option>
+                      <option value="其他">其他</option>
+                    </select>
+                  </label>
                 </div>
               </article>
 
@@ -430,6 +457,6 @@
     </main>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="script.js?v=20260601-paper-layout"></script>
+    <script src="script.js?v=20260603-mobile-flow"></script>
   </body>
 </html>

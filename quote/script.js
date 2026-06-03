@@ -41,6 +41,7 @@ const state = {
   step: "customer",
   productType: "shirt",
   company: "deshui",
+  quoteMode: "manual",
   editingId: null,
   items: []
 };
@@ -57,6 +58,7 @@ function init() {
   bindEvents();
   renderPricing();
   updateProductVisibility();
+  setQuoteMode(state.quoteMode);
   render();
 }
 
@@ -70,6 +72,9 @@ function bindEvents() {
     const button = event.target.closest("[data-view]");
     if (button) setView(button.dataset.view);
   });
+
+  $("mobileViewSelect")?.addEventListener("change", (event) => setView(event.target.value));
+  $("mobileModeSelect")?.addEventListener("change", (event) => setQuoteMode(event.target.value));
 
   document.querySelectorAll("[data-step]").forEach((button) => {
     button.addEventListener("click", () => setStep(button.dataset.step));
@@ -111,7 +116,17 @@ function setView(view) {
   document.querySelectorAll(".view").forEach((panel) => panel.classList.remove("active"));
   $(`${view}View`).classList.add("active");
   $("pageTitle").textContent = view === "workspace" ? "新增報價" : view === "history" ? "歷史報價" : "價格資料";
+  if ($("mobileViewSelect")) $("mobileViewSelect").value = view;
   if (view === "history") renderHistory();
+}
+
+function setQuoteMode(mode) {
+  state.quoteMode = mode === "cost" ? "cost" : "manual";
+  document.body.classList.toggle("manual-mode", state.quoteMode === "manual");
+  document.body.classList.toggle("cost-mode", state.quoteMode === "cost");
+  if ($("mobileModeSelect")) $("mobileModeSelect").value = state.quoteMode;
+  if (state.quoteMode === "manual" && state.view !== "workspace") setView("workspace");
+  render();
 }
 
 function setStep(step) {
@@ -673,7 +688,7 @@ function buildPreview(quote) {
       (item) => `
       <div class="preview-row">
         <span>${escapeHtml(item.product.name)}<small>${escapeHtml(item.product.spec)}</small></span>
-        <strong>${money(item.unitPrice)} x ${item.product.qty}</strong>
+        <strong>${item.product.qty || 0} 件 / ${money(item.subtotal)}</strong>
       </div>
     `
     )
@@ -697,7 +712,7 @@ function buildPreview(quote) {
       <strong>${escapeHtml(quote.customerName || "未填客戶")}</strong>
     </div>
     <div class="preview-body">
-      ${rows || `<div class="preview-row"><span>${escapeHtml(quote.currentItem.product.name)}<small>目前編輯，尚未加入清單</small></span><strong>${money(quote.currentItem.unitPrice)} x ${quote.currentItem.product.qty || 0}</strong></div>`}
+      ${rows || `<div class="preview-row"><span>${escapeHtml(quote.currentItem.product.name)}<small>目前編輯，尚未加入清單</small></span><strong>${quote.currentItem.product.qty || 0} 件 / ${money(quote.currentItem.subtotal)}</strong></div>`}
       <div class="detail-box">
         <strong>目前品項成本明細</strong>
         ${currentDetails || '<div class="detail-row"><span>尚無費用明細</span><strong>NT$ 0</strong></div>'}
@@ -775,7 +790,12 @@ function handleHistoryAction(event) {
 
 function loadQuote(quote) {
   Object.entries(quote.form?.values || {}).forEach(([id, value]) => {
-    if ($(id)) $(id).value = value;
+    const el = $(id);
+    if (!el) return;
+    if (el.tagName === "SELECT" && value && !Array.from(el.options).some((option) => option.value === value)) {
+      el.add(new Option(value, value));
+    }
+    el.value = value;
   });
   state.company = quote.form?.company || quote.companyKey || (quote.taxType === "invoice" ? "deshui" : "chimei");
   document.querySelectorAll("[data-company]").forEach((button) => button.classList.toggle("active", button.dataset.company === state.company));
