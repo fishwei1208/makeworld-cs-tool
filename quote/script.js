@@ -118,9 +118,7 @@ function bindEvents() {
   $("mailButton").addEventListener("click", openMailDraft);
   $("historySearch").addEventListener("input", renderHistory);
   $("historyList").addEventListener("click", handleHistoryAction);
-  window.addEventListener("beforeprint", () => {
-    if (!document.getElementById("printQuoteStage")) prepareQuotePrint();
-  });
+  window.addEventListener("beforeprint", prepareQuotePrint);
   window.addEventListener("afterprint", cleanupQuotePrint);
 }
 
@@ -132,27 +130,20 @@ function printQuoteSheet() {
 function prepareQuotePrint() {
   render();
   document.body.classList.add("is-printing-quote");
-  cleanupQuotePrint(false);
   const sheet = $("quoteSheet");
   if (!sheet) return;
-  const stage = document.createElement("div");
-  stage.id = "printQuoteStage";
-  const clone = sheet.cloneNode(true);
-  clone.removeAttribute("id");
-  clone.classList.add("print-quote-sheet");
-  stage.appendChild(clone);
-  document.body.appendChild(stage);
+  sheet.style.removeProperty("zoom");
   requestAnimationFrame(() => {
-    const availableHeight = stage.clientHeight || 1048;
-    const scale = Math.min(1, Math.max(0.72, availableHeight / Math.max(clone.scrollHeight, 1)));
-    clone.style.setProperty("--quote-print-scale", scale.toFixed(3));
+    const availableHeight = 1062;
+    const scale = Math.min(1, Math.max(0.72, availableHeight / Math.max(sheet.scrollHeight, 1)));
+    sheet.style.setProperty("--quote-print-scale", scale.toFixed(3));
   });
 }
 
-function cleanupQuotePrint(removeClass = true) {
-  document.getElementById("printQuoteStage")?.remove();
-  if (!removeClass) return;
+function cleanupQuotePrint() {
   document.body.classList.remove("is-printing-quote");
+  $("quoteSheet")?.style.removeProperty("--quote-print-scale");
+  updateMobileQuotePreviewScale();
 }
 
 function setView(view) {

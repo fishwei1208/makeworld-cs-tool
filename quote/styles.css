@@ -1136,24 +1136,6 @@ textarea:focus {
   opacity: 1;
 }
 
-#printQuoteStage {
-  position: absolute;
-  top: 0;
-  left: -10000px;
-  width: 210mm;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-#printQuoteStage .print-quote-sheet {
-  width: 194mm !important;
-  max-width: none !important;
-  zoom: 1 !important;
-  transform: none !important;
-  overflow: visible !important;
-  background: white;
-}
-
 @media (max-width: 1120px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -1865,42 +1847,51 @@ textarea:focus {
   body {
     background: white;
     width: 210mm;
-    min-height: 0;
+    height: 297mm;
     margin: 0;
     overflow: hidden;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
 
-  body > :not(#printQuoteStage),
-  body > :not(#printQuoteStage) * {
+  body * {
+    visibility: hidden !important;
+  }
+
+  .app-shell,
+  .main-area,
+  #workspaceView,
+  .work-grid,
+  .editor-panel,
+  #stepQuote {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  #stepQuote > :not(#quoteSheet) {
     display: none !important;
   }
 
-  #printQuoteStage {
-    display: block !important;
-    position: relative !important;
-    width: 210mm !important;
-    height: 297mm !important;
-    margin: 0 !important;
-    padding: 8mm !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-    background: white !important;
-    visibility: visible !important;
-    break-after: avoid !important;
-    page-break-after: avoid !important;
-  }
-
-  #printQuoteStage * {
+  #quoteSheet,
+  #quoteSheet * {
     visibility: visible !important;
   }
 
-  #printQuoteStage .print-quote-sheet {
-    position: static !important;
+  #quoteSheet {
+    position: fixed !important;
+    top: 7mm !important;
+    left: 7mm !important;
     display: block !important;
-    width: 194mm;
-    max-height: 281mm;
+    width: 196mm !important;
+    max-width: none !important;
+    max-height: 278mm !important;
     margin: 0 !important;
     border: 0 !important;
     border-radius: 0 !important;
@@ -1909,124 +1900,127 @@ textarea:focus {
     box-shadow: none !important;
     transform: scale(var(--quote-print-scale, 1)) !important;
     transform-origin: top left;
+    zoom: 1 !important;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
   }
 
-  #printQuoteStage .output-options {
+  .output-options {
     display: none !important;
   }
 
-  #printQuoteStage .quote-sheet-head {
+  #quoteSheet .quote-sheet-head {
     display: block;
     padding: 0 0 4mm;
     border-bottom: 0.35mm solid #111827;
     background: white;
   }
 
-  #printQuoteStage .quote-logo-row {
+  #quoteSheet .quote-logo-row {
     display: flex;
     justify-content: center;
     margin-bottom: 3mm;
   }
 
-  #printQuoteStage .quote-title-row {
+  #quoteSheet .quote-title-row {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
     gap: 8mm;
   }
 
-  #printQuoteStage .quote-output-logo {
+  #quoteSheet .quote-output-logo {
     width: 132mm;
     height: 34mm;
     object-fit: contain;
   }
 
-  #printQuoteStage .quote-output-logo.buma {
+  #quoteSheet .quote-output-logo.buma {
     width: 42mm;
     height: 30mm;
   }
 
-  #printQuoteStage .quote-sheet-head h3 {
+  #quoteSheet .quote-sheet-head h3 {
     margin: 0;
     font-size: 18pt;
     line-height: 1.15;
   }
 
-  #printQuoteStage .eyebrow,
-  #printQuoteStage .quote-company-name,
-  #printQuoteStage .quote-sheet-meta,
-  #printQuoteStage .quote-customer-block,
-  #printQuoteStage .quote-table,
-  #printQuoteStage .quote-total-box,
-  #printQuoteStage .quote-contact {
+  #quoteSheet .eyebrow,
+  #quoteSheet .quote-company-name,
+  #quoteSheet .quote-sheet-meta,
+  #quoteSheet .quote-customer-block,
+  #quoteSheet .quote-table,
+  #quoteSheet .quote-total-box,
+  #quoteSheet .quote-contact {
     font-size: 9pt;
   }
 
-  #printQuoteStage .quote-sheet-meta {
+  #quoteSheet .quote-sheet-meta {
     gap: 1.5mm;
     text-align: right;
   }
 
-  #printQuoteStage .quote-sheet-meta div {
+  #quoteSheet .quote-sheet-meta div {
     gap: 3mm;
   }
 
-  #printQuoteStage .quote-customer-block {
+  #quoteSheet .quote-customer-block {
     grid-template-columns: 1fr;
     gap: 2mm 6mm;
     padding: 4mm 0;
     border-bottom: 0.2mm solid #d7dde6;
   }
 
-  #printQuoteStage .quote-customer-line {
+  #quoteSheet .quote-customer-line {
     grid-template-columns: 18mm minmax(0, 1fr);
     gap: 3mm;
     font-size: 9pt;
   }
 
-  #printQuoteStage .quote-customer-pair {
+  #quoteSheet .quote-customer-pair {
     grid-template-columns: 18mm minmax(0, 1fr) 10mm minmax(0, 1fr);
   }
 
-  #printQuoteStage .quote-table-wrap {
+  #quoteSheet .quote-table-wrap {
     overflow: visible;
   }
 
-  #printQuoteStage .quote-table {
+  #quoteSheet .quote-table {
     width: 100%;
     table-layout: fixed;
     border-collapse: collapse;
   }
 
-  #printQuoteStage .quote-table th,
-  #printQuoteStage .quote-table td {
+  #quoteSheet .quote-table th,
+  #quoteSheet .quote-table td {
     padding: 2mm 2.2mm;
     font-size: 9pt;
     line-height: 1.35;
     border-bottom: 0.2mm solid #d7dde6;
   }
 
-  #printQuoteStage .quote-table th {
+  #quoteSheet .quote-table th {
     background: #f6f8fb;
     font-size: 8pt;
   }
 
-  #printQuoteStage .quote-table th:nth-child(1),
-  #printQuoteStage .quote-table td:nth-child(1) {
+  #quoteSheet .quote-table th:nth-child(1),
+  #quoteSheet .quote-table td:nth-child(1) {
     width: 38%;
   }
 
-  #printQuoteStage .quote-table th:nth-child(2),
-  #printQuoteStage .quote-table td:nth-child(2) {
+  #quoteSheet .quote-table th:nth-child(2),
+  #quoteSheet .quote-table td:nth-child(2) {
     width: 24%;
   }
 
-  #printQuoteStage .quote-table small {
+  #quoteSheet .quote-table small {
     margin-top: 1mm;
     font-size: 7.5pt;
   }
 
-  #printQuoteStage .quote-total-box {
+  #quoteSheet .quote-total-box {
     display: grid;
     grid-template-columns: 1fr 30mm 58mm;
     align-items: end;
@@ -2035,39 +2029,39 @@ textarea:focus {
     padding: 5mm 0 0;
   }
 
-  #printQuoteStage .quote-signature {
+  #quoteSheet .quote-signature {
     gap: 4mm;
     font-size: 9.5pt;
   }
 
-  #printQuoteStage .quote-stamp-slot {
+  #quoteSheet .quote-stamp-slot {
     min-height: 25mm;
   }
 
-  #printQuoteStage .quote-stamp {
+  #quoteSheet .quote-stamp {
     width: 2.5cm;
     height: 2.5cm;
     transform: rotate(-7deg);
     opacity: 0.9;
   }
 
-  #printQuoteStage .quote-total-stack {
+  #quoteSheet .quote-total-stack {
     gap: 2mm;
   }
 
-  #printQuoteStage .quote-total-line {
+  #quoteSheet .quote-total-line {
     grid-template-columns: 22mm 32mm;
     gap: 3mm;
     font-size: 9pt;
   }
 
-  #printQuoteStage .quote-total-line.grand {
+  #quoteSheet .quote-total-line.grand {
     margin-top: 1mm;
     padding-top: 2mm;
     font-size: 12pt;
   }
 
-  #printQuoteStage .quote-contact {
+  #quoteSheet .quote-contact {
     margin-top: 2mm;
     padding-top: 2mm;
     line-height: 1.45;
