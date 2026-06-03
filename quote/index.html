@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MakeWorld 報價工作台</title>
-    <link rel="stylesheet" href="styles.css?v=20260603-mobile-split-pane" />
+    <link rel="stylesheet" href="styles.css?v=20260603-mobile-manual-wizard" />
   </head>
   <body>
     <main class="app-shell">
@@ -68,6 +68,13 @@
             <button class="flow-step" type="button" data-step="quote"><span>5</span>出單</button>
           </div>
 
+          <div class="mobile-manual-flow" id="mobileManualFlow" aria-label="手機手動報價流程">
+            <button class="active" type="button" data-manual-step="1"><span>1</span>客戶資訊</button>
+            <button type="button" data-manual-step="2"><span>2</span>購買品項</button>
+            <button type="button" data-manual-step="3"><span>3</span>預覽設定</button>
+            <button type="button" data-manual-step="4"><span>4</span>產生 PDF</button>
+          </div>
+
           <div class="work-grid">
             <section class="editor-panel">
               <article class="step-panel active" id="stepCustomer">
@@ -97,6 +104,9 @@
                       <option value="其他">其他</option>
                     </select>
                   </label>
+                </div>
+                <div class="mobile-wizard-actions">
+                  <button class="primary-button" type="button" data-manual-next="2">完成，下一步：購買品項</button>
                 </div>
               </article>
 
@@ -340,6 +350,12 @@
                         <option value="lan">藍小姐 0939299535</option>
                       </select>
                     </label>
+                    <label>稅別
+                      <select id="manualTaxType">
+                        <option value="invoice">含稅</option>
+                        <option value="receipt">未稅</option>
+                      </select>
+                    </label>
                   </div>
                   <div class="quote-sheet-head">
                     <div>
@@ -383,6 +399,10 @@
                     <label>數量<input id="manualQty" type="number" min="0" placeholder="0" /></label>
                     <label>單價<input id="manualPrice" type="number" min="0" placeholder="0" /></label>
                   </div>
+                  <div class="mobile-wizard-actions">
+                    <button class="ghost-button" type="button" data-manual-back="1">回客戶資訊</button>
+                    <button class="primary-button" type="button" data-manual-next="3">完成，下一步：預覽設定</button>
+                  </div>
                 </div>
 
                 <div class="form-grid two">
@@ -390,8 +410,13 @@
                   <label>有效期限<input id="validUntil" type="date" /></label>
                   <label class="wide">備註<textarea id="quoteNote" rows="4" placeholder="例：報價未含特殊急件費，實際交期依確認稿件後排程。"></textarea></label>
                 </div>
+                <div class="mobile-wizard-actions manual-preview-actions">
+                  <button class="ghost-button" type="button" data-manual-back="2">回購買品項</button>
+                  <button class="primary-button" type="button" data-manual-next="4">完成，產生報價單 PDF</button>
+                </div>
 
                 <div class="action-row">
+                  <button class="ghost-button mobile-only-action" type="button" data-manual-back="3">回預覽設定</button>
                   <button class="primary-button" type="button" id="printButton">列印 / 另存 PDF</button>
                   <button class="secondary-button" type="button" id="mailButton">寄送 Email 草稿</button>
                 </div>
@@ -457,6 +482,6 @@
     </main>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="script.js?v=20260603-mobile-flow"></script>
+    <script src="script.js?v=20260603-mobile-manual-wizard"></script>
   </body>
 </html>

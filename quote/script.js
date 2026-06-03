@@ -42,6 +42,7 @@ const state = {
   productType: "shirt",
   company: "deshui",
   quoteMode: "manual",
+  manualStep: 1,
   editingId: null,
   items: []
 };
@@ -75,6 +76,15 @@ function bindEvents() {
 
   $("mobileViewSelect")?.addEventListener("change", (event) => setView(event.target.value));
   $("mobileModeSelect")?.addEventListener("change", (event) => setQuoteMode(event.target.value));
+  document.querySelectorAll("[data-manual-step]").forEach((button) => {
+    button.addEventListener("click", () => setManualStep(Number(button.dataset.manualStep)));
+  });
+  document.querySelectorAll("[data-manual-next]").forEach((button) => {
+    button.addEventListener("click", () => setManualStep(Number(button.dataset.manualNext)));
+  });
+  document.querySelectorAll("[data-manual-back]").forEach((button) => {
+    button.addEventListener("click", () => setManualStep(Number(button.dataset.manualBack)));
+  });
 
   document.querySelectorAll("[data-step]").forEach((button) => {
     button.addEventListener("click", () => setStep(button.dataset.step));
@@ -126,7 +136,22 @@ function setQuoteMode(mode) {
   document.body.classList.toggle("cost-mode", state.quoteMode === "cost");
   if ($("mobileModeSelect")) $("mobileModeSelect").value = state.quoteMode;
   if (state.quoteMode === "manual" && state.view !== "workspace") setView("workspace");
+  updateManualStepClass();
   render();
+}
+
+function setManualStep(step) {
+  state.manualStep = Math.min(4, Math.max(1, Number(step) || 1));
+  updateManualStepClass();
+  document.querySelector(".main-area")?.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function updateManualStepClass() {
+  document.body.classList.remove("manual-step-1", "manual-step-2", "manual-step-3", "manual-step-4");
+  document.body.classList.add(`manual-step-${state.manualStep}`);
+  document.querySelectorAll("[data-manual-step]").forEach((button) => {
+    button.classList.toggle("active", Number(button.dataset.manualStep) === state.manualStep);
+  });
 }
 
 function setStep(step) {
@@ -473,7 +498,8 @@ function calculateQuote() {
   const stampChoice = $("outputStamp")?.value || "auto";
   const stamp = resolveQuoteStamp(company, stampChoice);
   const contact = quoteContacts[$("outputContact")?.value] || quoteContacts.wei;
-  const tax = company.taxType === "invoice" ? subtotal * 0.05 : 0;
+  const selectedTaxType = $("manualTaxType")?.value || company.taxType;
+  const tax = selectedTaxType === "invoice" ? subtotal * 0.05 : 0;
   return {
     id: makeId(),
     createdAt: new Date().toISOString(),
@@ -489,7 +515,7 @@ function calculateQuote() {
     companyKey: state.company,
     companyName: company.name,
     docType: company.docType,
-    taxType: company.taxType,
+    taxType: selectedTaxType,
     stampChoice,
     stamp: stamp.src,
     stampLabel: stamp.label,

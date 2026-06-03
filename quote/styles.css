@@ -107,6 +107,12 @@ label,
   display: none;
 }
 
+.mobile-manual-flow,
+.mobile-wizard-actions,
+.mobile-only-action {
+  display: none;
+}
+
 .nav-item {
   display: grid;
   grid-template-columns: 24px 1fr;
@@ -1286,6 +1292,48 @@ textarea:focus {
     display: block;
   }
 
+  .mobile-manual-flow {
+    display: none;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .manual-mode .mobile-manual-flow {
+    display: grid;
+  }
+
+  .mobile-manual-flow button {
+    display: grid;
+    gap: 4px;
+    justify-items: center;
+    min-height: 54px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 7px 4px;
+  }
+
+  .mobile-manual-flow button span {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    background: var(--soft);
+    color: var(--accent);
+    font-size: 12px;
+  }
+
+  .mobile-manual-flow button.active {
+    border-color: var(--accent);
+    background: var(--accent-lt);
+    color: var(--accent);
+  }
+
   .manual-mode #workspaceView .flow-strip,
   .manual-mode #stepProduct,
   .manual-mode #stepProcessing,
@@ -1301,8 +1349,18 @@ textarea:focus {
 
   .manual-mode #stepCustomer,
   .manual-mode #stepQuote {
-    display: block;
+    display: none;
     scroll-margin-top: 16px;
+  }
+
+  .manual-mode.manual-step-1 #stepCustomer {
+    display: block;
+  }
+
+  .manual-mode.manual-step-2 #stepQuote,
+  .manual-mode.manual-step-3 #stepQuote,
+  .manual-mode.manual-step-4 #stepQuote {
+    display: flex;
   }
 
   .manual-mode .editor-panel {
@@ -1329,7 +1387,6 @@ textarea:focus {
   }
 
   .manual-mode #stepQuote {
-    display: flex;
     flex-direction: column;
     gap: 14px;
   }
@@ -1363,6 +1420,55 @@ textarea:focus {
     display: none;
   }
 
+  .manual-mode #stepQuote > .section-title,
+  .manual-mode #stepQuote > .quote-sheet,
+  .manual-mode #stepQuote > .manual-item-box,
+  .manual-mode #stepQuote > .form-grid,
+  .manual-mode #stepQuote > .manual-preview-actions,
+  .manual-mode #stepQuote > .action-row {
+    display: none;
+  }
+
+  .manual-mode.manual-step-2 #stepQuote > .manual-item-box {
+    display: block;
+  }
+
+  .manual-mode.manual-step-3 #stepQuote > .section-title,
+  .manual-mode.manual-step-3 #stepQuote > .quote-sheet,
+  .manual-mode.manual-step-3 #stepQuote > .form-grid {
+    display: block;
+  }
+
+  .manual-mode.manual-step-3 #stepQuote > .manual-preview-actions {
+    display: flex;
+  }
+
+  .manual-mode.manual-step-4 #stepQuote > .quote-sheet,
+  .manual-mode.manual-step-4 #stepQuote > .action-row {
+    display: block;
+  }
+
+  .manual-mode.manual-step-3 .quote-sheet-head,
+  .manual-mode.manual-step-3 .quote-customer-block,
+  .manual-mode.manual-step-3 .quote-table-wrap,
+  .manual-mode.manual-step-3 .quote-total-box,
+  .manual-mode.manual-step-4 .quote-sheet-head,
+  .manual-mode.manual-step-4 .quote-customer-block,
+  .manual-mode.manual-step-4 .quote-table-wrap,
+  .manual-mode.manual-step-4 .quote-total-box {
+    display: grid;
+  }
+
+  .manual-mode.manual-step-3 .quote-table-wrap,
+  .manual-mode.manual-step-4 .quote-table-wrap {
+    display: block;
+  }
+
+  .manual-mode.manual-step-3 .quote-total-box,
+  .manual-mode.manual-step-4 .quote-total-box {
+    display: flex;
+  }
+
   .manual-mode .output-options {
     border-bottom: 0;
   }
@@ -1375,6 +1481,20 @@ textarea:focus {
   .manual-mode #stepQuote > .form-grid,
   .manual-mode .output-options {
     grid-template-columns: 1fr;
+  }
+
+  .mobile-wizard-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .mobile-wizard-actions button {
+    flex: 1;
+  }
+
+  .mobile-only-action {
+    display: inline-flex;
   }
 
   .summary-panel {
