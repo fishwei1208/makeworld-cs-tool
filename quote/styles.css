@@ -1172,6 +1172,12 @@ textarea:focus {
     --mobile-quote-preview: max(176px, 25vh);
   }
 
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
   html {
     height: 100%;
     overflow: hidden;
@@ -1527,7 +1533,14 @@ textarea:focus {
     min-height: 34px;
     margin-top: 2px;
     padding: 6px 8px;
-    font-size: 13px;
+    font-size: 16px;
+  }
+
+  .manual-mode input,
+  .manual-mode select,
+  .manual-mode textarea,
+  .mobile-quote-controls select {
+    font-size: 16px !important;
   }
 
   .manual-mode .main-area {
