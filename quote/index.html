@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MakeWorld 報價工作台</title>
-    <link rel="stylesheet" href="styles.css?v=20260604-no-ios-input-zoom" />
+    <link rel="stylesheet" href="styles.css?v=20260604-cost-preview-fixed" />
   </head>
   <body>
     <main class="app-shell">
@@ -433,6 +433,21 @@
                 <div class="metric"><span>總利潤</span><strong id="totalProfit">NT$ 0</strong></div>
               </div>
 
+              <div class="cost-preview-panel" aria-label="即時計算預覽">
+                <div class="cost-preview-row">
+                  <span>成本</span>
+                  <strong id="costPreviewLine">NT$ 0 x 0 = NT$ 0</strong>
+                </div>
+                <div class="cost-preview-row">
+                  <span>報價</span>
+                  <strong id="pricePreviewLine">NT$ 0 x 0 = NT$ 0</strong>
+                </div>
+                <div class="cost-preview-row profit">
+                  <span>利潤</span>
+                  <strong id="profitPreviewLine">NT$ 0 / 0%</strong>
+                </div>
+              </div>
+
               <div class="item-list-panel">
                 <div class="item-list-head">
                   <h4>報價品項</h4>
@@ -476,6 +491,6 @@
     </main>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="script.js?v=20260604-single-flow-print"></script>
+    <script src="script.js?v=20260604-cost-preview-fixed"></script>
   </body>
 </html>

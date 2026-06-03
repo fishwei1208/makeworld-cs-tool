@@ -586,9 +586,26 @@ function render() {
   $("unitPrice").textContent = money(quote.currentItem.unitPrice);
   $("grandTotal").textContent = money(quote.grandTotal);
   $("totalProfit").textContent = money(quote.totalProfit);
+  renderCostPreviewLines(quote.currentItem);
   $("quoteStatus").textContent = quote.items.length ? `${quote.items.length} 項` : "草稿";
   $("quotePreview").innerHTML = buildPreview(quote);
   renderItemList(quote);
+}
+
+function renderCostPreviewLines(item) {
+  const qty = Number(item?.product?.qty || 0);
+  const unitCost = Number(item?.unitCost || 0);
+  const unitPrice = Number(item?.unitPrice || 0);
+  const costTotal = unitCost * qty;
+  const priceTotal = unitPrice * qty;
+  const profit = priceTotal - costTotal;
+  const profitRate = priceTotal > 0 ? (profit / priceTotal) * 100 : 0;
+  const costLine = $("costPreviewLine");
+  const priceLine = $("pricePreviewLine");
+  const profitLine = $("profitPreviewLine");
+  if (costLine) costLine.textContent = `${money(unitCost)} x ${qty} = ${money(costTotal)}`;
+  if (priceLine) priceLine.textContent = `${money(unitPrice)} x ${qty} = ${money(priceTotal)}`;
+  if (profitLine) profitLine.textContent = `${money(profit)} / ${profitRate.toFixed(1)}%`;
 }
 
 function updateMobileQuotePreviewScale() {
