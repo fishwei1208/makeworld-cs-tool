@@ -1398,7 +1398,7 @@ textarea:focus {
   }
 
   .manual-mode #stepQuote .section-title {
-    order: 1;
+    order: 2;
   }
 
   .manual-mode #stepQuote .manual-item-box {
@@ -1412,11 +1412,15 @@ textarea:focus {
   }
 
   .manual-mode #stepQuote > .output-options {
-    order: 2;
+    order: 1;
   }
 
   .manual-mode #stepQuote > .form-grid {
     order: 4;
+  }
+
+  .manual-mode #stepQuote > .form-grid.output-settings {
+    order: 1;
   }
 
   .manual-mode #stepQuote .action-row {
@@ -1444,6 +1448,7 @@ textarea:focus {
   }
 
   .manual-mode.manual-step-3 #stepQuote > .section-title,
+  .manual-mode.manual-step-3 #stepQuote > .output-settings,
   .manual-mode.manual-step-3 #stepQuote > .quote-sheet,
   .manual-mode.manual-step-3 #stepQuote > .form-grid {
     display: block;
