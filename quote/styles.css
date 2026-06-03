@@ -1155,6 +1155,10 @@ textarea:focus {
 }
 
 @media (max-width: 720px) {
+  html {
+    scroll-padding-top: 132px;
+  }
+
   body {
     padding-bottom: 27vh;
   }
@@ -1173,25 +1177,29 @@ textarea:focus {
     position: sticky;
     top: 0;
     z-index: 30;
-    gap: 12px;
-    padding: 12px 14px;
+    gap: 8px;
+    padding: 9px 12px 10px;
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
   }
 
+  .main-area {
+    padding-top: 14px;
+  }
+
   .brand {
-    grid-template-columns: 36px 1fr;
-    gap: 10px;
+    grid-template-columns: 30px 1fr;
+    gap: 8px;
   }
 
   .brand-logo {
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     border-radius: 7px;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .brand h1 {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .brand p,
@@ -1213,7 +1221,7 @@ textarea:focus {
 
   .mobile-quote-controls select {
     margin-top: 4px;
-    min-height: 42px;
+    min-height: 38px;
     font-size: 14px;
     border-radius: 8px;
   }
@@ -1274,6 +1282,7 @@ textarea:focus {
   .manual-mode #stepCustomer,
   .manual-mode #stepQuote {
     display: block;
+    scroll-margin-top: 132px;
   }
 
   .manual-mode .editor-panel {
