@@ -1566,6 +1566,8 @@ textarea:focus {
   .manual-mode #stepCustomer,
   .manual-mode #stepQuote {
     padding: 14px;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .manual-mode .section-title,
@@ -1584,6 +1586,10 @@ textarea:focus {
 
   .manual-mode .quote-sheet {
     max-height: none;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
   }
 
   .manual-mode .output-options {
@@ -1592,6 +1598,154 @@ textarea:focus {
     z-index: 12;
     margin-bottom: 10px;
     box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+  }
+
+  .manual-mode.manual-step-3 .quote-sheet,
+  .manual-mode.manual-step-4 .quote-sheet {
+    border-radius: 8px;
+  }
+
+  .manual-mode.manual-step-3 .quote-sheet-head,
+  .manual-mode.manual-step-4 .quote-sheet-head {
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .manual-mode.manual-step-3 .quote-title-row,
+  .manual-mode.manual-step-4 .quote-title-row {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .manual-mode.manual-step-3 .quote-logo-row,
+  .manual-mode.manual-step-4 .quote-logo-row {
+    justify-content: flex-start;
+  }
+
+  .manual-mode.manual-step-3 .quote-output-logo,
+  .manual-mode.manual-step-4 .quote-output-logo {
+    width: min(150px, 44vw);
+    height: 72px;
+  }
+
+  .manual-mode.manual-step-3 .quote-output-logo.buma,
+  .manual-mode.manual-step-4 .quote-output-logo.buma {
+    width: 86px;
+    height: 64px;
+  }
+
+  .manual-mode.manual-step-3 .quote-sheet-head h3,
+  .manual-mode.manual-step-4 .quote-sheet-head h3 {
+    font-size: 24px;
+  }
+
+  .manual-mode.manual-step-3 .quote-company-name,
+  .manual-mode.manual-step-4 .quote-company-name,
+  .manual-mode.manual-step-3 .quote-sheet-meta,
+  .manual-mode.manual-step-4 .quote-sheet-meta {
+    font-size: 11px;
+  }
+
+  .manual-mode.manual-step-3 .quote-customer-block,
+  .manual-mode.manual-step-4 .quote-customer-block {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+
+  .manual-mode.manual-step-3 .quote-customer-line,
+  .manual-mode.manual-step-4 .quote-customer-line {
+    grid-template-columns: 62px minmax(0, 1fr);
+    gap: 8px;
+    font-size: 11px;
+  }
+
+  .manual-mode.manual-step-3 .quote-customer-pair,
+  .manual-mode.manual-step-4 .quote-customer-pair {
+    grid-template-columns: 62px minmax(0, 1fr);
+  }
+
+  .manual-mode.manual-step-3 .quote-customer-pair span:nth-of-type(2),
+  .manual-mode.manual-step-4 .quote-customer-pair span:nth-of-type(2) {
+    grid-column: 1;
+  }
+
+  .manual-mode.manual-step-3 .quote-table,
+  .manual-mode.manual-step-4 .quote-table {
+    table-layout: fixed;
+    width: 100%;
+    font-size: 10px;
+  }
+
+  .manual-mode.manual-step-3 .quote-table th,
+  .manual-mode.manual-step-3 .quote-table td,
+  .manual-mode.manual-step-4 .quote-table th,
+  .manual-mode.manual-step-4 .quote-table td {
+    padding: 7px 5px;
+    word-break: break-word;
+  }
+
+  .manual-mode.manual-step-3 .quote-table th:nth-child(1),
+  .manual-mode.manual-step-3 .quote-table td:nth-child(1),
+  .manual-mode.manual-step-4 .quote-table th:nth-child(1),
+  .manual-mode.manual-step-4 .quote-table td:nth-child(1) {
+    width: 34%;
+  }
+
+  .manual-mode.manual-step-3 .quote-table th:nth-child(2),
+  .manual-mode.manual-step-3 .quote-table td:nth-child(2),
+  .manual-mode.manual-step-4 .quote-table th:nth-child(2),
+  .manual-mode.manual-step-4 .quote-table td:nth-child(2) {
+    width: 20%;
+  }
+
+  .manual-mode.manual-step-3 .quote-table th:nth-child(3),
+  .manual-mode.manual-step-3 .quote-table td:nth-child(3),
+  .manual-mode.manual-step-4 .quote-table th:nth-child(3),
+  .manual-mode.manual-step-4 .quote-table td:nth-child(3) {
+    width: 12%;
+  }
+
+  .manual-mode.manual-step-3 .quote-table th:nth-child(4),
+  .manual-mode.manual-step-3 .quote-table td:nth-child(4),
+  .manual-mode.manual-step-4 .quote-table th:nth-child(4),
+  .manual-mode.manual-step-4 .quote-table td:nth-child(4),
+  .manual-mode.manual-step-3 .quote-table th:nth-child(5),
+  .manual-mode.manual-step-3 .quote-table td:nth-child(5),
+  .manual-mode.manual-step-4 .quote-table th:nth-child(5),
+  .manual-mode.manual-step-4 .quote-table td:nth-child(5) {
+    width: 17%;
+  }
+
+  .manual-mode.manual-step-3 .quote-total-box,
+  .manual-mode.manual-step-4 .quote-total-box {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    min-height: 0;
+    padding: 12px;
+  }
+
+  .manual-mode.manual-step-3 .quote-stamp-slot,
+  .manual-mode.manual-step-4 .quote-stamp-slot {
+    justify-content: flex-start;
+    min-height: 70px;
+  }
+
+  .manual-mode.manual-step-3 .quote-stamp,
+  .manual-mode.manual-step-4 .quote-stamp {
+    width: 70px;
+    height: 70px;
+  }
+
+  .manual-mode.manual-step-3 .quote-total-line,
+  .manual-mode.manual-step-4 .quote-total-line {
+    grid-template-columns: minmax(80px, 1fr) minmax(100px, 1fr);
+    font-size: 12px;
+  }
+
+  .manual-mode.manual-step-4 .action-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   .mobile-wizard-actions {
