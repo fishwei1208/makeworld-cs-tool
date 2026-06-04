@@ -1656,14 +1656,14 @@ textarea:focus {
 
   .manual-mode .main-area {
     position: fixed;
-    top: calc(var(--mobile-quote-header) + var(--mobile-manual-flow));
+    top: var(--mobile-quote-header);
     left: 0;
     right: 0;
     bottom: env(safe-area-inset-bottom, 0px);
     height: auto;
     margin-top: 0;
-    padding: 12px 10px 18px;
-    scroll-padding-top: 12px;
+    padding: 0 10px 18px;
+    scroll-padding-top: calc(var(--mobile-manual-flow) + 12px);
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
@@ -1674,13 +1674,11 @@ textarea:focus {
   }
 
   .manual-mode .mobile-manual-flow {
-    position: fixed;
-    top: var(--mobile-quote-header);
-    left: 0;
-    right: 0;
+    position: sticky;
+    top: 0;
     z-index: 44;
     gap: 4px;
-    margin: 0;
+    margin: 0 -10px 12px;
     min-height: var(--mobile-manual-flow);
     padding: 8px 10px 10px;
     border-bottom: 1px solid var(--line);
