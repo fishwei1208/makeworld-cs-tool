@@ -1655,10 +1655,18 @@ textarea:focus {
   }
 
   .manual-mode .main-area {
-    height: calc(100dvh - var(--mobile-quote-header));
-    margin-top: var(--mobile-quote-header);
-    padding: calc(var(--mobile-manual-flow) + 18px) 10px 10px;
-    scroll-padding-top: calc(var(--mobile-manual-flow) + 18px);
+    position: fixed;
+    top: calc(var(--mobile-quote-header) + var(--mobile-manual-flow));
+    left: 0;
+    right: 0;
+    bottom: env(safe-area-inset-bottom, 0px);
+    height: auto;
+    margin-top: 0;
+    padding: 12px 10px 18px;
+    scroll-padding-top: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 
   .manual-mode .summary-panel {
@@ -1679,6 +1687,12 @@ textarea:focus {
     background: rgba(255, 255, 255, 0.96);
     box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
     backdrop-filter: blur(8px);
+  }
+
+  .manual-mode #workspaceView,
+  .manual-mode .work-grid,
+  .manual-mode .editor-panel {
+    min-height: 0;
   }
 
   .manual-mode .mobile-manual-flow button {

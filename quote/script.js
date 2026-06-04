@@ -181,7 +181,16 @@ function setManualStep(step) {
   state.manualStep = Math.min(4, Math.max(1, Number(step) || 1));
   updateManualStepClass();
   updateMobileQuotePreviewScale();
-  document.querySelector(".main-area")?.scrollTo({ top: 0, behavior: "smooth" });
+  resetManualScrollPosition();
+}
+
+function resetManualScrollPosition() {
+  const scrollTargets = [document.querySelector(".main-area"), document.scrollingElement, document.documentElement, document.body];
+  const reset = () => {
+    scrollTargets.forEach((target) => target?.scrollTo?.({ top: 0, left: 0, behavior: "auto" }));
+  };
+  reset();
+  requestAnimationFrame(reset);
 }
 
 function updateManualStepClass() {
