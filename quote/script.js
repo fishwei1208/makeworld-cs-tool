@@ -152,9 +152,16 @@ function cleanupQuotePrint() {
 }
 
 function getQuoteFileName(quote) {
-  const date = (quote.quoteDate || new Date().toISOString().slice(0, 10)).replaceAll("-", "");
-  const customer = (quote.customerName || "未填客戶").replace(/[\\/:*?"<>|]/g, "").trim() || "未填客戶";
+  const date = getLocalDateStamp();
+  const customer = (textValue("customerName") || quote.customerName || "未填客戶").replace(/[\\/:*?"<>|]/g, "").trim() || "未填客戶";
   return `${date}${customer}`;
+}
+
+function getLocalDateStamp(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}${month}${day}`;
 }
 
 function setView(view) {
