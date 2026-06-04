@@ -51,6 +51,7 @@ const $ = (id) => document.getElementById(id);
 const money = (value) => `NT$ ${Math.round(value || 0).toLocaleString()}`;
 const numberValue = (id) => Number($(id)?.value || 0);
 const textValue = (id) => ($(id)?.value || "").trim();
+let originalDocumentTitle = document.title;
 const escapeHtml = (value) =>
   String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 
@@ -129,6 +130,9 @@ function printQuoteSheet() {
 
 function prepareQuotePrint() {
   render();
+  const quote = calculateQuote();
+  originalDocumentTitle = document.title;
+  document.title = getQuoteFileName(quote);
   document.body.classList.add("is-printing-quote");
   const sheet = $("quoteSheet");
   if (!sheet) return;
@@ -142,8 +146,15 @@ function prepareQuotePrint() {
 
 function cleanupQuotePrint() {
   document.body.classList.remove("is-printing-quote");
+  document.title = originalDocumentTitle || "MakeWorld 報價工作台";
   $("quoteSheet")?.style.removeProperty("--quote-print-scale");
   updateMobileQuotePreviewScale();
+}
+
+function getQuoteFileName(quote) {
+  const date = (quote.quoteDate || new Date().toISOString().slice(0, 10)).replaceAll("-", "");
+  const customer = (quote.customerName || "未填客戶").replace(/[\\/:*?"<>|]/g, "").trim() || "未填客戶";
+  return `${date}${customer}`;
 }
 
 function setView(view) {
@@ -633,7 +644,7 @@ function renderQuoteSheet(quote) {
   const logoHtml = logo.src
     ? `<img class="quote-output-logo ${logo.className}" src="${logo.src}" alt="${escapeHtml(logo.label)}">`
     : "";
-  const docTitle = quote.taxType === "invoice" ? "報價單" : "報價單 / 收據";
+  const docTitle = "報價單";
   const stampHtml = quote.stamp
     ? `<div class="quote-stamp"><img class="quote-stamp-img" src="${quote.stamp}" alt="${escapeHtml(quote.stampLabel || quote.companyName || "")} 印章"></div>`
     : "";
@@ -641,7 +652,6 @@ function renderQuoteSheet(quote) {
   $("quoteSheetMeta").innerHTML = `
     <div><span>報價日期</span><strong>${escapeHtml(quote.quoteDate || "未設定")}</strong></div>
     <div><span>有效期限</span><strong>${escapeHtml(quote.validUntil || "未設定")}</strong></div>
-    <div><span>單據類型</span><strong>${escapeHtml(quote.docType || "")}</strong></div>
   `;
 
   $("quoteSheet").querySelector(".quote-sheet-head").innerHTML = `

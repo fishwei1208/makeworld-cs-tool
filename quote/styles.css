@@ -1617,7 +1617,7 @@ textarea:focus {
 
   .manual-mode {
     --mobile-quote-header: 78px;
-    --mobile-manual-flow: 58px;
+    --mobile-manual-flow: 66px;
     --mobile-quote-preview: 0px;
   }
 
@@ -1657,7 +1657,8 @@ textarea:focus {
   .manual-mode .main-area {
     height: calc(100dvh - var(--mobile-quote-header));
     margin-top: var(--mobile-quote-header);
-    padding: calc(var(--mobile-manual-flow) + 10px) 10px 10px;
+    padding: calc(var(--mobile-manual-flow) + 18px) 10px 10px;
+    scroll-padding-top: calc(var(--mobile-manual-flow) + 18px);
   }
 
   .manual-mode .summary-panel {
@@ -1669,10 +1670,11 @@ textarea:focus {
     top: var(--mobile-quote-header);
     left: 0;
     right: 0;
-    z-index: 28;
+    z-index: 44;
     gap: 4px;
     margin: 0;
-    padding: 8px 10px;
+    min-height: var(--mobile-manual-flow);
+    padding: 8px 10px 10px;
     border-bottom: 1px solid var(--line);
     background: rgba(255, 255, 255, 0.96);
     box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
@@ -1723,11 +1725,11 @@ textarea:focus {
   }
 
   .manual-mode .output-options {
-    position: sticky;
-    top: 0;
-    z-index: 12;
+    position: relative;
+    top: auto;
+    z-index: 1;
     margin-bottom: 10px;
-    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+    box-shadow: none;
   }
 
   .manual-mode.manual-step-3 .quote-sheet,
