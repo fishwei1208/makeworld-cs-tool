@@ -2078,15 +2078,17 @@ textarea:focus {
 
   #quoteSheet .quote-sheet-head {
     display: block;
-    padding: 0 0 4mm;
+    padding: 0 0 3mm;
     border-bottom: 0.35mm solid #111827;
     background: white;
   }
 
   #quoteSheet .quote-logo-row {
     display: flex;
+    width: 100%;
     justify-content: center;
-    margin-bottom: 3mm;
+    align-items: center;
+    margin: 0 0 2mm;
   }
 
   #quoteSheet .quote-title-row {
@@ -2097,14 +2099,15 @@ textarea:focus {
   }
 
   #quoteSheet .quote-output-logo {
-    width: 132mm;
-    height: 34mm;
+    width: 104mm;
+    height: 22mm;
     object-fit: contain;
+    object-position: center;
   }
 
   #quoteSheet .quote-output-logo.buma {
-    width: 42mm;
-    height: 30mm;
+    width: 28mm;
+    height: 24mm;
   }
 
   #quoteSheet .quote-sheet-head h3 {
@@ -2189,11 +2192,12 @@ textarea:focus {
 
   #quoteSheet .quote-total-box {
     display: grid;
-    grid-template-columns: 1fr 30mm 58mm;
+    grid-template-columns: minmax(0, 1fr) 28mm 72mm;
     align-items: end;
-    gap: 5mm;
+    gap: 4mm;
     min-height: 35mm;
     padding: 5mm 0 0;
+    overflow: visible;
   }
 
   #quoteSheet .quote-signature {
@@ -2214,12 +2218,14 @@ textarea:focus {
 
   #quoteSheet .quote-total-stack {
     gap: 2mm;
+    min-width: 0;
   }
 
   #quoteSheet .quote-total-line {
-    grid-template-columns: 22mm 32mm;
-    gap: 3mm;
+    grid-template-columns: 30mm minmax(36mm, 1fr);
+    gap: 2mm;
     font-size: 9pt;
+    min-width: 0;
   }
 
   #quoteSheet .quote-total-line.grand {
@@ -2232,5 +2238,7 @@ textarea:focus {
     margin-top: 2mm;
     padding-top: 2mm;
     line-height: 1.45;
+    max-width: 100%;
+    overflow-wrap: anywhere;
   }
 }

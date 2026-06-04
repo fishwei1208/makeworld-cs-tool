@@ -20,7 +20,7 @@ const companies = {
 };
 
 const quoteLogos = {
-  makeworld: { label: "地圖製造", src: "assets/makeworld-logo-stack.jpg", className: "makeworld" },
+  makeworld: { label: "地圖製造", src: "assets/makeworld-logo.jpg", className: "makeworld" },
   buma: { label: "布碼科技", src: "assets/buma-logo.png", className: "buma" },
   none: { label: "無 logo", src: "", className: "none" }
 };
