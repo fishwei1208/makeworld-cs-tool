@@ -489,6 +489,25 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
   .tbl-thumb,.tbl-nothumb{width:56px;height:56px}
   .month-group{border-radius:14px;margin-bottom:12px}
   .month-group summary{padding:12px}
+  .mobile-order-list{display:grid;gap:12px}
+  .mobile-order-card{border:1px solid var(--border);border-radius:16px;background:#fff;box-shadow:var(--sh);overflow:hidden}
+  .mobile-order-card.row-processing{background:var(--green-lt)}
+  .mobile-order-card.row-done{background:#eef0f3;color:var(--text-dim)}
+  .mobile-order-head{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.6)}
+  .mobile-order-date{margin-top:5px;color:var(--text-dim);font-family:'DM Mono',monospace;font-size:13px}
+  .mobile-order-owner{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;padding:14px 12px;border-bottom:1px solid var(--border);background:#fff}
+  .mobile-order-owner span,.mobile-section-label{display:block;color:var(--text-dim);font-size:12px;font-weight:800;margin-bottom:4px}
+  .mobile-order-owner strong{display:block;font-size:22px;line-height:1.2;color:var(--text)}
+  .mobile-order-owner small{display:block;margin-top:4px;color:var(--text-dim);font-size:12px}
+  .mobile-order-amount{font-family:'DM Mono',monospace;font-size:18px;font-weight:800;color:var(--accent);white-space:nowrap;text-align:right}
+  .mobile-order-section{padding:12px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.76)}
+  .mobile-order-section .order-items-cell{gap:8px}
+  .mobile-total{margin-top:8px;color:var(--accent);font-family:'DM Mono',monospace;font-size:15px;font-weight:800;text-align:right}
+  .mobile-recipient-main{font-size:16px;font-weight:800;color:var(--text);line-height:1.45}
+  .mobile-recipient-delivery{margin-top:7px;line-height:1.55;color:var(--text-dim)}
+  .mobile-order-actions{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:12px;background:#fff}
+  .mobile-order-actions label{display:flex;align-items:center;gap:7px;margin:0;color:var(--text-dim);font-size:13px;font-weight:800}
+  .mobile-order-actions .print-check{width:20px;height:20px}
   #page-new{height:calc(100dvh - 112px);overflow:auto;padding:10px}
   .form-card{padding:14px}
   .preview-card{display:none}
@@ -1655,7 +1674,44 @@ function renderProcessOrders(){
   const processing=orders.filter(o=>(o.orderStatus||'pending')==='processing').length;
   document.getElementById('process-summary').innerHTML=`<div class="summ-card"><h4 class="h-other">待處理</h4><div class="sku-row"><span class="sku-k">待確認訂單</span><span class="sku-v">×${pending}</span></div></div><div class="summ-card"><h4 class="h-towel">處理中</h4><div class="sku-row"><span class="sku-k">製作 / 出貨中</span><span class="sku-v">×${processing}</span></div></div>`;
   if(!list.length){container.innerHTML=`<div class="empty-state"><div class="ei">☑</div><p>目前沒有待處理訂單</p></div>`;return}
-  container.innerHTML=buildProcessTable(list);
+  container.innerHTML=isMobileView()?buildProcessCards(list):buildProcessTable(list);
+}
+function isMobileView(){return window.matchMedia&&window.matchMedia('(max-width:720px)').matches}
+function buildProcessCards(list){
+  return `<div class="mobile-order-list">${list.map((o,i)=>{
+    const items=getItems(o);
+    const total=items.reduce((s,it)=>s+itemQty(it),0);
+    const itemHtml=items.map(it=>lineItemHtml(it)).join('');
+    const recipient=[o.recipientName||o.name||'',o.recipientPhone||o.phone||''].filter(Boolean).join(' / ')||'未填收件人';
+    return `<article class="mobile-order-card row-${o.orderStatus||'pending'}">
+      <div class="mobile-order-head">
+        <div>
+          <div class="status-cell"><select class="status-select ${orderStatusClass(o)}" onchange="setOrderStatus(${o.id},this.value)"><option value="pending" ${(o.orderStatus||'pending')==='pending'?'selected':''}>待處理</option><option value="processing" ${(o.orderStatus||'pending')==='processing'?'selected':''}>處理中</option><option value="done" ${(o.orderStatus||'pending')==='done'?'selected':''}>已完成</option></select></div>
+          <div class="mobile-order-date">${esc(orderDateLabel(o))}　${esc(orderCode(o))}</div>
+        </div>
+        <button class="quick-print-btn" onclick="printSingleOrder(${o.id})">列印</button>
+      </div>
+      <div class="mobile-order-owner">
+        <div><span>訂購人</span><strong>${esc(o.customer||o.name||'未填客戶')}</strong><small>${esc(recipient)}</small></div>
+        <div><div class="mobile-order-amount">${esc(moneyLabel(o.orderAmount))}</div><small>${esc(paymentLabel(o))}</small></div>
+      </div>
+      <div class="mobile-order-section">
+        <span class="mobile-section-label">購買內容</span>
+        <div class="order-items-cell">${itemHtml}</div>
+        <div class="mobile-total">總件數 ×${total}</div>
+      </div>
+      <div class="mobile-order-section">
+        <span class="mobile-section-label">收件資訊</span>
+        <div class="mobile-recipient-main">${esc(recipient)}</div>
+        <div class="mobile-recipient-delivery">${deliveryBadgeHtml(o)}</div>
+      </div>
+      <div class="mobile-order-actions">
+        <label><input class="print-check status-check" type="checkbox" value="${o.id}">列印勾選</label>
+        <button class="rm-btn" onclick="deleteOrder(${o.id})">刪除</button>
+        <button class="edit-btn" onclick="editOrder(${o.id})">編輯</button>
+      </div>
+    </article>`;
+  }).join('')}</div>`;
 }
 function buildProcessTable(list){
   let h=`<table class="order-table"><thead><tr><th class="pick-cell">勾選</th><th>#</th><th>狀態</th><th>日期</th><th>客戶</th><th>金額</th><th>付款</th><th>配送</th><th>商品明細</th><th>總件數</th><th>操作</th></tr></thead><tbody>`;
