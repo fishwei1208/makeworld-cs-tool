@@ -542,20 +542,46 @@ function renderAssets() {
 }
 
 async function copyText(text) {
+  const value = String(text || "");
+  let copied = false;
+
   if (navigator.clipboard && window.isSecureContext) {
-    await navigator.clipboard.writeText(text);
-  } else {
-    const helper = document.createElement("textarea");
-    helper.value = text;
-    helper.setAttribute("readonly", "");
-    helper.style.position = "fixed";
-    helper.style.left = "-9999px";
-    document.body.appendChild(helper);
-    helper.select();
-    document.execCommand("copy");
-    helper.remove();
+    try {
+      await navigator.clipboard.writeText(value);
+      copied = true;
+    } catch (error) {
+      copied = false;
+    }
   }
-  showToast("已複製");
+
+  if (!copied) copied = fallbackCopyText(value);
+
+  showToast(copied ? "已複製" : "無法自動複製，請長按文字手動複製");
+}
+
+function fallbackCopyText(text) {
+  const helper = document.createElement("textarea");
+  helper.value = text;
+  helper.setAttribute("readonly", "");
+  helper.style.position = "fixed";
+  helper.style.top = "0";
+  helper.style.left = "0";
+  helper.style.width = "1px";
+  helper.style.height = "1px";
+  helper.style.opacity = "0";
+  helper.style.pointerEvents = "none";
+  document.body.appendChild(helper);
+  helper.focus();
+  helper.select();
+  helper.setSelectionRange(0, helper.value.length);
+  let copied = false;
+  try {
+    copied = document.execCommand("copy");
+  } catch (error) {
+    copied = false;
+  }
+  helper.remove();
+  return copied;
 }
 
 function showToast(message) {
