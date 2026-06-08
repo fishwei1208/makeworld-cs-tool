@@ -533,7 +533,9 @@ function renderAssets() {
         <h3>${escapeHtml(asset.title)}</h3>
         <p>${escapeHtml(asset.description)}</p>
         <div class="asset-actions">
-          <a class="primary-button" href="${encodeURI(asset.file)}" download>下載</a>
+          <a class="primary-button" href="${encodeURI(asset.file)}" target="_blank" rel="noopener">開啟圖片</a>
+          <button class="secondary-button" type="button" data-share-asset-index="${index}">分享</button>
+          <a class="secondary-button" href="${encodeURI(asset.file)}" download>下載檔案</a>
           <button class="secondary-button" type="button" data-copy-asset-index="${index}">複製檔名</button>
         </div>
       </div>
@@ -638,10 +640,35 @@ copyAllButton.addEventListener("click", () => {
 });
 
 assetGrid.addEventListener("click", (event) => {
+  const shareButton = event.target.closest("[data-share-asset-index]");
   const copyButton = event.target.closest("[data-copy-asset-index]");
+  if (shareButton) {
+    const asset = filteredAssets()[Number(shareButton.dataset.shareAssetIndex)];
+    shareAsset(asset);
+    return;
+  }
   if (!copyButton) return;
   const asset = filteredAssets()[Number(copyButton.dataset.copyAssetIndex)];
   copyText(asset.title);
 });
+
+async function shareAsset(asset) {
+  if (!asset) return;
+  const url = new URL(asset.file, window.location.href).href;
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: asset.title,
+        text: asset.description,
+        url
+      });
+      return;
+    } catch (error) {
+      if (error.name === "AbortError") return;
+    }
+  }
+  window.open(url, "_blank", "noopener");
+  showToast("已開啟圖片，請長按或使用分享選單儲存");
+}
 
 rerender();
