@@ -535,6 +535,7 @@ function renderAssets() {
         <div class="asset-actions">
           <a class="primary-button" href="${encodeURI(asset.file)}" target="_blank" rel="noopener">開啟圖片</a>
           <button class="secondary-button" type="button" data-share-asset-index="${index}">分享</button>
+          <button class="secondary-button" type="button" data-copy-help-index="${index}">客戶連結</button>
           <a class="secondary-button" href="${encodeURI(asset.file)}" download>下載檔案</a>
           <button class="secondary-button" type="button" data-copy-asset-index="${index}">複製檔名</button>
         </div>
@@ -641,16 +642,30 @@ copyAllButton.addEventListener("click", () => {
 
 assetGrid.addEventListener("click", (event) => {
   const shareButton = event.target.closest("[data-share-asset-index]");
+  const helpButton = event.target.closest("[data-copy-help-index]");
   const copyButton = event.target.closest("[data-copy-asset-index]");
   if (shareButton) {
     const asset = filteredAssets()[Number(shareButton.dataset.shareAssetIndex)];
     shareAsset(asset);
     return;
   }
+  if (helpButton) {
+    const asset = filteredAssets()[Number(helpButton.dataset.copyHelpIndex)];
+    copyText(helpUrl(asset));
+    return;
+  }
   if (!copyButton) return;
   const asset = filteredAssets()[Number(copyButton.dataset.copyAssetIndex)];
   copyText(asset.title);
 });
+
+function assetSlug(asset) {
+  return encodeURIComponent(asset.title.replace(/\s+/g, "-"));
+}
+
+function helpUrl(asset) {
+  return new URL(`../help/?item=${assetSlug(asset)}`, window.location.href).href;
+}
 
 async function shareAsset(asset) {
   if (!asset) return;
