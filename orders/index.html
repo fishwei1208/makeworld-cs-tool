@@ -1133,10 +1133,20 @@ function formatDateTime(val){
   return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
 function orderDateLabel(o){
+  const parts=orderDateParts(o);
+  const base=parts.weekday?`${parts.date}<br><span style="font-size:9px;color:var(--text-dim)">${parts.weekday}</span>`:parts.date;
+  return `${base}${parts.time?`<br><span style="font-size:11px;color:var(--accent)">${esc(parts.time)}</span>`:''}`;
+}
+function orderDateText(o){
+  const parts=orderDateParts(o);
+  return [parts.date,parts.weekday,parts.time].filter(Boolean).join(' ');
+}
+function orderDateParts(o){
   const datePart=o.date?o.date.split('-'):[];
-  const base=datePart.length===3?`${datePart[0]}/${datePart[1]}/${datePart[2]}<br><span style="font-size:9px;color:var(--text-dim)">${WDAYS[new Date(o.date+'T00:00:00').getDay()]}</span>`:(o.date||'');
+  const date=datePart.length===3?`${datePart[0]}/${datePart[1]}/${datePart[2]}`:(o.date||'');
+  const weekday=datePart.length===3?WDAYS[new Date(o.date+'T00:00:00').getDay()]:'';
   const time=o.createdAt?formatDateTime(o.createdAt).split(' ')[1]:'';
-  return `${base}${time?`<br><span style="font-size:11px;color:var(--accent)">${esc(time)}</span>`:''}`;
+  return {date,weekday,time};
 }
 function updateDateLabel(){
   const created=document.getElementById('f-created-at').value||nowIso();
@@ -1687,7 +1697,7 @@ function buildProcessCards(list){
       <div class="mobile-order-head">
         <div>
           <div class="status-cell"><select class="status-select ${orderStatusClass(o)}" onchange="setOrderStatus(${o.id},this.value)"><option value="pending" ${(o.orderStatus||'pending')==='pending'?'selected':''}>待處理</option><option value="processing" ${(o.orderStatus||'pending')==='processing'?'selected':''}>處理中</option><option value="done" ${(o.orderStatus||'pending')==='done'?'selected':''}>已完成</option></select></div>
-          <div class="mobile-order-date">${esc(orderDateLabel(o))}　${esc(orderCode(o))}</div>
+          <div class="mobile-order-date">${esc(orderDateText(o))}　${esc(orderCode(o))}</div>
         </div>
         <button class="quick-print-btn" onclick="printSingleOrder(${o.id})">列印</button>
       </div>
