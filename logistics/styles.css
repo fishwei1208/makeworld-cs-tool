@@ -108,6 +108,18 @@ a {
   white-space: nowrap;
 }
 
+.status-chip[data-state="ok"] {
+  border-color: rgba(31, 122, 87, 0.24);
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.status-chip[data-state="error"] {
+  border-color: rgba(185, 28, 28, 0.22);
+  background: #fff1f2;
+  color: #b91c1c;
+}
+
 .mode-tabs {
   position: sticky;
   top: 84px;

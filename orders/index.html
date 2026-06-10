@@ -1044,6 +1044,7 @@ function normalizeOrder(o){
 function cleanOrderForSync(order){
   return {
     ...order,
+    recordType:'orders',
     imgs:(order.imgs||[]).map(img=>({
       name:img.name||'',
       dataUrl:img.dataUrl||'',
@@ -1057,6 +1058,7 @@ function cleanOrderForSync(order){
 function mergeOrders(localRows,cloudRows){
   const byId=new Map();
   [...localRows,...cloudRows].forEach(row=>{
+    if(row?.recordType&&row.recordType!=='orders')return;
     if(String(row?.id||'').startsWith('test-'))return;
     if(row?._deleted){byId.delete(row.id);return}
     const order=normalizeOrder(row);

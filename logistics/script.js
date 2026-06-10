@@ -1,4 +1,8 @@
 const STORAGE_KEY = "makeworld.logistics.cases.v1";
+const SYNC_API_URL = "https://script.google.com/macros/s/AKfycbzf8wAMKhFjdaG6C1_RsMWKZi9CFcQsoGKZhAhWpZJFzwz4GxkGsgxbzAEKji4JAr5Y/exec";
+const SYNC_SECRET = "mw_sync_6jQ8pV3xL2rT9sD4";
+const CLOUD_TYPE = "logistics";
+const RECORD_TYPE = "logistics";
 
 const stateLabels = {
   pending: "待處理",
@@ -11,6 +15,7 @@ let activeFilter = "active";
 
 const form = document.querySelector("#caseForm");
 const saveStatus = document.querySelector("#saveStatus");
+const syncStatus = document.querySelector("#syncStatus");
 
 document.querySelectorAll(".mode-tab").forEach((button) => {
   button.addEventListener("click", () => switchView(button.dataset.view));
@@ -35,6 +40,7 @@ form.addEventListener("submit", (event) => {
 
 updateConditionalFields();
 renderCases();
+loadCloudCases();
 
 function loadCases() {
   try {
@@ -47,6 +53,101 @@ function loadCases() {
 
 function persist() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cases));
+}
+
+function normalizeCase(item) {
+  return {
+    id: String(item?.id || Date.now()),
+    recordType: RECORD_TYPE,
+    createdAt: item?.createdAt || item?.updatedAt || new Date().toISOString(),
+    updatedAt: item?.updatedAt || item?.syncUpdatedAt || item?.createdAt || new Date().toISOString(),
+    reference: item?.reference || "",
+    purpose: item?.purpose || "超商退件",
+    purposeOther: item?.purposeOther || "",
+    method: item?.method || "原超商重新寄出",
+    storeName: item?.storeName || "",
+    storeCode: item?.storeCode || "",
+    recipientName: item?.recipientName || "",
+    recipientPhone: item?.recipientPhone || "",
+    recipientAddress: item?.recipientAddress || "",
+    note: item?.note || "",
+    status: item?.status || "pending",
+    syncUpdatedAt: item?.syncUpdatedAt || item?.updatedAt || new Date().toISOString()
+  };
+}
+
+function mergeCases(localRows, cloudRows) {
+  const byId = new Map();
+  [...localRows, ...cloudRows].forEach((row) => {
+    if (!row || row.recordType !== RECORD_TYPE) return;
+    const id = String(row.id || "");
+    if (!id) return;
+    if (row._deleted) {
+      byId.delete(id);
+      return;
+    }
+    const next = normalizeCase(row);
+    const prev = byId.get(id);
+    if (!prev || new Date(next.syncUpdatedAt || next.updatedAt) >= new Date(prev.syncUpdatedAt || prev.updatedAt)) {
+      byId.set(id, next);
+    }
+  });
+  return Array.from(byId.values()).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+}
+
+function cloudRecord(item) {
+  if (item?._deleted) {
+    return {
+      id: String(item.id || ""),
+      recordType: RECORD_TYPE,
+      _deleted: true,
+      syncUpdatedAt: item.syncUpdatedAt || new Date().toISOString()
+    };
+  }
+  return {
+    ...normalizeCase(item),
+    recordType: RECORD_TYPE,
+    syncUpdatedAt: new Date().toISOString()
+  };
+}
+
+async function loadCloudCases() {
+  setSyncStatus("雲端同步中", "syncing");
+  try {
+    const res = await fetch(`${SYNC_API_URL}?type=${encodeURIComponent(CLOUD_TYPE)}&secret=${encodeURIComponent(SYNC_SECRET)}`);
+    const json = await res.json();
+    if (!json.ok || !Array.isArray(json.data)) throw new Error(json.error || "sync failed");
+    cases = mergeCases(cases.map(normalizeCase), json.data);
+    persist();
+    renderCases();
+    setSyncStatus("雲端已同步", "ok");
+  } catch (error) {
+    console.warn("cloud logistics read failed", error);
+    setSyncStatus("雲端同步失敗", "error");
+  }
+}
+
+async function syncCloudCase(item) {
+  const payload = { secret: SYNC_SECRET, type: CLOUD_TYPE, record: cloudRecord(item) };
+  setSyncStatus("雲端同步中", "syncing");
+  try {
+    await fetch(SYNC_API_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+      body: `payload=${encodeURIComponent(JSON.stringify(payload))}`
+    });
+    setSyncStatus("雲端已同步", "ok");
+  } catch (error) {
+    console.warn("cloud logistics write failed", error);
+    setSyncStatus("雲端同步失敗", "error");
+  }
+}
+
+function setSyncStatus(text, state = "") {
+  if (!syncStatus) return;
+  syncStatus.textContent = text;
+  syncStatus.dataset.state = state;
 }
 
 function switchView(view) {
@@ -74,6 +175,7 @@ function saveCase() {
   const now = new Date().toISOString();
   const record = {
     id,
+    recordType: RECORD_TYPE,
     createdAt: existing?.createdAt || now,
     updatedAt: now,
     reference: fieldValue("#caseReference"),
@@ -86,12 +188,14 @@ function saveCase() {
     recipientPhone: fieldValue("#recipientPhone"),
     recipientAddress: fieldValue("#recipientAddress"),
     note: fieldValue("#caseNote"),
-    status: fieldValue("#caseStatus") || "pending"
+    status: fieldValue("#caseStatus") || "pending",
+    syncUpdatedAt: now
   };
 
   cases = [record, ...cases.filter((item) => item.id !== id)]
     .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
   persist();
+  syncCloudCase(record).then(refreshCloudSoon);
   clearForm();
   renderCases();
   saveStatus.textContent = "已儲存案件";
@@ -193,8 +297,14 @@ function methodDetails(item) {
 }
 
 function setCaseStatus(id, status) {
-  cases = cases.map((item) => item.id === id ? { ...item, status, updatedAt: new Date().toISOString() } : item);
+  let changed = null;
+  cases = cases.map((item) => {
+    if (item.id !== id) return item;
+    changed = { ...item, status, updatedAt: new Date().toISOString(), syncUpdatedAt: new Date().toISOString() };
+    return changed;
+  });
   persist();
+  if (changed) syncCloudCase(changed).then(refreshCloudSoon);
   renderCases();
 }
 
@@ -220,9 +330,15 @@ function editCase(id) {
 
 function deleteCase(id) {
   if (!confirm("確定刪除這筆物流案件？")) return;
+  const tombstone = { id, recordType: RECORD_TYPE, _deleted: true, syncUpdatedAt: new Date().toISOString() };
   cases = cases.filter((item) => item.id !== id);
   persist();
+  syncCloudCase(tombstone).then(refreshCloudSoon);
   renderCases();
+}
+
+function refreshCloudSoon() {
+  window.setTimeout(loadCloudCases, 1200);
 }
 
 function formatDateTime(value) {
