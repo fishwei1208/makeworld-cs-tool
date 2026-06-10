@@ -556,6 +556,8 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
     <!-- 訂單基本 -->
     <div class="field-group compact-order-info">
       <div class="section-label">ORDER</div>
+      <input id="f-date" type="hidden">
+      <input id="f-created-at" type="hidden">
       <div class="field-row r2">
         <div>
           <label>來源管道</label>
@@ -572,16 +574,9 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
           </div>
         </div>
         <div>
-          <label>訂單日期 / 時刻</label>
-          <input id="f-date" type="hidden">
-          <input id="f-created-at" type="hidden">
-          <div class="date-display" id="date-display">—</div>
+          <label>客戶暱稱</label>
+          <input id="f-customer" type="text" placeholder="客戶暱稱 / 粉專名稱 / 聯絡人">
         </div>
-      </div>
-
-      <div>
-        <label>客戶暱稱</label>
-        <input id="f-customer" type="text" placeholder="客戶暱稱 / 粉專名稱 / 聯絡人">
       </div>
     </div>
 
@@ -1156,7 +1151,8 @@ function updateDateLabel(){
   const created=document.getElementById('f-created-at').value||nowIso();
   document.getElementById('f-created-at').value=created;
   document.getElementById('f-date').value=created.slice(0,10);
-  document.getElementById('date-display').textContent=formatDateTimeFull(created);
+  const dateDisplay=document.getElementById('date-display');
+  if(dateDisplay)dateDisplay.textContent=formatDateTimeFull(created);
   renderOrderPreview();
 }
 document.getElementById('f-created-at').value=nowIso();
