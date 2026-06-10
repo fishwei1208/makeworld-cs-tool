@@ -1,3 +1,32 @@
+function getNextLuggageShipDate(today = new Date()) {
+  const day = new Date(today);
+  day.setHours(0, 0, 0, 0);
+
+  const firstCutoff = new Date(2026, 5, 17);
+  const firstShip = new Date(2026, 5, 25);
+  const cycleDays = 14;
+  const dayMs = 24 * 60 * 60 * 1000;
+
+  if (day <= firstCutoff) {
+    return firstShip;
+  }
+
+  const cyclesAfterFirst = Math.ceil((day - firstCutoff) / (cycleDays * dayMs));
+  const shipDate = new Date(firstShip);
+  shipDate.setDate(firstShip.getDate() + cyclesAfterFirst * cycleDays);
+  return shipDate;
+}
+
+function formatShortDate(date) {
+  return `${date.getMonth() + 1}/${date.getDate()}`;
+}
+
+function luggageShippingReply() {
+  return `目前下單，正常出貨時間是${formatShortDate(getNextLuggageShipDate())}
+如果您需要提前寄出，會有急件費100元
+會在一周內幫您寄出！急件私訊跟我下單即可`;
+}
+
 const faqs = [
   {
     category: "towel",
@@ -67,6 +96,12 @@ https://www.makeworld.tw/product/product&product_id=786
 下單後來信圖片
 --來信mail標題為訂單編號+姓名--
 makeworld.design@gmail.com`
+  },
+  {
+    category: "luggage",
+    label: "行李箱套",
+    title: "行李箱套目前出貨時程",
+    text: luggageShippingReply()
   },
   {
     category: "luggage",
