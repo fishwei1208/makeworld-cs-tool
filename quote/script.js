@@ -37,7 +37,7 @@ const quoteContacts = {
 };
 
 const state = {
-  view: "workspace",
+  view: "quote",
   step: "customer",
   productType: "shirt",
   company: "deshui",
@@ -165,13 +165,24 @@ function getLocalDateStamp(date = new Date()) {
 }
 
 function setView(view) {
-  state.view = view;
-  document.querySelectorAll("[data-view]").forEach((button) => button.classList.toggle("active", button.dataset.view === view));
+  const nextView = view === "workspace" ? "quote" : view;
+  state.view = nextView;
+  document.querySelectorAll("[data-view]").forEach((button) => button.classList.toggle("active", button.dataset.view === nextView));
   document.querySelectorAll(".view").forEach((panel) => panel.classList.remove("active"));
-  $(`${view}View`).classList.add("active");
-  $("pageTitle").textContent = view === "workspace" ? "新增報價" : view === "history" ? "歷史報價" : "價格資料";
-  if ($("mobileViewSelect")) $("mobileViewSelect").value = view;
-  if (view === "history") renderHistory();
+  const panelId = nextView === "quote" || nextView === "cost" ? "workspaceView" : `${nextView}View`;
+  $(panelId).classList.add("active");
+  $("pageTitle").textContent =
+    nextView === "quote" ? "報價單" : nextView === "cost" ? "成本計算" : nextView === "history" ? "歷史報價" : "價格資料";
+  if ($("mobileViewSelect")) $("mobileViewSelect").value = nextView;
+  if (nextView === "quote") setQuoteMode("manual");
+  if (nextView === "cost") {
+    setQuoteMode("cost");
+    if (state.step === "customer" || state.step === "quote") setStep("product");
+  }
+  if (nextView === "history" || nextView === "pricing") {
+    document.body.classList.remove("manual-mode", "cost-mode");
+  }
+  if (nextView === "history") renderHistory();
 }
 
 function setQuoteMode(mode) {
@@ -179,7 +190,6 @@ function setQuoteMode(mode) {
   document.body.classList.toggle("manual-mode", state.quoteMode === "manual");
   document.body.classList.toggle("cost-mode", state.quoteMode === "cost");
   if ($("mobileModeSelect")) $("mobileModeSelect").value = state.quoteMode;
-  if (state.quoteMode === "manual" && state.view !== "workspace") setView("workspace");
   updateManualStepClass();
   render();
 }

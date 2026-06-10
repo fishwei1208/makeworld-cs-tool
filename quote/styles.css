@@ -113,6 +113,17 @@ label,
   display: none;
 }
 
+.cost-mode #stepCustomer,
+.cost-mode #stepQuote,
+.cost-mode [data-step="customer"],
+.cost-mode [data-step="quote"] {
+  display: none !important;
+}
+
+.cost-mode .flow-strip.five {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .nav-item {
   display: grid;
   grid-template-columns: 24px 1fr;
@@ -1181,7 +1192,7 @@ textarea:focus {
   }
 
   .nav-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .nav-note {
@@ -1287,7 +1298,7 @@ textarea:focus {
 
   .mobile-quote-controls {
     display: grid;
-    grid-template-columns: 0.78fr 1.22fr;
+    grid-template-columns: 1fr;
     gap: 8px;
   }
 
@@ -1632,7 +1643,7 @@ textarea:focus {
   }
 
   .manual-mode .mobile-quote-controls {
-    grid-template-columns: 0.9fr 1.1fr;
+    grid-template-columns: 1fr;
     gap: 6px;
   }
 

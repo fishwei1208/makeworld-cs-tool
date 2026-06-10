@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MakeWorld 報價工作台</title>
-    <link rel="stylesheet" href="styles.css?v=20260605-print-layout-fix" />
+    <link rel="stylesheet" href="styles.css?v=20260610-split-quote-cost" />
   </head>
   <body>
     <main class="app-shell">
@@ -20,28 +20,24 @@
         <div class="mobile-quote-controls" aria-label="手機版報價操作">
           <label>頁面
             <select id="mobileViewSelect">
-              <option value="workspace">新增報價</option>
+              <option value="quote">報價單</option>
+              <option value="cost">成本計算</option>
               <option value="history">歷史報價</option>
               <option value="pricing">價格資料</option>
-            </select>
-          </label>
-          <label>模式
-            <select id="mobileModeSelect">
-              <option value="manual">手機手動報價單模式</option>
-              <option value="cost">成本計算建立訂單模式</option>
             </select>
           </label>
         </div>
 
         <nav class="nav-list" id="viewNav">
-          <button class="nav-item active" type="button" data-view="workspace"><span>＋</span>新增報價</button>
+          <button class="nav-item active" type="button" data-view="quote"><span>＋</span>報價單</button>
+          <button class="nav-item" type="button" data-view="cost"><span>∑</span>成本計算</button>
           <button class="nav-item" type="button" data-view="history"><span>≡</span>歷史報價</button>
           <button class="nav-item" type="button" data-view="pricing"><span>$</span>價格資料</button>
         </nav>
 
         <div class="nav-note">
           <strong>流程提醒</strong>
-          <p>同一位客戶可建立多個品項。先完成商品與成本附加項，再進售價設定決定毛利與單價。</p>
+          <p>報價單適合直接出單；成本計算適合先推算成本、售價與利潤。</p>
         </div>
       </aside>
 
@@ -49,7 +45,7 @@
         <header class="topbar">
           <div>
             <p class="eyebrow">Quote System</p>
-            <h2 id="pageTitle">新增報價</h2>
+            <h2 id="pageTitle">報價單</h2>
           </div>
           <div class="topbar-actions">
             <button class="ghost-button" type="button" id="newItemButton">新增品項</button>
@@ -491,6 +487,6 @@
     </main>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="script.js?v=20260605-print-layout-fix"></script>
+    <script src="script.js?v=20260610-split-quote-cost"></script>
   </body>
 </html>
