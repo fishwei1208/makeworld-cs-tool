@@ -164,6 +164,7 @@ textarea.tall{min-height:100px}
   transition:background .18s,box-shadow .18s;font-family:'Noto Sans TC',sans-serif;
   box-shadow:0 2px 10px rgba(61,110,246,.28);letter-spacing:.3px}
 .btn-submit:hover{background:var(--accent-dk);box-shadow:0 4px 16px rgba(61,110,246,.38)}
+.btn-submit:disabled{cursor:not-allowed;opacity:.68;box-shadow:none}
 .save-status{margin-top:9px;border:1px solid var(--green);background:var(--green-lt);color:var(--green);
   border-radius:10px;padding:10px 12px;font-size:14px;font-weight:800;display:none}
 .save-status.show{display:block}
@@ -997,6 +998,7 @@ let delMode='cvs';
 let currentFilter='all';
 let processFilter='active';
 let editingOrderId=null;
+let isOrderSubmitting=false;
 orders=orders.map(normalizeOrder);
 save();
 
@@ -1540,6 +1542,7 @@ function clearItemFields(cat){
 
 // ══ ADD ORDER ══
 function addOrder(){
+  if(isOrderSubmitting){toast('訂單正在儲存與同步，請稍等');return}
   document.querySelectorAll('.missing,.missing-group').forEach(clearMissing);
   const customer=document.getElementById('f-customer').value.trim();
   const recipientName=document.getElementById('f-recipient-name').value.trim();
@@ -1570,6 +1573,7 @@ function addOrder(){
   const delivery=getDraftDelivery();
   const payload={id:editingOrderId||Date.now(),source,customer,recipientName,recipientPhone,orderAmount,paymentStatus:payment.status,paymentAmount:payment.amount,orderStatus,name:recipientName,phone:recipientPhone,date,createdAt,delivery,imgs:[...pendingImgs],items:orderItems.map(it=>({...it}))};
   const wasEditing=!!editingOrderId;
+  setOrderSubmitState(true,wasEditing?'更新中...':'儲存中...');
   if(editingOrderId){
     payload.editedAt=new Date().toISOString();
     orders=orders.map(o=>o.id===editingOrderId?payload:o);
@@ -1577,7 +1581,7 @@ function addOrder(){
     orders.push(payload);
   }
   save();updateStats();renderProcessOrders();clearForm();showSaveStatus(payload,wasEditing);toast(wasEditing?'✓ 訂單已重新編輯，正在同步雲端':'✓ 訂單已建立，正在同步雲端');
-  syncCloudOrder(payload).then(loadCloudOrders);
+  syncCloudOrder(payload).then(()=>window.setTimeout(loadCloudOrders,1200)).finally(()=>setOrderSubmitState(false));
 }
 function showSaveStatus(order,wasEditing=false){
   const el=document.getElementById('save-status');
@@ -1589,6 +1593,14 @@ function showSaveStatus(order,wasEditing=false){
   btn.textContent=wasEditing?'✓ 已更新訂單':'✓ 已儲存成功';
   setTimeout(()=>{btn.classList.remove('saved');btn.textContent='✓ 儲存整筆訂單'},2200);
 }
+function setOrderSubmitState(isSubmitting,label='儲存中...'){
+  isOrderSubmitting=isSubmitting;
+  const btn=document.querySelector('.btn-submit');
+  if(!btn)return;
+  btn.disabled=isSubmitting;
+  if(isSubmitting)btn.textContent=label;
+  else btn.textContent=editingOrderId?'✓ 儲存重新編輯':'✓ 儲存整筆訂單';
+}
 function deleteOrder(id){
   if(!confirm('確定要刪除這筆訂單？'))return;
   const tombstone={id,_deleted:true,syncUpdatedAt:new Date().toISOString()};
@@ -1596,7 +1608,37 @@ function deleteOrder(id){
   save();updateStats();renderProcessOrders();renderOrders();renderSummary();
   syncCloudOrder(tombstone);
 }
-function save(){localStorage.setItem('mw3_orders',JSON.stringify(orders))}
+function localImageForStorage(img){
+  const dataUrl=img?.dataUrl||'';
+  const canKeepData=!img?.fileId&&!img?.url&&!img?.thumbUrl&&dataUrl.length<180000;
+  return {
+    name:img?.name||'',
+    dataUrl:canKeepData?dataUrl:'',
+    fileId:img?.fileId||'',
+    url:img?.url||'',
+    thumbUrl:img?.thumbUrl||''
+  };
+}
+function localOrderForStorage(order){
+  return {...order,imgs:(order.imgs||[]).map(localImageForStorage)};
+}
+function save(){
+  try{
+    localStorage.setItem('mw3_orders',JSON.stringify(orders));
+    return true;
+  }catch(err){
+    console.warn('full local save failed, retry compact',err);
+    try{
+      localStorage.setItem('mw3_orders',JSON.stringify(orders.map(localOrderForStorage)));
+      toast('圖片較大，已先保留訂單資料並同步雲端圖片');
+      return true;
+    }catch(err2){
+      console.warn('compact local save failed',err2);
+      toast('本機儲存空間不足，已嘗試送出雲端同步');
+      return false;
+    }
+  }
+}
 
 function editOrder(id){
   const o=orders.find(x=>x.id===id);
