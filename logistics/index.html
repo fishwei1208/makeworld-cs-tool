@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>客服物流處理</title>
+    <link rel="stylesheet" href="styles.css?v=20260610-logistics" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="回內部工具台">
+          <span class="brand-mark">LG</span>
+          <span>
+            <strong>客服物流處理</strong>
+            <small>退件、樣品、換貨、退貨與補寄追蹤</small>
+          </span>
+        </a>
+        <div class="status-chip">本機紀錄</div>
+      </header>
+
+      <nav class="mode-tabs" aria-label="頁面切換">
+        <button class="mode-tab active" type="button" data-view="form">新增案件</button>
+        <button class="mode-tab" type="button" data-view="list">案件處理</button>
+      </nav>
+
+      <section class="view active" id="formView">
+        <form class="case-form" id="caseForm">
+          <input id="caseId" type="hidden" />
+
+          <section class="panel">
+            <div class="panel-head">
+              <p>STEP 1</p>
+              <h1>案件資訊</h1>
+            </div>
+
+            <label>
+              官網訂單編號或聯絡資訊
+              <input id="caseReference" type="text" placeholder="例：ORD-20260610-001 / 王小姐 0912..." />
+            </label>
+
+            <label>
+              目的
+              <select id="casePurpose">
+                <option value="超商退件">超商退件</option>
+                <option value="樣品">樣品</option>
+                <option value="換貨">換貨</option>
+                <option value="退貨">退貨</option>
+                <option value="其他">其他</option>
+              </select>
+            </label>
+
+            <label class="conditional" id="purposeOtherWrap">
+              其他目的內容
+              <input id="casePurposeOther" type="text" placeholder="請填寫目的" />
+            </label>
+
+            <label>
+              備註
+              <textarea id="caseNote" rows="3" placeholder="可填寫客服對話重點、金額、注意事項"></textarea>
+            </label>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <p>STEP 2</p>
+              <h2>處理方式</h2>
+            </div>
+
+            <label>
+              處理方式
+              <select id="caseMethod">
+                <option value="原超商重新寄出">原超商重新寄出</option>
+                <option value="新超商重新寄出">新超商重新寄出</option>
+                <option value="宅配">宅配</option>
+                <option value="取件收回">取件收回</option>
+              </select>
+            </label>
+
+            <div class="conditional detail-grid" id="storeWrap">
+              <label>
+                新超商店名
+                <input id="storeName" type="text" placeholder="例：7-11 竹山門市" />
+              </label>
+              <label>
+                新超商店號
+                <input id="storeCode" type="text" placeholder="例：123456" />
+              </label>
+            </div>
+
+            <div class="conditional detail-grid" id="deliveryWrap">
+              <label>
+                姓名
+                <input id="recipientName" type="text" placeholder="收件 / 取件姓名" />
+              </label>
+              <label>
+                電話
+                <input id="recipientPhone" type="text" placeholder="電話" />
+              </label>
+              <label class="wide">
+                地址
+                <input id="recipientAddress" type="text" placeholder="完整地址" />
+              </label>
+            </div>
+
+            <label>
+              狀態
+              <select id="caseStatus">
+                <option value="pending">待處理</option>
+                <option value="processing">處理中</option>
+                <option value="done">完成</option>
+              </select>
+            </label>
+          </section>
+
+          <div class="form-actions">
+            <button class="primary-btn" type="submit">儲存案件</button>
+            <button class="secondary-btn" type="button" id="clearButton">清除</button>
+          </div>
+          <div class="save-status" id="saveStatus" role="status" aria-live="polite"></div>
+        </form>
+      </section>
+
+      <section class="view" id="listView">
+        <div class="filter-bar" id="filterBar">
+          <button class="filter-btn active" type="button" data-filter="active">未完成</button>
+          <button class="filter-btn" type="button" data-filter="pending">待處理</button>
+          <button class="filter-btn" type="button" data-filter="processing">處理中</button>
+          <button class="filter-btn" type="button" data-filter="done">完成</button>
+          <button class="filter-btn" type="button" data-filter="all">全部</button>
+        </div>
+
+        <div class="summary-grid" id="summaryGrid"></div>
+        <div class="case-list" id="caseList"></div>
+      </section>
+    </main>
+
+    <script src="script.js?v=20260610-logistics"></script>
+  </body>
+</html>
