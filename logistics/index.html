@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <title>客服物流處理</title>
-    <link rel="stylesheet" href="styles.css?v=20260611-logistics-source" />
+    <link rel="stylesheet" href="styles.css?v=20260611-logistics-compact" />
   </head>
   <body>
     <main class="app-shell">
@@ -27,6 +27,7 @@
       <section class="view active" id="formView">
         <form class="case-form" id="caseForm">
           <input id="caseId" type="hidden" />
+          <input id="caseReference" type="hidden" />
 
           <section class="panel">
             <div class="panel-head">
@@ -34,15 +35,11 @@
               <h1>案件資訊</h1>
             </div>
 
-            <label>
-              官網訂單編號或聯絡資訊
-              <input id="caseReference" type="text" placeholder="例：ORD-20260610-001 / 王小姐 0912..." />
-            </label>
-
             <div class="source-grid">
               <label>
                 客戶來源
                 <select id="caseSource">
+                  <option value="官網">官網</option>
                   <option value="FB">FB</option>
                   <option value="LINE@">LINE@</option>
                   <option value="threads">threads</option>
@@ -121,14 +118,7 @@
               </label>
             </div>
 
-            <label>
-              狀態
-              <select id="caseStatus">
-                <option value="pending">待處理</option>
-                <option value="processing">處理中</option>
-                <option value="done">完成</option>
-              </select>
-            </label>
+            <input id="caseStatus" type="hidden" value="pending" />
           </section>
 
           <div class="form-actions">
@@ -155,6 +145,6 @@
 
     <div class="print-workorder" id="printWorkorder" aria-hidden="true"></div>
 
-    <script src="script.js?v=20260611-logistics-source"></script>
+    <script src="script.js?v=20260611-logistics-compact"></script>
   </body>
 </html>

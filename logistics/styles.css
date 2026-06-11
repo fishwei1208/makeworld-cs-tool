@@ -349,27 +349,39 @@ textarea:focus {
 .case-head {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 12px;
-  align-items: start;
+  gap: 10px;
+  align-items: center;
   border-bottom: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.72);
-  padding: 14px;
+  padding: 12px 14px;
 }
 
 .case-status {
-  min-width: 128px;
+  min-width: 116px;
   font-weight: 900;
+  padding: 8px 10px;
 }
 
-.case-date {
+.case-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
 }
 
+.case-state {
+  border-radius: 999px;
+  background: var(--accent);
+  color: white;
+  padding: 3px 8px;
+}
+
 .case-title {
-  margin-top: 6px;
-  font-size: 22px;
+  margin-top: 5px;
+  font-size: 20px;
   font-weight: 900;
   line-height: 1.25;
   word-break: break-word;
@@ -379,7 +391,7 @@ textarea:focus {
   display: inline-flex;
   width: fit-content;
   max-width: 100%;
-  margin-top: 8px;
+  margin-top: 6px;
   border: 1px solid rgba(180, 83, 9, 0.22);
   border-radius: 999px;
   background: var(--accent-soft);
@@ -392,19 +404,21 @@ textarea:focus {
 
 .case-body {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 12px;
-  padding: 14px;
+  grid-template-columns: minmax(0, 0.75fr) minmax(0, 1fr);
+  gap: 8px;
+  padding: 12px 14px;
 }
 
-.case-section {
+.case-line,
+.case-detail,
+.case-note {
   border: 1px solid rgba(234, 217, 197, 0.75);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.72);
-  padding: 12px;
+  padding: 10px;
 }
 
-.case-section span {
+.case-line span {
   display: block;
   margin-bottom: 5px;
   color: var(--muted);
@@ -412,16 +426,21 @@ textarea:focus {
   font-weight: 900;
 }
 
-.case-section strong {
+.case-line strong {
   display: block;
-  font-size: 17px;
+  font-size: 16px;
 }
 
-.case-section p {
-  margin-top: 6px;
+.case-detail,
+.case-note {
   color: var(--muted);
-  line-height: 1.55;
+  line-height: 1.45;
   white-space: pre-wrap;
+  grid-column: 1 / -1;
+}
+
+.case-note {
+  background: #fffaf3;
 }
 
 .case-actions {
@@ -430,7 +449,7 @@ textarea:focus {
   gap: 8px;
   align-items: center;
   border-top: 1px solid var(--line);
-  padding: 12px 14px;
+  padding: 10px 14px;
   background: rgba(255, 255, 255, 0.72);
 }
 

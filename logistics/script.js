@@ -180,7 +180,7 @@ function saveCase() {
     recordType: RECORD_TYPE,
     createdAt: existing?.createdAt || now,
     updatedAt: now,
-    reference: fieldValue("#caseReference"),
+    reference: existing?.reference || fieldValue("#caseReference"),
     source: fieldValue("#caseSource"),
     sourceName: fieldValue("#caseSourceName"),
     purpose: fieldValue("#casePurpose"),
@@ -210,7 +210,7 @@ function saveCase() {
 }
 
 function fieldValue(selector) {
-  return document.querySelector(selector).value.trim();
+  return document.querySelector(selector)?.value.trim() || "";
 }
 
 function clearForm() {
@@ -255,12 +255,16 @@ function renderSummary() {
 
 function caseCard(item) {
   const purpose = item.purpose === "其他" && item.purposeOther ? `其他：${item.purposeOther}` : item.purpose;
+  const customer = caseDisplayTitle(item);
   return `
     <article class="case-card status-${escapeHtml(item.status)}">
       <div class="case-head">
         <div>
-          <div class="case-date">${escapeHtml(formatDateTime(item.updatedAt))}</div>
-          <div class="case-title">${escapeHtml(item.reference || "未填訂單 / 聯絡資訊")}</div>
+          <div class="case-meta-row">
+            <span class="case-state">${escapeHtml(stateLabels[item.status] || item.status)}</span>
+            <span>${escapeHtml(formatDateTime(item.updatedAt))}</span>
+          </div>
+          <div class="case-title">${escapeHtml(customer)}</div>
           ${sourceLabel(item) ? `<div class="case-source">${escapeHtml(sourceLabel(item))}</div>` : ""}
         </div>
         <select class="case-status" onchange="setCaseStatus('${escapeAttr(item.id)}', this.value)">
@@ -268,16 +272,16 @@ function caseCard(item) {
         </select>
       </div>
       <div class="case-body">
-        <div class="case-section">
+        <div class="case-line">
           <span>目的</span>
           <strong>${escapeHtml(purpose)}</strong>
-          ${item.note ? `<p>${escapeHtml(item.note)}</p>` : ""}
         </div>
-        <div class="case-section">
-          <span>處理方式</span>
+        <div class="case-line">
+          <span>處理</span>
           <strong>${escapeHtml(item.method)}</strong>
-          <p>${escapeHtml(methodDetails(item))}</p>
         </div>
+        <div class="case-detail">${escapeHtml(methodDetails(item))}</div>
+        ${item.note ? `<div class="case-note">${escapeHtml(item.note)}</div>` : ""}
       </div>
       <div class="case-actions">
         <button class="card-btn print" type="button" onclick="printCase('${escapeAttr(item.id)}')">列印</button>
@@ -356,8 +360,8 @@ function buildPrintWorkorder(item) {
       </div>
 
       <div class="workorder-reference">
-        <span>官網訂單編號 / 聯絡資訊</span>
-        <strong>${escapeHtml(item.reference || "未填")}</strong>
+        <span>案件對象</span>
+        <strong>${escapeHtml(caseDisplayTitle(item))}</strong>
       </div>
 
       <div class="workorder-source">
@@ -395,7 +399,7 @@ function editCase(id) {
   if (!item) return;
   document.querySelector("#caseId").value = item.id;
   document.querySelector("#caseReference").value = item.reference || "";
-  document.querySelector("#caseSource").value = ["FB", "LINE@", "threads", "電話", "布碼科技", "其他"].includes(item.source) ? item.source : "其他";
+  document.querySelector("#caseSource").value = ["官網", "FB", "LINE@", "threads", "電話", "布碼科技", "其他"].includes(item.source) ? item.source : "其他";
   document.querySelector("#caseSourceName").value = item.sourceName || "";
   document.querySelector("#casePurpose").value = item.purpose || "超商退件";
   document.querySelector("#casePurposeOther").value = item.purposeOther || "";
@@ -433,6 +437,10 @@ function formatDateTime(value) {
 
 function sourceLabel(item) {
   return [item.source, item.sourceName].filter(Boolean).join(" / ");
+}
+
+function caseDisplayTitle(item) {
+  return item.sourceName || item.reference || "未填名字 / 帳號";
 }
 
 function safeFileName(value) {
