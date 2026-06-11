@@ -495,8 +495,8 @@ textarea:focus {
     -webkit-print-color-adjust: exact;
   }
 
-  body * {
-    visibility: hidden !important;
+  .app-shell {
+    display: none !important;
   }
 
   .print-workorder,
@@ -505,18 +505,18 @@ textarea:focus {
   }
 
   .print-workorder {
-    position: fixed;
-    inset: 0;
+    position: static;
     display: block !important;
     background: #fff;
   }
 
   .workorder-sheet {
     width: 190mm;
-    min-height: 267mm;
+    height: 257mm;
     margin: 0 auto;
     border: 2px solid #111827;
-    padding: 10mm;
+    padding: 8mm;
+    overflow: hidden;
     font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
   }
 
@@ -620,7 +620,7 @@ textarea:focus {
   }
 
   .workorder-note {
-    min-height: 55mm;
+    min-height: 42mm;
     margin-top: 4mm;
   }
 
@@ -635,7 +635,7 @@ textarea:focus {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 6mm;
-    margin-top: 8mm;
+    margin-top: 6mm;
   }
 
   .workorder-footer b {

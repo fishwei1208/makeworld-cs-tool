@@ -59,6 +59,8 @@ textarea {
   grid-template-columns: 48px 1fr;
   gap: 12px;
   align-items: center;
+  color: inherit;
+  text-decoration: none;
 }
 
 .brand-mark {

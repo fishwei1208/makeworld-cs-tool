@@ -24,7 +24,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex-shrink:0;box-shadow:var(--sh);z-index:50}
 .logo{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--accent);
-  letter-spacing:2.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+  letter-spacing:2.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px;text-decoration:none}
 .logo-mark{width:22px;height:22px;background:var(--accent);border-radius:6px;
   display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
 .topbar-tabs{display:flex;gap:4px}
@@ -525,10 +525,10 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
 
 <!-- ── TOPBAR ── -->
 <div class="topbar">
-  <div class="logo">
+  <a class="logo" href="../" aria-label="回內部工具台">
     <div class="logo-mark">MW</div>
     MakeWorld · 訂單系統
-  </div>
+  </a>
   <div class="topbar-tabs">
     <button class="ttab active" id="tab-new" onclick="switchPage('new')">＋ 新增訂單</button>
     <button class="ttab" id="tab-process" onclick="switchPage('process')">☑ 訂單處理</button>
