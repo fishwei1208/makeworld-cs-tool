@@ -275,6 +275,7 @@ function caseCard(item) {
         </div>
       </div>
       <div class="case-actions">
+        <button class="card-btn print" type="button" onclick="printCase('${escapeAttr(item.id)}')">列印</button>
         <button class="card-btn danger" type="button" onclick="deleteCase('${escapeAttr(item.id)}')">刪除</button>
         <button class="card-btn" type="button" onclick="editCase('${escapeAttr(item.id)}')">編輯</button>
       </div>
@@ -306,6 +307,77 @@ function setCaseStatus(id, status) {
   persist();
   if (changed) syncCloudCase(changed).then(refreshCloudSoon);
   renderCases();
+}
+
+function printCase(id) {
+  const item = cases.find((record) => record.id === id);
+  if (!item) return;
+  const printTarget = document.querySelector("#printWorkorder");
+  const originalTitle = document.title;
+  printTarget.innerHTML = buildPrintWorkorder(item);
+  document.title = `物流處理工作單-${safeFileName(item.reference || item.id)}`;
+  document.body.classList.add("is-printing-logistics");
+  requestAnimationFrame(() => {
+    window.print();
+    window.setTimeout(() => {
+      document.body.classList.remove("is-printing-logistics");
+      printTarget.innerHTML = "";
+      document.title = originalTitle;
+    }, 500);
+  });
+}
+
+function buildPrintWorkorder(item) {
+  const purpose = item.purpose === "其他" && item.purposeOther ? `其他：${item.purposeOther}` : item.purpose;
+  const details = methodDetails(item)
+    .split("\n")
+    .filter(Boolean)
+    .map((line) => `<li>${escapeHtml(line)}</li>`)
+    .join("");
+  return `
+    <section class="workorder-sheet">
+      <header class="workorder-head">
+        <div>
+          <p>MAKEWORLD</p>
+          <h1>物流處理工作單</h1>
+        </div>
+        <div class="workorder-status">${escapeHtml(stateLabels[item.status] || item.status)}</div>
+      </header>
+
+      <div class="workorder-meta">
+        <div><span>列印時間</span><strong>${escapeHtml(formatDateTime(new Date().toISOString()))}</strong></div>
+        <div><span>建立時間</span><strong>${escapeHtml(formatDateTime(item.createdAt))}</strong></div>
+        <div><span>更新時間</span><strong>${escapeHtml(formatDateTime(item.updatedAt))}</strong></div>
+      </div>
+
+      <div class="workorder-reference">
+        <span>官網訂單編號 / 聯絡資訊</span>
+        <strong>${escapeHtml(item.reference || "未填")}</strong>
+      </div>
+
+      <div class="workorder-grid">
+        <section>
+          <h2>目的</h2>
+          <p class="workorder-main">${escapeHtml(purpose || "未填")}</p>
+        </section>
+        <section>
+          <h2>處理方式</h2>
+          <p class="workorder-main">${escapeHtml(item.method || "未填")}</p>
+          <ul>${details}</ul>
+        </section>
+      </div>
+
+      <section class="workorder-note">
+        <h2>備註</h2>
+        <p>${escapeHtml(item.note || "無")}</p>
+      </section>
+
+      <footer class="workorder-footer">
+        <div><span>處理人員</span><b></b></div>
+        <div><span>完成確認</span><b></b></div>
+      </footer>
+    </section>
+  `;
 }
 
 function editCase(id) {
@@ -345,6 +417,10 @@ function formatDateTime(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
   return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+}
+
+function safeFileName(value) {
+  return String(value || "未填案件").replace(/[\\/:*?"<>|]/g, "").trim() || "未填案件";
 }
 
 function escapeHtml(value) {

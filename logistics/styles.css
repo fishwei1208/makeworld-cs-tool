@@ -417,6 +417,14 @@ textarea:focus {
   color: #b91c1c;
 }
 
+.print {
+  color: var(--accent-strong);
+}
+
+.print-workorder {
+  display: none;
+}
+
 .empty {
   border: 1px dashed var(--line);
   border-radius: 8px;
@@ -470,6 +478,169 @@ textarea:focus {
 
   .case-actions {
     display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  body {
+    background: #fff !important;
+    color: #111827 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .print-workorder,
+  .print-workorder * {
+    visibility: visible !important;
+  }
+
+  .print-workorder {
+    position: fixed;
+    inset: 0;
+    display: block !important;
+    background: #fff;
+  }
+
+  .workorder-sheet {
+    width: 190mm;
+    min-height: 267mm;
+    margin: 0 auto;
+    border: 2px solid #111827;
+    padding: 10mm;
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
+  }
+
+  .workorder-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10mm;
+    align-items: start;
+    border-bottom: 3px solid #111827;
+    padding-bottom: 7mm;
+  }
+
+  .workorder-head p {
+    margin: 0 0 2mm;
+    font-size: 10pt;
+    font-weight: 900;
+    letter-spacing: 1.5pt;
+  }
+
+  .workorder-head h1 {
+    margin: 0;
+    font-size: 24pt;
+    line-height: 1.15;
+  }
+
+  .workorder-status {
+    min-width: 36mm;
+    border: 2px solid #111827;
+    padding: 4mm 6mm;
+    text-align: center;
+    font-size: 18pt;
+    font-weight: 900;
+  }
+
+  .workorder-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3mm;
+    margin-top: 6mm;
+  }
+
+  .workorder-meta div,
+  .workorder-reference,
+  .workorder-grid section,
+  .workorder-note,
+  .workorder-footer div {
+    border: 1px solid #9ca3af;
+    padding: 4mm;
+  }
+
+  .workorder-meta span,
+  .workorder-reference span,
+  .workorder-footer span {
+    display: block;
+    margin-bottom: 2mm;
+    color: #4b5563;
+    font-size: 9pt;
+    font-weight: 800;
+  }
+
+  .workorder-meta strong {
+    font-size: 11pt;
+  }
+
+  .workorder-reference {
+    margin-top: 4mm;
+  }
+
+  .workorder-reference strong {
+    display: block;
+    font-size: 20pt;
+    line-height: 1.25;
+    word-break: break-word;
+  }
+
+  .workorder-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 4mm;
+    margin-top: 4mm;
+  }
+
+  .workorder-grid h2,
+  .workorder-note h2 {
+    margin: 0 0 3mm;
+    font-size: 13pt;
+  }
+
+  .workorder-main {
+    margin: 0;
+    font-size: 18pt;
+    font-weight: 900;
+    line-height: 1.25;
+  }
+
+  .workorder-grid ul {
+    margin: 4mm 0 0;
+    padding-left: 5mm;
+    font-size: 13pt;
+    line-height: 1.55;
+  }
+
+  .workorder-note {
+    min-height: 55mm;
+    margin-top: 4mm;
+  }
+
+  .workorder-note p {
+    margin: 0;
+    white-space: pre-wrap;
+    font-size: 14pt;
+    line-height: 1.6;
+  }
+
+  .workorder-footer {
+    display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 6mm;
+    margin-top: 8mm;
+  }
+
+  .workorder-footer b {
+    display: block;
+    height: 18mm;
+    border-bottom: 2px solid #111827;
   }
 }
