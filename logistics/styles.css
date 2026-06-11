@@ -250,6 +250,16 @@ textarea:focus {
   gap: 12px;
 }
 
+.source-grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 12px;
+}
+
+.source-grid label {
+  margin-bottom: 13px;
+}
+
 .detail-grid label {
   margin-bottom: 0;
 }
@@ -365,6 +375,21 @@ textarea:focus {
   word-break: break-word;
 }
 
+.case-source {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 8px;
+  border: 1px solid rgba(180, 83, 9, 0.22);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  padding: 4px 9px;
+  font-size: 13px;
+  font-weight: 900;
+  word-break: break-word;
+}
+
 .case-body {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
@@ -456,7 +481,8 @@ textarea:focus {
 
   .case-form,
   .case-body,
-  .summary-grid {
+  .summary-grid,
+  .source-grid {
     grid-template-columns: 1fr;
   }
 
@@ -585,6 +611,26 @@ textarea:focus {
     margin-top: 4mm;
   }
 
+  .workorder-source {
+    margin-top: 4mm;
+    border: 1px solid #9ca3af;
+    padding: 4mm;
+  }
+
+  .workorder-source span {
+    display: block;
+    margin-bottom: 2mm;
+    color: #4b5563;
+    font-size: 9pt;
+    font-weight: 800;
+  }
+
+  .workorder-source strong {
+    display: block;
+    font-size: 16pt;
+    line-height: 1.25;
+  }
+
   .workorder-reference strong {
     display: block;
     font-size: 20pt;
@@ -620,7 +666,7 @@ textarea:focus {
   }
 
   .workorder-note {
-    min-height: 42mm;
+    min-height: 32mm;
     margin-top: 4mm;
   }
 
@@ -640,7 +686,7 @@ textarea:focus {
 
   .workorder-footer b {
     display: block;
-    height: 18mm;
+    height: 14mm;
     border-bottom: 2px solid #111827;
   }
 }

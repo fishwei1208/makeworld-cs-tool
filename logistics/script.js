@@ -62,6 +62,8 @@ function normalizeCase(item) {
     createdAt: item?.createdAt || item?.updatedAt || new Date().toISOString(),
     updatedAt: item?.updatedAt || item?.syncUpdatedAt || item?.createdAt || new Date().toISOString(),
     reference: item?.reference || "",
+    source: item?.source || "",
+    sourceName: item?.sourceName || "",
     purpose: item?.purpose || "超商退件",
     purposeOther: item?.purposeOther || "",
     method: item?.method || "原超商重新寄出",
@@ -179,6 +181,8 @@ function saveCase() {
     createdAt: existing?.createdAt || now,
     updatedAt: now,
     reference: fieldValue("#caseReference"),
+    source: fieldValue("#caseSource"),
+    sourceName: fieldValue("#caseSourceName"),
     purpose: fieldValue("#casePurpose"),
     purposeOther: fieldValue("#casePurposeOther"),
     method: fieldValue("#caseMethod"),
@@ -257,6 +261,7 @@ function caseCard(item) {
         <div>
           <div class="case-date">${escapeHtml(formatDateTime(item.updatedAt))}</div>
           <div class="case-title">${escapeHtml(item.reference || "未填訂單 / 聯絡資訊")}</div>
+          ${sourceLabel(item) ? `<div class="case-source">${escapeHtml(sourceLabel(item))}</div>` : ""}
         </div>
         <select class="case-status" onchange="setCaseStatus('${escapeAttr(item.id)}', this.value)">
           ${Object.entries(stateLabels).map(([value, label]) => `<option value="${value}" ${item.status === value ? "selected" : ""}>${label}</option>`).join("")}
@@ -355,6 +360,11 @@ function buildPrintWorkorder(item) {
         <strong>${escapeHtml(item.reference || "未填")}</strong>
       </div>
 
+      <div class="workorder-source">
+        <span>客戶來源</span>
+        <strong>${escapeHtml(sourceLabel(item) || "未填")}</strong>
+      </div>
+
       <div class="workorder-grid">
         <section>
           <h2>目的</h2>
@@ -385,6 +395,8 @@ function editCase(id) {
   if (!item) return;
   document.querySelector("#caseId").value = item.id;
   document.querySelector("#caseReference").value = item.reference || "";
+  document.querySelector("#caseSource").value = ["FB", "LINE@", "threads", "電話", "布碼科技", "其他"].includes(item.source) ? item.source : "其他";
+  document.querySelector("#caseSourceName").value = item.sourceName || "";
   document.querySelector("#casePurpose").value = item.purpose || "超商退件";
   document.querySelector("#casePurposeOther").value = item.purposeOther || "";
   document.querySelector("#caseMethod").value = item.method || "原超商重新寄出";
@@ -417,6 +429,10 @@ function formatDateTime(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
   return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+}
+
+function sourceLabel(item) {
+  return [item.source, item.sourceName].filter(Boolean).join(" / ");
 }
 
 function safeFileName(value) {

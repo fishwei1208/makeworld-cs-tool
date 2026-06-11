@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <title>客服物流處理</title>
-    <link rel="stylesheet" href="styles.css?v=20260611-print-workorder-onepage" />
+    <link rel="stylesheet" href="styles.css?v=20260611-logistics-source" />
   </head>
   <body>
     <main class="app-shell">
@@ -38,6 +38,24 @@
               官網訂單編號或聯絡資訊
               <input id="caseReference" type="text" placeholder="例：ORD-20260610-001 / 王小姐 0912..." />
             </label>
+
+            <div class="source-grid">
+              <label>
+                客戶來源
+                <select id="caseSource">
+                  <option value="FB">FB</option>
+                  <option value="LINE@">LINE@</option>
+                  <option value="threads">threads</option>
+                  <option value="電話">電話</option>
+                  <option value="布碼科技">布碼科技</option>
+                  <option value="其他">其他</option>
+                </select>
+              </label>
+              <label>
+                名字 / 帳號
+                <input id="caseSourceName" type="text" placeholder="例：王小姐 / IG帳號 / LINE名稱" />
+              </label>
+            </div>
 
             <label>
               目的
@@ -137,6 +155,6 @@
 
     <div class="print-workorder" id="printWorkorder" aria-hidden="true"></div>
 
-    <script src="script.js?v=20260611-print-workorder"></script>
+    <script src="script.js?v=20260611-logistics-source"></script>
   </body>
 </html>
