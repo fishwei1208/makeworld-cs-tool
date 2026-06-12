@@ -1191,16 +1191,52 @@ textarea:focus {
     display: none;
   }
 
-  .quote-workspace .editor-panel {
+  .quote-workspace .work-grid {
     display: grid;
-    gap: 18px;
+    grid-template-columns: minmax(230px, 0.52fr) minmax(230px, 0.52fr) minmax(520px, 1fr);
+    grid-template-areas:
+      "product processing customer"
+      "pricing pricing quote";
+    gap: 14px;
+    align-items: start;
+  }
+
+  .quote-workspace .editor-panel {
+    display: contents;
     min-height: 0;
     border: 0;
     background: transparent;
     box-shadow: none;
   }
 
+  .quote-workspace .summary-panel {
+    display: none;
+  }
+
+  .quote-workspace #stepProduct {
+    grid-area: product;
+  }
+
+  .quote-workspace #stepProcessing {
+    grid-area: processing;
+  }
+
+  .quote-workspace #stepPricing {
+    grid-area: pricing;
+  }
+
+  .quote-workspace #stepCustomer {
+    grid-area: customer;
+  }
+
+  .quote-workspace #stepQuote {
+    grid-area: quote;
+  }
+
   .quote-workspace #stepCustomer,
+  .quote-workspace #stepProduct,
+  .quote-workspace #stepProcessing,
+  .quote-workspace #stepPricing,
   .quote-workspace #stepQuote {
     display: block;
     border: 1px solid var(--line);
@@ -1209,19 +1245,66 @@ textarea:focus {
     box-shadow: var(--shadow);
   }
 
-  .quote-workspace #stepProduct,
-  .quote-workspace #stepProcessing,
-  .quote-workspace #stepPricing {
-    display: none !important;
-  }
-
   .quote-workspace .topbar-actions #newItemButton,
   .quote-workspace .topbar-actions #commitTopButton {
     display: none;
   }
 
-  .quote-workspace .metric-grid,
+  .quote-workspace .step-panel {
+    padding: 18px;
+  }
+
+  .quote-workspace .section-title {
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+
+  .quote-workspace .section-title h3 {
+    font-size: 20px;
+  }
+
+  .quote-workspace .item-toolbar {
+    display: block;
+  }
+
+  .quote-workspace .item-toolbar .secondary-button {
+    display: none;
+  }
+
+  .quote-workspace .product-form .form-grid.two,
+  .quote-workspace .processing-grid,
+  .quote-workspace .cost-layout .form-grid.two {
+    grid-template-columns: 1fr;
+  }
+
+  .quote-workspace .processing-grid {
+    gap: 10px;
+  }
+
+  .quote-workspace .position-card {
+    padding: 12px;
+  }
+
+  .quote-workspace .position-head {
+    align-items: flex-start;
+  }
+
+  .quote-workspace .cost-submit-row {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .quote-workspace .cost-submit-row .primary-button {
+    min-width: 180px;
+  }
+
   .quote-workspace .cost-preview-panel {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .quote-workspace .metric-grid {
     display: none;
   }
 
@@ -1243,6 +1326,26 @@ textarea:focus {
 
   .quote-workspace .manual-item-box {
     margin-top: 18px;
+  }
+
+  body:not(.is-printing-quote).quote-workspace .quote-sheet {
+    max-height: 540px;
+    overflow: auto;
+  }
+
+  .quote-workspace .quote-output-logo {
+    height: 96px;
+  }
+
+  .quote-workspace .quote-total-box {
+    grid-template-columns: minmax(150px, 1fr) 118px minmax(220px, auto);
+  }
+
+  .quote-workspace .quote-stamp,
+  .quote-workspace .quote-stamp-slot {
+    width: 104px;
+    height: 104px;
+    min-height: 104px;
   }
 
   .cost-workspace .cost-preview-panel {
@@ -1322,6 +1425,16 @@ textarea:focus {
 
   .summary-panel {
     position: static;
+  }
+
+  .quote-workspace .work-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "product"
+      "processing"
+      "pricing"
+      "customer"
+      "quote";
   }
 }
 
