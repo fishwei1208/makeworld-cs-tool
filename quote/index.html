@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MakeWorld 報價工作台</title>
-    <link rel="stylesheet" href="styles.css?v=20260611-home-link" />
+    <link rel="stylesheet" href="styles.css?v=20260612-quote-split" />
   </head>
   <body>
     <main class="app-shell">
@@ -49,7 +49,7 @@
           </div>
           <div class="topbar-actions">
             <button class="ghost-button" type="button" id="newItemButton">新增品項</button>
-            <button class="secondary-button" type="button" id="commitTopButton">加入 / 更新品項</button>
+            <button class="secondary-button" type="button" id="commitTopButton">加入報價單</button>
             <button class="ghost-button" type="button" id="resetButton">清空</button>
             <button class="primary-button" type="button" id="saveButton">儲存紀錄</button>
           </div>
@@ -58,10 +58,10 @@
         <section class="view active" id="workspaceView">
           <div class="flow-strip five" id="flowStrip" aria-label="報價流程">
             <button class="flow-step active" type="button" data-step="customer"><span>1</span>客戶</button>
-            <button class="flow-step" type="button" data-step="product"><span>2</span>品項</button>
-            <button class="flow-step" type="button" data-step="processing"><span>3</span>加工</button>
-            <button class="flow-step" type="button" data-step="pricing"><span>4</span>售價</button>
-            <button class="flow-step" type="button" data-step="quote"><span>5</span>出單</button>
+            <button class="flow-step" type="button" data-step="product"><span>1</span>成本品項</button>
+            <button class="flow-step" type="button" data-step="processing"><span>2</span>加工</button>
+            <button class="flow-step" type="button" data-step="pricing"><span>3</span>報價售價</button>
+            <button class="flow-step" type="button" data-step="quote"><span>2</span>出單</button>
           </div>
 
           <div class="mobile-manual-flow" id="mobileManualFlow" aria-label="手機手動報價流程">
@@ -122,9 +122,9 @@
                 <div class="item-toolbar">
                   <div>
                     <strong id="editingLabel">目前編輯：新衣服品項</strong>
-                    <p class="small-muted">設定完成後按「加入 / 更新品項」，它會進入右側報價清單。</p>
+                    <p class="small-muted">成本與售價確認後按「加入報價單」，它會進入右側報價品項。</p>
                   </div>
-                  <button class="secondary-button" type="button" id="commitItemButton">加入 / 更新品項</button>
+                  <button class="secondary-button" type="button" id="commitItemButton">加入報價單</button>
                 </div>
 
                 <div class="product-form active" id="shirtForm">
@@ -313,14 +313,19 @@
               <article class="step-panel" id="stepQuote">
                 <div class="section-title">
                   <div>
-                    <p class="eyebrow">Step 5</p>
-                    <h3>出單</h3>
+                    <p class="eyebrow">Quote</p>
+                    <h3>報價單出單</h3>
                   </div>
                   <div class="segmented company-segment" role="group" aria-label="出單公司">
                     <button class="active" type="button" data-company="deshui">得水實業<br><small>發票</small></button>
                     <button type="button" data-company="chimei">奇美廣告<br><small>收據</small></button>
                     <button type="button" data-company="buma">布碼科技<br><small>收據</small></button>
                   </div>
+                </div>
+
+                <div class="quote-mode-note">
+                  <strong>已知價格可以直接在這裡新增品項。</strong>
+                  <span>若需要先試算成本，請切到左側「成本計算」，完成後加入報價單。</span>
                 </div>
 
                 <div class="form-grid two output-options output-settings">
@@ -487,6 +492,6 @@
     </main>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="script.js?v=20260610-split-quote-cost"></script>
+    <script src="script.js?v=20260612-quote-split"></script>
   </body>
 </html>

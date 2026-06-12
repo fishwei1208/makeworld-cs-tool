@@ -60,7 +60,7 @@ function init() {
   bindEvents();
   renderPricing();
   updateProductVisibility();
-  setQuoteMode(state.quoteMode);
+  setView("quote");
   render();
 }
 
@@ -167,20 +167,25 @@ function getLocalDateStamp(date = new Date()) {
 function setView(view) {
   const nextView = view === "workspace" ? "quote" : view;
   state.view = nextView;
+  document.body.classList.toggle("quote-workspace", nextView === "quote");
+  document.body.classList.toggle("cost-workspace", nextView === "cost");
   document.querySelectorAll("[data-view]").forEach((button) => button.classList.toggle("active", button.dataset.view === nextView));
   document.querySelectorAll(".view").forEach((panel) => panel.classList.remove("active"));
   const panelId = nextView === "quote" || nextView === "cost" ? "workspaceView" : `${nextView}View`;
   $(panelId).classList.add("active");
   $("pageTitle").textContent =
-    nextView === "quote" ? "報價單" : nextView === "cost" ? "成本計算" : nextView === "history" ? "歷史報價" : "價格資料";
+    nextView === "quote" ? "報價單出單" : nextView === "cost" ? "成本計算" : nextView === "history" ? "歷史報價" : "價格資料";
   if ($("mobileViewSelect")) $("mobileViewSelect").value = nextView;
-  if (nextView === "quote") setQuoteMode("manual");
+  if (nextView === "quote") {
+    setQuoteMode("manual");
+    setStep("quote");
+  }
   if (nextView === "cost") {
     setQuoteMode("cost");
     if (state.step === "customer" || state.step === "quote") setStep("product");
   }
   if (nextView === "history" || nextView === "pricing") {
-    document.body.classList.remove("manual-mode", "cost-mode");
+    document.body.classList.remove("manual-mode", "cost-mode", "quote-workspace", "cost-workspace");
   }
   if (nextView === "history") renderHistory();
 }
@@ -461,7 +466,7 @@ function commitCurrentItem() {
   else state.items.push(item);
   state.editingId = item.id;
   render();
-  showToast("品項已加入報價清單");
+  showToast("品項已加入報價單");
 }
 
 function addManualItem() {
@@ -855,7 +860,7 @@ function saveCurrentQuote() {
   const quote = calculateQuote();
   if (!quote.customerName) {
     showToast("請先填客戶名稱");
-    setStep("customer");
+    if (state.view !== "quote") setView("quote");
     return;
   }
   if (!state.items.length) {

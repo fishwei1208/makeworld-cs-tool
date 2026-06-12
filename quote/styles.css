@@ -626,6 +626,10 @@ textarea:focus {
   display: none;
 }
 
+.quote-mode-note {
+  display: none;
+}
+
 .cost-preview-row {
   display: grid;
   grid-template-columns: 52px minmax(0, 1fr);
@@ -1180,6 +1184,95 @@ textarea:focus {
 .toast.show {
   transform: translateY(0);
   opacity: 1;
+}
+
+@media (min-width: 721px) {
+  .quote-workspace .flow-strip {
+    display: none;
+  }
+
+  .quote-workspace .editor-panel {
+    display: grid;
+    gap: 18px;
+    min-height: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .quote-workspace #stepCustomer,
+  .quote-workspace #stepQuote {
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: var(--shadow);
+  }
+
+  .quote-workspace #stepProduct,
+  .quote-workspace #stepProcessing,
+  .quote-workspace #stepPricing {
+    display: none !important;
+  }
+
+  .quote-workspace .topbar-actions #newItemButton,
+  .quote-workspace .topbar-actions #commitTopButton {
+    display: none;
+  }
+
+  .quote-workspace .metric-grid,
+  .quote-workspace .cost-preview-panel {
+    display: none;
+  }
+
+  .quote-workspace .quote-mode-note {
+    display: grid;
+    gap: 4px;
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #f7fafc;
+    color: var(--muted);
+    padding: 12px 14px;
+    line-height: 1.5;
+  }
+
+  .quote-workspace .quote-mode-note strong {
+    color: var(--ink);
+  }
+
+  .quote-workspace .manual-item-box {
+    margin-top: 18px;
+  }
+
+  .cost-workspace .cost-preview-panel {
+    display: grid;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .cost-workspace .topbar-actions #saveButton {
+    display: none;
+  }
+
+  .cost-workspace .flow-strip.five {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .cost-workspace .flow-strip.five.processing-hidden {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cost-workspace .quote-preview {
+    display: none;
+  }
+
+  .cost-workspace .summary-panel .summary-header h3::after {
+    content: " / 可加入報價單";
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 700;
+  }
 }
 
 @media (max-width: 1120px) {
