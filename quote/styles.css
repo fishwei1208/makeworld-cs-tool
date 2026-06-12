@@ -1251,16 +1251,36 @@ textarea:focus {
     margin-top: 16px;
   }
 
-  .cost-workspace .topbar-actions #saveButton {
+  .cost-workspace .flow-strip {
     display: none;
   }
 
-  .cost-workspace .flow-strip.five {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .cost-workspace .editor-panel {
+    display: grid;
+    gap: 18px;
+    min-height: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
   }
 
-  .cost-workspace .flow-strip.five.processing-hidden {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .cost-workspace #stepProduct,
+  .cost-workspace #stepProcessing,
+  .cost-workspace #stepPricing {
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: var(--shadow);
+  }
+
+  .cost-workspace #stepCustomer,
+  .cost-workspace #stepQuote {
+    display: none !important;
+  }
+
+  .cost-workspace .topbar-actions #saveButton {
+    display: none;
   }
 
   .cost-workspace .quote-preview {
