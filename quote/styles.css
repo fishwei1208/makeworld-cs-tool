@@ -1212,45 +1212,13 @@ textarea:focus {
 
   .quote-workspace .work-grid {
     display: grid;
-    grid-template-columns: minmax(360px, 0.96fr) 46px minmax(480px, 1.04fr);
-    grid-template-rows: minmax(136px, 0.72fr) minmax(168px, 0.96fr) minmax(150px, 0.78fr);
-    grid-template-areas:
-      "product arrow customer"
-      "processing arrow quote"
-      "pricing arrow quote";
-    gap: 10px 12px;
+    grid-template-columns: minmax(320px, 0.48fr) minmax(560px, 1fr);
+    grid-template-areas: "customer quote";
+    gap: 14px;
     align-items: stretch;
     height: 100%;
     min-height: 0;
     overflow: hidden;
-    position: relative;
-  }
-
-  .quote-workspace .work-grid::before {
-    content: "";
-    grid-area: arrow;
-    align-self: center;
-    justify-self: center;
-    width: 0;
-    height: 0;
-    border-top: 28px solid transparent;
-    border-bottom: 28px solid transparent;
-    border-left: 38px solid #d62f78;
-    filter: drop-shadow(0 7px 10px rgba(214, 47, 120, 0.2));
-  }
-
-  .quote-workspace .work-grid::after {
-    content: "成本送出報價";
-    grid-area: arrow;
-    align-self: center;
-    justify-self: center;
-    transform: translateY(62px);
-    color: #9b1f58;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0;
-    writing-mode: vertical-rl;
-    opacity: 0.84;
   }
 
   .quote-workspace .editor-panel {
@@ -1265,18 +1233,6 @@ textarea:focus {
     display: none;
   }
 
-  .quote-workspace #stepProduct {
-    grid-area: product;
-  }
-
-  .quote-workspace #stepProcessing {
-    grid-area: processing;
-  }
-
-  .quote-workspace #stepPricing {
-    grid-area: pricing;
-  }
-
   .quote-workspace #stepCustomer {
     grid-area: customer;
   }
@@ -1285,10 +1241,13 @@ textarea:focus {
     grid-area: quote;
   }
 
-  .quote-workspace #stepCustomer,
   .quote-workspace #stepProduct,
   .quote-workspace #stepProcessing,
-  .quote-workspace #stepPricing,
+  .quote-workspace #stepPricing {
+    display: none !important;
+  }
+
+  .quote-workspace #stepCustomer,
   .quote-workspace #stepQuote {
     display: block;
     border: 1px solid var(--line);
@@ -1300,7 +1259,6 @@ textarea:focus {
     scrollbar-width: thin;
   }
 
-  .quote-workspace #stepProduct::before,
   .quote-workspace #stepCustomer::before {
     display: block;
     margin-bottom: 8px;
@@ -1310,12 +1268,8 @@ textarea:focus {
     letter-spacing: 0.08em;
   }
 
-  .quote-workspace #stepProduct::before {
-    content: "01 成本計算";
-  }
-
   .quote-workspace #stepCustomer::before {
-    content: "02 報價單生成";
+    content: "01 客戶資料";
   }
 
   .quote-workspace .topbar-actions #newItemButton,
@@ -1431,6 +1385,35 @@ textarea:focus {
     padding: 10px;
   }
 
+  .quote-workspace #stepQuote {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .quote-workspace #stepQuote .section-title {
+    order: 0;
+  }
+
+  .quote-workspace .output-settings {
+    order: 1;
+  }
+
+  .quote-workspace .manual-item-box {
+    order: 2;
+  }
+
+  .quote-workspace #stepQuote > .form-grid:not(.output-settings) {
+    order: 3;
+  }
+
+  .quote-workspace .quote-sheet {
+    order: 4;
+  }
+
+  .quote-workspace .action-row {
+    order: 5;
+  }
+
   .quote-workspace .output-options,
   .quote-workspace .cost-card,
   .quote-workspace .item-list-panel {
@@ -1487,6 +1470,11 @@ textarea:focus {
     margin-top: 16px;
   }
 
+  .cost-workspace .work-grid {
+    grid-template-columns: minmax(0, 1fr) 390px;
+    align-items: start;
+  }
+
   .cost-workspace .flow-strip {
     display: none;
   }
@@ -1516,6 +1504,10 @@ textarea:focus {
   }
 
   .cost-workspace .topbar-actions #saveButton {
+    display: none;
+  }
+
+  .cost-workspace .topbar-actions #resetButton {
     display: none;
   }
 
@@ -1563,9 +1555,6 @@ textarea:focus {
   .quote-workspace .work-grid {
     grid-template-columns: 1fr;
     grid-template-areas:
-      "product"
-      "processing"
-      "pricing"
       "customer"
       "quote";
   }

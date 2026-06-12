@@ -174,7 +174,7 @@ function setView(view) {
   const panelId = nextView === "quote" || nextView === "cost" ? "workspaceView" : `${nextView}View`;
   $(panelId).classList.add("active");
   $("pageTitle").textContent =
-    nextView === "quote" ? "報價單出單" : nextView === "cost" ? "成本計算" : nextView === "history" ? "歷史報價" : "價格資料";
+    nextView === "quote" ? "報價單生成" : nextView === "cost" ? "成本計算與比較" : nextView === "history" ? "歷史報價" : "價格資料";
   if ($("mobileViewSelect")) $("mobileViewSelect").value = nextView;
   if (nextView === "quote") {
     setQuoteMode("manual");
@@ -466,7 +466,7 @@ function commitCurrentItem() {
   else state.items.push(item);
   state.editingId = item.id;
   render();
-  showToast("品項已加入報價單");
+  showToast("已送到報價單");
 }
 
 function addManualItem() {

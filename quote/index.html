@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MakeWorld 報價工作台</title>
-    <link rel="stylesheet" href="styles.css?v=20260612-quote-two-blocks" />
+    <link rel="stylesheet" href="styles.css?v=20260612-quote-split-workflow" />
   </head>
   <body>
     <main class="app-shell">
@@ -20,8 +20,8 @@
         <div class="mobile-quote-controls" aria-label="手機版報價操作">
           <label>頁面
             <select id="mobileViewSelect">
-              <option value="quote">報價單</option>
-              <option value="cost">成本計算</option>
+              <option value="quote">報價單生成</option>
+              <option value="cost">成本計算與比較</option>
               <option value="history">歷史報價</option>
               <option value="pricing">價格資料</option>
             </select>
@@ -29,15 +29,15 @@
         </div>
 
         <nav class="nav-list" id="viewNav">
-          <button class="nav-item active" type="button" data-view="quote"><span>＋</span>報價單</button>
-          <button class="nav-item" type="button" data-view="cost"><span>∑</span>成本計算</button>
+          <button class="nav-item active" type="button" data-view="quote"><span>＋</span>報價單生成</button>
+          <button class="nav-item" type="button" data-view="cost"><span>∑</span>成本計算與比較</button>
           <button class="nav-item" type="button" data-view="history"><span>≡</span>歷史報價</button>
           <button class="nav-item" type="button" data-view="pricing"><span>$</span>價格資料</button>
         </nav>
 
         <div class="nav-note">
           <strong>流程提醒</strong>
-          <p>報價單適合直接出單；成本計算適合先推算成本、售價與利潤。</p>
+          <p>先在成本計算比較售價與利潤；確定後送進報價單，或直接在報價單生成手動出單。</p>
         </div>
       </aside>
 
@@ -45,11 +45,11 @@
         <header class="topbar">
           <div>
             <p class="eyebrow">Quote System</p>
-            <h2 id="pageTitle">報價單</h2>
+            <h2 id="pageTitle">報價單生成</h2>
           </div>
           <div class="topbar-actions">
             <button class="ghost-button" type="button" id="newItemButton">新增品項</button>
-            <button class="secondary-button" type="button" id="commitTopButton">加入報價單</button>
+            <button class="secondary-button" type="button" id="commitTopButton">送到報價單</button>
             <button class="ghost-button" type="button" id="resetButton">清空</button>
             <button class="primary-button" type="button" id="saveButton">儲存紀錄</button>
           </div>
@@ -122,9 +122,9 @@
                 <div class="item-toolbar">
                   <div>
                     <strong id="editingLabel">目前編輯：新衣服品項</strong>
-                    <p class="small-muted">成本與售價確認後按「加入報價單」，它會進入右側報價品項。</p>
+                    <p class="small-muted">成本、售價、利潤確認後，按「送到報價單」即可帶入出單品項。</p>
                   </div>
-                  <button class="secondary-button" type="button" id="commitItemButton">加入報價單</button>
+                  <button class="secondary-button" type="button" id="commitItemButton">送到報價單</button>
                 </div>
 
                 <div class="product-form active" id="shirtForm">
@@ -308,7 +308,7 @@
                     <div class="part-summary" id="pricingSummary"></div>
                   </div>
                   <div class="cost-submit-row">
-                    <button class="primary-button" type="button" onclick="commitCurrentItem()">新增至報價單</button>
+                    <button class="primary-button" type="button" onclick="commitCurrentItem()">送到報價單</button>
                   </div>
                 </div>
               </article>
@@ -495,6 +495,6 @@
     </main>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="script.js?v=20260612-quote-split"></script>
+    <script src="script.js?v=20260612-quote-split-workflow"></script>
   </body>
 </html>
