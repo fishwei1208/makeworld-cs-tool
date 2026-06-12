@@ -44,7 +44,7 @@ a {
 }
 
 .app-shell {
-  width: min(1080px, calc(100% - 24px));
+  width: min(1240px, calc(100% - 24px));
   margin: 0 auto;
   padding: 16px 0 42px;
 }
@@ -255,6 +255,11 @@ textarea:focus {
   border-radius: 8px;
   background: rgba(247, 245, 239, 0.96);
   padding: 10px;
+}
+
+.list-search {
+  width: 100%;
+  min-height: 42px;
 }
 
 .filter-bar {
@@ -498,6 +503,134 @@ textarea:focus {
 
   .note-status {
     min-width: 0;
+  }
+}
+
+@media (min-width: 900px) {
+  .app-shell {
+    display: grid;
+    grid-template-columns: 488px minmax(0, 1fr);
+    gap: 18px 20px;
+    align-items: start;
+  }
+
+  .topbar {
+    position: static;
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .mode-tabs {
+    display: none;
+  }
+
+  #formView,
+  #listView {
+    display: block !important;
+    min-width: 0;
+  }
+
+  .note-form {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: var(--shadow);
+    padding: 18px;
+  }
+
+  .panel {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .panel-head {
+    margin-bottom: 12px;
+  }
+
+  .panel-head p {
+    display: none;
+  }
+
+  h1,
+  h2 {
+    font-size: 18px;
+  }
+
+  label {
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  input,
+  select,
+  textarea {
+    min-height: 42px;
+    padding: 9px 12px;
+    font-size: 15px;
+  }
+
+  textarea {
+    min-height: 74px;
+  }
+
+  .form-actions {
+    justify-content: flex-start;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding: 0 18px;
+  }
+
+  .list-tools {
+    position: static;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px auto;
+    gap: 10px;
+    align-items: center;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    margin-bottom: 14px;
+  }
+
+  .filter-bar {
+    border-radius: 8px;
+    background: #ebe8df;
+    padding: 4px;
+  }
+
+  .filter-btn {
+    min-height: 38px;
+    min-width: auto;
+    border-color: transparent;
+    padding: 0 12px;
+  }
+
+  .print-btn {
+    width: auto;
+    min-height: 42px;
+    margin-top: 0;
+    padding: 0 14px;
+  }
+
+  .summary-grid {
+    display: none;
+  }
+
+  .note-list {
+    max-height: calc(100vh - 168px);
+    overflow: auto;
+    padding-right: 2px;
   }
 }
 

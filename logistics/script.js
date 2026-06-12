@@ -12,6 +12,7 @@ const stateLabels = {
 
 let cases = loadCases();
 let activeFilter = "active";
+let activeSearch = "";
 
 const form = document.querySelector("#caseForm");
 const saveStatus = document.querySelector("#saveStatus");
@@ -24,6 +25,11 @@ document.querySelectorAll(".mode-tab").forEach((button) => {
 document.querySelector("#casePurpose").addEventListener("change", updateConditionalFields);
 document.querySelector("#caseMethod").addEventListener("change", updateConditionalFields);
 document.querySelector("#clearButton").addEventListener("click", clearForm);
+document.querySelector("#printListButton")?.addEventListener("click", () => window.print());
+document.querySelector("#caseSearch")?.addEventListener("input", (event) => {
+  activeSearch = event.target.value.trim().toLowerCase();
+  renderCases();
+});
 
 document.querySelector("#filterBar").addEventListener("click", (event) => {
   const button = event.target.closest("[data-filter]");
@@ -223,9 +229,28 @@ function clearForm() {
 
 function filteredCases() {
   return cases.filter((item) => {
-    if (activeFilter === "all") return true;
-    if (activeFilter === "active") return item.status !== "done";
-    return item.status === activeFilter;
+    const statusMatch =
+      activeFilter === "all" ||
+      (activeFilter === "active" && item.status !== "done") ||
+      item.status === activeFilter;
+    if (!statusMatch) return false;
+    if (!activeSearch) return true;
+    return [
+      item.source,
+      item.sourceName,
+      item.purpose,
+      item.purposeOther,
+      item.method,
+      item.storeName,
+      item.storeCode,
+      item.recipientName,
+      item.recipientPhone,
+      item.recipientAddress,
+      item.note
+    ]
+      .join(" ")
+      .toLowerCase()
+      .includes(activeSearch);
   });
 }
 

@@ -25,6 +25,7 @@ const priorityLabels = {
 
 let notes = loadNotes();
 let activeFilter = "active";
+let activeSearch = "";
 
 const form = document.querySelector("#noteForm");
 const saveStatus = document.querySelector("#saveStatus");
@@ -36,6 +37,10 @@ document.querySelectorAll(".mode-tab").forEach((button) => {
 
 document.querySelector("#clearButton").addEventListener("click", clearForm);
 document.querySelector("#printListButton").addEventListener("click", () => window.print());
+document.querySelector("#noteSearch")?.addEventListener("input", (event) => {
+  activeSearch = event.target.value.trim().toLowerCase();
+  renderNotes();
+});
 
 document.querySelector("#filterBar").addEventListener("click", (event) => {
   const button = event.target.closest("[data-filter]");
@@ -258,11 +263,18 @@ function renderSummary() {
 }
 
 function matchesFilter(item) {
-  if (activeFilter === "all") return true;
-  if (activeFilter === "active") return item.status !== "done";
-  if (activeFilter === "waiting") return ["customer_wait", "vendor_wait", "quote", "sample"].includes(item.status);
-  if (activeFilter === "soon") return item.status !== "done" && isDueSoon(item.due);
-  return item.status === activeFilter;
+  const statusMatch =
+    activeFilter === "all" ||
+    (activeFilter === "active" && item.status !== "done") ||
+    (activeFilter === "waiting" && ["customer_wait", "vendor_wait", "quote", "sample"].includes(item.status)) ||
+    (activeFilter === "soon" && item.status !== "done" && isDueSoon(item.due)) ||
+    item.status === activeFilter;
+  if (!statusMatch) return false;
+  if (!activeSearch) return true;
+  return [item.title, item.target, item.work, item.memo, statusLabels[item.status], priorityLabels[item.priority]]
+    .join(" ")
+    .toLowerCase()
+    .includes(activeSearch);
 }
 
 function noteCard(item) {

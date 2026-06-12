@@ -44,7 +44,7 @@ a {
 }
 
 .app-shell {
-  width: min(1120px, calc(100% - 28px));
+  width: min(1240px, calc(100% - 28px));
   margin: 0 auto;
   padding: 18px 0 44px;
 }
@@ -298,6 +298,28 @@ textarea:focus {
   background: rgba(255, 248, 239, 0.95);
 }
 
+.list-tools {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 210px auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.list-search {
+  min-height: 42px;
+}
+
+.print-list-btn {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  color: var(--ink);
+  font-weight: 900;
+  padding: 0 14px;
+}
+
 .filter-btn {
   flex: 0 0 auto;
   padding: 0 14px;
@@ -513,6 +535,14 @@ textarea:focus {
     top: 146px;
   }
 
+  .list-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .print-list-btn {
+    width: 100%;
+  }
+
   .case-head {
     grid-template-columns: 1fr;
   }
@@ -524,6 +554,149 @@ textarea:focus {
   .case-actions {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  body {
+    background: #f7f7f2;
+  }
+
+  .app-shell {
+    display: grid;
+    grid-template-columns: 508px minmax(0, 1fr);
+    gap: 18px 20px;
+    align-items: start;
+  }
+
+  .topbar {
+    position: static;
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .mode-tabs {
+    display: none;
+  }
+
+  #formView,
+  #listView {
+    display: block !important;
+    min-width: 0;
+  }
+
+  .case-form {
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: var(--shadow);
+    padding: 18px;
+  }
+
+  .panel {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .panel + .panel {
+    margin-top: 12px;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+  }
+
+  .panel-head {
+    margin-bottom: 12px;
+  }
+
+  .panel-head p {
+    display: none;
+  }
+
+  h1,
+  h2 {
+    font-size: 18px;
+  }
+
+  label {
+    gap: 6px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+
+  input,
+  select,
+  textarea {
+    min-height: 42px;
+    padding: 9px 12px;
+    font-size: 15px;
+  }
+
+  textarea {
+    min-height: 74px;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 14px;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    flex: 0 0 auto;
+    min-height: 40px;
+  }
+
+  .filter-bar {
+    position: static;
+    padding: 4px;
+    border-radius: 8px;
+    background: #ebe8df;
+  }
+
+  .filter-btn {
+    min-height: 38px;
+    border-color: transparent;
+    padding: 0 12px;
+  }
+
+  .summary-grid {
+    display: none;
+  }
+
+  .case-list {
+    max-height: calc(100vh - 172px);
+    overflow: auto;
+    padding-right: 2px;
+  }
+
+  .case-card {
+    box-shadow: 0 10px 28px rgba(68, 44, 24, 0.08);
+  }
+
+  .case-head {
+    grid-template-columns: minmax(0, 1fr) 132px;
+    padding: 10px 12px;
+  }
+
+  .case-title {
+    font-size: 18px;
+  }
+
+  .case-body {
+    grid-template-columns: 0.8fr 1fr;
+    padding: 10px 12px;
+  }
+
+  .case-actions {
+    padding: 8px 12px;
   }
 }
 
@@ -540,19 +713,52 @@ textarea:focus {
     -webkit-print-color-adjust: exact;
   }
 
-  .app-shell {
+  body.is-printing-logistics .app-shell {
     display: none !important;
   }
 
-  .print-workorder,
-  .print-workorder * {
+  body.is-printing-logistics .print-workorder,
+  body.is-printing-logistics .print-workorder * {
     visibility: visible !important;
   }
 
-  .print-workorder {
+  body.is-printing-logistics .print-workorder {
     position: static;
     display: block !important;
     background: #fff;
+  }
+
+  body:not(.is-printing-logistics) .topbar,
+  body:not(.is-printing-logistics) .mode-tabs,
+  body:not(.is-printing-logistics) #formView,
+  body:not(.is-printing-logistics) .list-tools,
+  body:not(.is-printing-logistics) .summary-grid,
+  body:not(.is-printing-logistics) .case-actions {
+    display: none !important;
+  }
+
+  body:not(.is-printing-logistics) .app-shell {
+    display: block;
+    width: 100%;
+    padding: 0;
+  }
+
+  body:not(.is-printing-logistics) #listView,
+  body:not(.is-printing-logistics) .view {
+    display: block !important;
+  }
+
+  body:not(.is-printing-logistics) .case-list {
+    display: block;
+    max-height: none;
+    overflow: visible;
+  }
+
+  body:not(.is-printing-logistics) .case-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    box-shadow: none;
+    margin-bottom: 6mm;
   }
 
   .workorder-sheet {

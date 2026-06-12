@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <title>客服物流處理</title>
-    <link rel="stylesheet" href="styles.css?v=20260611-logistics-compact" />
+    <link rel="stylesheet" href="styles.css?v=20260612-desk-workbench" />
   </head>
   <body>
     <main class="app-shell">
@@ -130,12 +130,16 @@
       </section>
 
       <section class="view" id="listView">
-        <div class="filter-bar" id="filterBar">
-          <button class="filter-btn active" type="button" data-filter="active">未完成</button>
-          <button class="filter-btn" type="button" data-filter="pending">待處理</button>
-          <button class="filter-btn" type="button" data-filter="processing">處理中</button>
-          <button class="filter-btn" type="button" data-filter="done">完成</button>
-          <button class="filter-btn" type="button" data-filter="all">全部</button>
+        <div class="list-tools">
+          <div class="filter-bar" id="filterBar">
+            <button class="filter-btn active" type="button" data-filter="active">未完成</button>
+            <button class="filter-btn" type="button" data-filter="pending">待處理</button>
+            <button class="filter-btn" type="button" data-filter="processing">處理中</button>
+            <button class="filter-btn" type="button" data-filter="done">完成</button>
+            <button class="filter-btn" type="button" data-filter="all">全部</button>
+          </div>
+          <input class="list-search" id="caseSearch" type="search" placeholder="搜尋名字 / 備註..." autocomplete="off" />
+          <button class="print-list-btn" type="button" id="printListButton">列印清單</button>
         </div>
 
         <div class="summary-grid" id="summaryGrid"></div>
@@ -145,6 +149,6 @@
 
     <div class="print-workorder" id="printWorkorder" aria-hidden="true"></div>
 
-    <script src="script.js?v=20260611-logistics-compact"></script>
+    <script src="script.js?v=20260612-desk-workbench"></script>
   </body>
 </html>
