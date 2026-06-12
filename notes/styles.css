@@ -24,6 +24,94 @@
   --shadow-lg: 0 4px 10px rgba(20, 30, 25, 0.08), 0 12px 40px rgba(20, 30, 25, 0.12);
 }
 
+/* Claude reference layout override: one clear workbench instead of tabs. */
+.tool-layout {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.8fr) minmax(0, 1.15fr);
+  gap: 22px;
+  align-items: start;
+  margin-top: 22px;
+}
+
+.tool-layout .view,
+.tool-layout .view.active {
+  display: block;
+}
+
+.tool-layout .note-form {
+  display: block;
+}
+
+.tool-layout .summary-grid {
+  display: none;
+}
+
+.tool-layout .panel {
+  padding: 18px;
+}
+
+.tool-layout .list-tools {
+  position: static;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.tool-layout .filter-bar {
+  overflow: visible;
+  padding: 3px;
+  border-radius: 10px;
+  background: #ebece8;
+}
+
+.tool-layout .filter-btn {
+  min-width: 0;
+  min-height: 36px;
+  border-color: transparent;
+  padding: 0 14px;
+}
+
+.tool-layout .print-btn {
+  width: auto;
+  margin-top: 0;
+  padding-inline: 14px;
+}
+
+.tool-layout .form-actions {
+  justify-content: flex-start;
+}
+
+.tool-layout .primary-btn,
+.tool-layout .secondary-btn {
+  flex: 0 0 auto;
+  padding-inline: 18px;
+}
+
+@media (max-width: 980px) {
+  .tool-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .tool-layout {
+    margin-top: 14px;
+  }
+
+  .tool-layout .list-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .tool-layout .filter-bar {
+    overflow-x: auto;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -742,5 +830,101 @@ textarea:focus {
     page-break-inside: avoid;
     box-shadow: none;
     margin-bottom: 8px;
+  }
+}
+
+/* Final desktop workbench override. Keep this last so the tools match the reference layout. */
+@media screen {
+  .tool-layout {
+    display: grid;
+    grid-template-columns: minmax(360px, 0.8fr) minmax(0, 1.15fr);
+    gap: 22px;
+    align-items: start;
+    margin-top: 22px;
+  }
+
+  .tool-layout .view,
+  .tool-layout .view.active {
+    display: block;
+  }
+
+  .tool-layout .note-form {
+    display: block;
+  }
+
+  .tool-layout .summary-grid {
+    display: none;
+  }
+
+  .tool-layout .panel {
+    padding: 18px;
+  }
+
+  .tool-layout .list-tools {
+    position: static;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px auto;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+    border: 0;
+    background: transparent;
+    padding: 0;
+  }
+
+  .tool-layout .filter-bar {
+    overflow: visible;
+    padding: 3px;
+    border-radius: 10px;
+    background: #ebece8;
+  }
+
+  .tool-layout .filter-btn {
+    min-width: 0;
+    min-height: 36px;
+    border-color: transparent;
+    padding: 0 14px;
+  }
+
+  .tool-layout .print-btn {
+    width: auto;
+    margin-top: 0;
+    padding-inline: 14px;
+  }
+
+  .tool-layout .form-actions {
+    justify-content: flex-start;
+  }
+
+  .tool-layout .primary-btn,
+  .tool-layout .secondary-btn {
+    flex: 0 0 auto;
+    padding-inline: 18px;
+  }
+}
+
+@media screen and (max-width: 980px) {
+  .tool-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  .tool-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .tool-layout {
+    margin-top: 14px;
+  }
+
+  .tool-layout .list-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .tool-layout .filter-bar {
+    overflow-x: auto;
   }
 }

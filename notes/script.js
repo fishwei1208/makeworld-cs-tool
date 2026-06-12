@@ -163,6 +163,11 @@ function setSyncStatus(text, state = "") {
 }
 
 function switchView(view) {
+  if (!document.querySelector(".mode-tab")) {
+    if (view === "list") renderNotes();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
   document.querySelectorAll(".mode-tab").forEach((button) => {
     button.classList.toggle("active", button.dataset.view === view);
   });

@@ -598,6 +598,194 @@ textarea:focus {
   display: none;
 }
 
+/* Claude reference layout override: single-screen form + list, no horizontal dragging. */
+.tool-layout {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.78fr) minmax(0, 1.12fr);
+  gap: 22px;
+  align-items: start;
+  margin-top: 22px;
+}
+
+.tool-layout .view,
+.tool-layout .view.active {
+  display: block;
+  padding: 0;
+  background: transparent;
+}
+
+.tool-layout .case-form {
+  display: block;
+}
+
+.tool-layout .panel {
+  margin-bottom: 16px;
+  padding: 18px;
+}
+
+.tool-layout .panel + .panel {
+  margin-top: 16px;
+}
+
+.tool-layout .form-actions {
+  justify-content: flex-start;
+}
+
+.tool-layout .primary-btn,
+.tool-layout .secondary-btn {
+  flex: 0 0 auto;
+  padding-inline: 18px;
+}
+
+.tool-layout .summary-grid {
+  display: none;
+}
+
+.tool-layout .list-tools {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 210px auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.tool-layout .filter-bar {
+  position: static;
+  overflow: visible;
+  padding: 3px;
+  border-radius: 10px;
+  background: #ebece8;
+}
+
+.tool-layout .filter-btn {
+  min-height: 36px;
+  border-color: transparent;
+  padding: 0 14px;
+}
+
+.case-table-card {
+  overflow: hidden;
+}
+
+.case-table-wrap {
+  overflow: visible;
+}
+
+.case-table {
+  table-layout: fixed;
+  font-size: 13px;
+}
+
+.case-table th,
+.case-table td {
+  padding-left: 8px;
+  padding-right: 8px;
+  overflow-wrap: anywhere;
+}
+
+.case-table th:nth-child(1),
+.case-table td:nth-child(1) {
+  width: 114px;
+}
+
+.case-table th:nth-child(2),
+.case-table td:nth-child(2) {
+  width: 76px;
+}
+
+.case-table th:nth-child(3),
+.case-table td:nth-child(3) {
+  width: 54px;
+}
+
+.case-table th:nth-child(4),
+.case-table td:nth-child(4) {
+  width: 76px;
+}
+
+.case-table th:nth-child(5),
+.case-table td:nth-child(5) {
+  width: 68px;
+}
+
+.case-table th:nth-child(6),
+.case-table td:nth-child(6) {
+  width: 86px;
+}
+
+.case-table th:nth-child(9),
+.case-table td:nth-child(9) {
+  width: 118px;
+}
+
+.action-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  white-space: normal;
+}
+
+.action-cell .card-btn {
+  min-height: 32px;
+  padding: 4px 9px;
+}
+
+@media (max-width: 980px) {
+  .tool-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .tool-layout {
+    margin-top: 14px;
+  }
+
+  .tool-layout .list-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .tool-layout .filter-bar {
+    overflow-x: auto;
+  }
+
+  .case-table,
+  .case-table thead,
+  .case-table tbody,
+  .case-table tr,
+  .case-table th,
+  .case-table td {
+    display: block;
+    width: 100% !important;
+  }
+
+  .case-table thead {
+    display: none;
+  }
+
+  .case-table tr {
+    border-bottom: 1px solid var(--line);
+    padding: 12px;
+  }
+
+  .case-table td {
+    border: 0;
+    padding: 5px 0;
+  }
+
+  .case-table td::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .case-table td.action-cell {
+    display: flex;
+  }
+}
+
 .empty {
   border: 1px dashed var(--line);
   border-radius: 8px;
@@ -1020,5 +1208,192 @@ textarea:focus {
     display: block;
     height: 14mm;
     border-bottom: 2px solid #111827;
+  }
+}
+
+/* Final desktop workbench override. Keep this last so logistics matches the reference layout. */
+@media screen {
+  .tool-layout {
+    display: grid;
+    grid-template-columns: minmax(360px, 0.78fr) minmax(0, 1.12fr);
+    gap: 22px;
+    align-items: start;
+    margin-top: 22px;
+  }
+
+  .tool-layout .view,
+  .tool-layout .view.active {
+    display: block;
+    padding: 0;
+    background: transparent;
+  }
+
+  .tool-layout .case-form {
+    display: block;
+  }
+
+  .tool-layout .panel {
+    margin-bottom: 16px;
+    padding: 18px;
+  }
+
+  .tool-layout .panel + .panel {
+    margin-top: 16px;
+  }
+
+  .tool-layout .summary-grid {
+    display: none;
+  }
+
+  .tool-layout .list-tools {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 210px auto;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .tool-layout #listView,
+  .tool-layout .case-list,
+  .tool-layout .case-table-card {
+    min-width: 0;
+  }
+
+  .tool-layout .filter-bar {
+    position: static;
+    overflow: visible;
+    padding: 3px;
+    border-radius: 10px;
+    background: #ebece8;
+  }
+
+  .tool-layout .filter-btn {
+    min-height: 36px;
+    border-color: transparent;
+    padding: 0 14px;
+  }
+
+  .case-table-card {
+    overflow: hidden;
+  }
+
+  .case-table-wrap {
+    overflow: visible;
+  }
+
+  .case-table {
+    table-layout: fixed;
+    font-size: 13px;
+  }
+
+  .case-table th,
+  .case-table td {
+    padding-left: 8px;
+    padding-right: 8px;
+    overflow-wrap: anywhere;
+  }
+
+  .case-table th:nth-child(1),
+  .case-table td:nth-child(1) {
+    width: 15%;
+  }
+
+  .case-table th:nth-child(2),
+  .case-table td:nth-child(2) {
+    width: 9%;
+  }
+
+  .case-table th:nth-child(3),
+  .case-table td:nth-child(3) {
+    width: 7%;
+  }
+
+  .case-table th:nth-child(4),
+  .case-table td:nth-child(4) {
+    width: 10%;
+  }
+
+  .case-table th:nth-child(5),
+  .case-table td:nth-child(5) {
+    width: 9%;
+  }
+
+  .case-table th:nth-child(6),
+  .case-table td:nth-child(6) {
+    width: 12%;
+  }
+
+  .case-table th:nth-child(9),
+  .case-table td:nth-child(9) {
+    width: 14%;
+  }
+
+  .action-cell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    white-space: normal;
+  }
+}
+
+@media screen and (max-width: 980px) {
+  .tool-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  .tool-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .tool-layout {
+    margin-top: 14px;
+  }
+
+  .tool-layout .list-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .tool-layout .filter-bar {
+    overflow-x: auto;
+  }
+
+  .case-table,
+  .case-table thead,
+  .case-table tbody,
+  .case-table tr,
+  .case-table th,
+  .case-table td {
+    display: block;
+    width: 100% !important;
+  }
+
+  .case-table thead {
+    display: none;
+  }
+
+  .case-table tr {
+    border-bottom: 1px solid var(--line);
+    padding: 12px;
+  }
+
+  .case-table td {
+    border: 0;
+    padding: 5px 0;
+  }
+
+  .case-table td::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .case-table td.action-cell {
+    display: flex;
   }
 }

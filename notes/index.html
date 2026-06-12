@@ -19,11 +19,7 @@
         <div class="status-chip" id="syncStatus">雲端同步中</div>
       </header>
 
-      <nav class="mode-tabs" aria-label="頁面切換">
-        <button class="mode-tab active" type="button" data-view="form">新增筆記</button>
-        <button class="mode-tab" type="button" data-view="list">追蹤清單</button>
-      </nav>
-
+      <div class="tool-layout">
       <section class="view active" id="formView">
         <form class="note-form" id="noteForm">
           <input id="noteId" type="hidden" />
@@ -95,7 +91,7 @@
         </form>
       </section>
 
-      <section class="view" id="listView">
+      <section class="view active" id="listView">
         <div class="list-tools">
           <div class="filter-bar" id="filterBar">
             <button class="filter-btn active" type="button" data-filter="active">未完成</button>
@@ -112,8 +108,9 @@
         <div class="summary-grid" id="summaryGrid"></div>
         <div class="note-list" id="noteList"></div>
       </section>
+      </div>
     </main>
 
-    <script src="script.js?v=20260612-refined-ui"></script>
+    <script src="script.js?v=20260612-full-copy-ui"></script>
   </body>
 </html>

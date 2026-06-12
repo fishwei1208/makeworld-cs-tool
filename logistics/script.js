@@ -159,6 +159,11 @@ function setSyncStatus(text, state = "") {
 }
 
 function switchView(view) {
+  if (!document.querySelector(".mode-tab")) {
+    if (view === "list") renderCases();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
   document.querySelectorAll(".mode-tab").forEach((button) => {
     button.classList.toggle("active", button.dataset.view === view);
   });
@@ -264,24 +269,22 @@ function renderCases() {
   }
   target.innerHTML = `
     <div class="case-table-card">
-      <div class="case-table-wrap">
-        <table class="case-table">
-          <thead>
-            <tr>
-              <th>狀態</th>
-              <th>日期</th>
-              <th>來源</th>
-              <th>名字</th>
-              <th>目的</th>
-              <th>處理方式</th>
-              <th>寄送資訊</th>
-              <th>備註</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>${list.map(caseRow).join("")}</tbody>
-        </table>
-      </div>
+      <table class="case-table">
+        <thead>
+          <tr>
+            <th>狀態</th>
+            <th>日期</th>
+            <th>來源</th>
+            <th>名字</th>
+            <th>目的</th>
+            <th>處理方式</th>
+            <th>寄送資訊</th>
+            <th>備註</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>${list.map(caseRow).join("")}</tbody>
+      </table>
     </div>
   `;
 }
@@ -349,19 +352,19 @@ function caseRow(item) {
     .replaceAll("\n", " / ");
   return `
     <tr class="case-row status-${escapeHtml(item.status)}">
-      <td>
+      <td data-label="狀態">
         <select class="case-status compact-status" onchange="setCaseStatus('${escapeAttr(item.id)}', this.value)">
           ${Object.entries(stateLabels).map(([value, label]) => `<option value="${value}" ${item.status === value ? "selected" : ""}>${label}</option>`).join("")}
         </select>
       </td>
-      <td class="mono">${escapeHtml(formatShortDate(item.updatedAt))}</td>
-      <td>${escapeHtml(item.source || "—")}</td>
-      <td><strong>${escapeHtml(caseDisplayTitle(item))}</strong></td>
-      <td>${escapeHtml(purpose || "—")}</td>
-      <td>${escapeHtml(item.method || "—")}</td>
-      <td class="muted-cell">${escapeHtml(delivery || "—")}</td>
-      <td class="note-cell">${escapeHtml(item.note || "—")}</td>
-      <td class="action-cell">
+      <td data-label="日期" class="mono">${escapeHtml(formatShortDate(item.updatedAt))}</td>
+      <td data-label="來源">${escapeHtml(item.source || "—")}</td>
+      <td data-label="名字"><strong>${escapeHtml(caseDisplayTitle(item))}</strong></td>
+      <td data-label="目的">${escapeHtml(purpose || "—")}</td>
+      <td data-label="處理方式">${escapeHtml(item.method || "—")}</td>
+      <td data-label="寄送資訊" class="muted-cell">${escapeHtml(delivery || "—")}</td>
+      <td data-label="備註" class="note-cell">${escapeHtml(item.note || "—")}</td>
+      <td data-label="操作" class="action-cell">
         <button class="card-btn print" type="button" onclick="printCase('${escapeAttr(item.id)}')">列印</button>
         <button class="card-btn" type="button" onclick="editCase('${escapeAttr(item.id)}')">編輯</button>
         <button class="card-btn danger" type="button" onclick="deleteCase('${escapeAttr(item.id)}')">刪除</button>
