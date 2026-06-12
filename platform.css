@@ -99,7 +99,7 @@ h1 {
 
 .tool-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   margin-top: 18px;
 }
@@ -167,6 +167,8 @@ h1 {
   --tool-main: #7a5c1c;
   --tool-soft: #fff7da;
   --tool-border: #ead89a;
+  grid-column: 1 / span 2;
+  min-height: 104px;
 }
 
 .tool-content strong,
@@ -224,6 +226,11 @@ h1 {
   .tool-grid,
   .placeholder-grid {
     grid-template-columns: 1fr;
+  }
+
+  .tool-notes {
+    grid-column: auto;
+    min-height: 128px;
   }
 
   .topbar {
