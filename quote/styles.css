@@ -1187,18 +1187,70 @@ textarea:focus {
 }
 
 @media (min-width: 721px) {
+  .quote-workspace .main-area {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100vh;
+    overflow: hidden;
+    padding: 16px;
+  }
+
+  .quote-workspace .topbar {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+  }
+
+  .quote-workspace #workspaceView {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
   .quote-workspace .flow-strip {
     display: none;
   }
 
   .quote-workspace .work-grid {
     display: grid;
-    grid-template-columns: minmax(230px, 0.52fr) minmax(230px, 0.52fr) minmax(520px, 1fr);
+    grid-template-columns: minmax(360px, 0.96fr) 46px minmax(480px, 1.04fr);
+    grid-template-rows: minmax(136px, 0.72fr) minmax(168px, 0.96fr) minmax(150px, 0.78fr);
     grid-template-areas:
-      "product processing customer"
-      "pricing pricing quote";
-    gap: 14px;
-    align-items: start;
+      "product arrow customer"
+      "processing arrow quote"
+      "pricing arrow quote";
+    gap: 10px 12px;
+    align-items: stretch;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .quote-workspace .work-grid::before {
+    content: "";
+    grid-area: arrow;
+    align-self: center;
+    justify-self: center;
+    width: 0;
+    height: 0;
+    border-top: 28px solid transparent;
+    border-bottom: 28px solid transparent;
+    border-left: 38px solid #d62f78;
+    filter: drop-shadow(0 7px 10px rgba(214, 47, 120, 0.2));
+  }
+
+  .quote-workspace .work-grid::after {
+    content: "成本送出報價";
+    grid-area: arrow;
+    align-self: center;
+    justify-self: center;
+    transform: translateY(62px);
+    color: #9b1f58;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0;
+    writing-mode: vertical-rl;
+    opacity: 0.84;
   }
 
   .quote-workspace .editor-panel {
@@ -1242,7 +1294,28 @@ textarea:focus {
     border: 1px solid var(--line);
     border-radius: 8px;
     background: var(--panel);
-    box-shadow: var(--shadow);
+    box-shadow: 0 8px 18px rgba(16, 39, 55, 0.06);
+    min-height: 0;
+    overflow: auto;
+    scrollbar-width: thin;
+  }
+
+  .quote-workspace #stepProduct::before,
+  .quote-workspace #stepCustomer::before {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+  }
+
+  .quote-workspace #stepProduct::before {
+    content: "01 成本計算";
+  }
+
+  .quote-workspace #stepCustomer::before {
+    content: "02 報價單生成";
   }
 
   .quote-workspace .topbar-actions #newItemButton,
@@ -1251,20 +1324,26 @@ textarea:focus {
   }
 
   .quote-workspace .step-panel {
-    padding: 18px;
+    padding: 12px;
   }
 
   .quote-workspace .section-title {
     align-items: flex-start;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
   }
 
   .quote-workspace .section-title h3 {
-    font-size: 20px;
+    font-size: 17px;
+  }
+
+  .quote-workspace .section-title .eyebrow,
+  .quote-workspace label {
+    font-size: 12px;
   }
 
   .quote-workspace .item-toolbar {
     display: block;
+    margin-bottom: 8px;
   }
 
   .quote-workspace .item-toolbar .secondary-button {
@@ -1277,12 +1356,34 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 
+  .quote-workspace .form-grid,
+  .quote-workspace .form-grid.two,
+  .quote-workspace .form-grid.three,
+  .quote-workspace .cost-layout,
+  .quote-workspace .summary-lines,
+  .quote-workspace .quote-actions {
+    gap: 8px;
+  }
+
+  .quote-workspace input,
+  .quote-workspace select {
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 14px;
+  }
+
+  .quote-workspace textarea {
+    min-height: 68px;
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+
   .quote-workspace .processing-grid {
     gap: 10px;
   }
 
   .quote-workspace .position-card {
-    padding: 12px;
+    padding: 10px;
   }
 
   .quote-workspace .position-head {
@@ -1292,6 +1393,7 @@ textarea:focus {
   .quote-workspace .cost-submit-row {
     display: flex;
     justify-content: flex-end;
+    margin-top: 8px;
   }
 
   .quote-workspace .cost-submit-row .primary-button {
@@ -1301,7 +1403,7 @@ textarea:focus {
   .quote-workspace .cost-preview-panel {
     display: grid;
     gap: 8px;
-    margin-top: 14px;
+    margin-top: 8px;
   }
 
   .quote-workspace .metric-grid {
@@ -1309,7 +1411,7 @@ textarea:focus {
   }
 
   .quote-workspace .quote-mode-note {
-    display: grid;
+    display: none;
     gap: 4px;
     margin-bottom: 16px;
     border: 1px solid var(--line);
@@ -1325,27 +1427,58 @@ textarea:focus {
   }
 
   .quote-workspace .manual-item-box {
-    margin-top: 18px;
+    margin-top: 10px;
+    padding: 10px;
+  }
+
+  .quote-workspace .output-options,
+  .quote-workspace .cost-card,
+  .quote-workspace .item-list-panel {
+    padding: 10px;
+  }
+
+  .quote-workspace .option-tabs {
+    gap: 6px;
+  }
+
+  .quote-workspace .option-tabs button,
+  .quote-workspace .primary-button,
+  .quote-workspace .secondary-button,
+  .quote-workspace .danger-button {
+    min-height: 36px;
+    padding: 0 12px;
   }
 
   body:not(.is-printing-quote).quote-workspace .quote-sheet {
-    max-height: 540px;
+    max-height: 360px;
     overflow: auto;
   }
 
   .quote-workspace .quote-output-logo {
-    height: 96px;
+    height: 72px;
+  }
+
+  .quote-workspace .quote-output-head {
+    padding-top: 18px;
+    padding-bottom: 12px;
+  }
+
+  .quote-workspace .quote-table th,
+  .quote-workspace .quote-table td {
+    padding: 6px 8px;
+    font-size: 12px;
   }
 
   .quote-workspace .quote-total-box {
-    grid-template-columns: minmax(150px, 1fr) 118px minmax(220px, auto);
+    grid-template-columns: minmax(150px, 1fr) 94px minmax(190px, auto);
+    gap: 10px;
   }
 
   .quote-workspace .quote-stamp,
   .quote-workspace .quote-stamp-slot {
-    width: 104px;
-    height: 104px;
-    min-height: 104px;
+    width: 86px;
+    height: 86px;
+    min-height: 86px;
   }
 
   .cost-workspace .cost-preview-panel {
@@ -1435,6 +1568,21 @@ textarea:focus {
       "pricing"
       "customer"
       "quote";
+  }
+
+  .quote-workspace .main-area {
+    height: auto;
+    overflow: visible;
+  }
+
+  .quote-workspace .work-grid {
+    height: auto;
+    overflow: visible;
+  }
+
+  .quote-workspace .work-grid::before,
+  .quote-workspace .work-grid::after {
+    display: none;
   }
 }
 
