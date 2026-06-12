@@ -262,7 +262,28 @@ function renderCases() {
     target.innerHTML = `<div class="empty">目前沒有符合條件的物流案件</div>`;
     return;
   }
-  target.innerHTML = list.map(caseCard).join("");
+  target.innerHTML = `
+    <div class="case-table-card">
+      <div class="case-table-wrap">
+        <table class="case-table">
+          <thead>
+            <tr>
+              <th>狀態</th>
+              <th>日期</th>
+              <th>來源</th>
+              <th>名字</th>
+              <th>目的</th>
+              <th>處理方式</th>
+              <th>寄送資訊</th>
+              <th>備註</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>${list.map(caseRow).join("")}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
 }
 
 function renderSummary() {
@@ -314,6 +335,38 @@ function caseCard(item) {
         <button class="card-btn" type="button" onclick="editCase('${escapeAttr(item.id)}')">編輯</button>
       </div>
     </article>
+  `;
+}
+
+function caseRow(item) {
+  const purpose = item.purpose === "其他" && item.purposeOther ? `其他：${item.purposeOther}` : item.purpose;
+  const delivery = methodDetails(item)
+    .replaceAll("店名：", "")
+    .replaceAll("店號：", "")
+    .replaceAll("姓名：", "")
+    .replaceAll("電話：", "")
+    .replaceAll("地址：", "")
+    .replaceAll("\n", " / ");
+  return `
+    <tr class="case-row status-${escapeHtml(item.status)}">
+      <td>
+        <select class="case-status compact-status" onchange="setCaseStatus('${escapeAttr(item.id)}', this.value)">
+          ${Object.entries(stateLabels).map(([value, label]) => `<option value="${value}" ${item.status === value ? "selected" : ""}>${label}</option>`).join("")}
+        </select>
+      </td>
+      <td class="mono">${escapeHtml(formatShortDate(item.updatedAt))}</td>
+      <td>${escapeHtml(item.source || "—")}</td>
+      <td><strong>${escapeHtml(caseDisplayTitle(item))}</strong></td>
+      <td>${escapeHtml(purpose || "—")}</td>
+      <td>${escapeHtml(item.method || "—")}</td>
+      <td class="muted-cell">${escapeHtml(delivery || "—")}</td>
+      <td class="note-cell">${escapeHtml(item.note || "—")}</td>
+      <td class="action-cell">
+        <button class="card-btn print" type="button" onclick="printCase('${escapeAttr(item.id)}')">列印</button>
+        <button class="card-btn" type="button" onclick="editCase('${escapeAttr(item.id)}')">編輯</button>
+        <button class="card-btn danger" type="button" onclick="deleteCase('${escapeAttr(item.id)}')">刪除</button>
+      </td>
+    </tr>
   `;
 }
 
@@ -458,6 +511,12 @@ function formatDateTime(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
   return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+}
+
+function formatShortDate(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return `${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
 function sourceLabel(item) {

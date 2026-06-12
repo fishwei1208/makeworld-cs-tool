@@ -1,17 +1,27 @@
 :root {
   color-scheme: light;
-  --bg: #f7f5ef;
+  --bg: #f4f4f1;
   --panel: #ffffff;
-  --text: #1e2420;
-  --muted: #68736d;
-  --line: #e1ddd2;
-  --accent: #7a5c1c;
-  --accent-dark: #594211;
-  --accent-soft: #fff7da;
-  --green: #1f7a57;
-  --red: #c2410c;
-  --blue: #2f6fae;
-  --shadow: 0 18px 45px rgba(44, 35, 19, 0.1);
+  --text: #21272b;
+  --muted: #5c666d;
+  --muted-light: #97a1a8;
+  --line: #e4e6e3;
+  --line-strong: #cdd2ce;
+  --accent: #166e4f;
+  --accent-dark: #0e4a36;
+  --accent-soft: #e3f1ea;
+  --tool-color: #a16207;
+  --green: #15803d;
+  --red: #b91c1c;
+  --blue: #1d4ed8;
+  --pending: #b45309;
+  --pending-soft: #fdf0dd;
+  --wait: #7c3aed;
+  --wait-soft: #f0e9fc;
+  --radius: 12px;
+  --radius-s: 8px;
+  --shadow: 0 1px 2px rgba(20, 30, 25, 0.05), 0 4px 16px rgba(20, 30, 25, 0.06);
+  --shadow-lg: 0 4px 10px rgba(20, 30, 25, 0.08), 0 12px 40px rgba(20, 30, 25, 0.12);
 }
 
 * {
@@ -21,9 +31,11 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: Inter, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
+  font-family: "Noto Sans TC", Inter, "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
+  font-size: 14.5px;
+  line-height: 1.65;
 }
 
 button,
@@ -31,7 +43,7 @@ input,
 select,
 textarea {
   font: inherit;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 button {
@@ -57,11 +69,11 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: var(--shadow);
-  padding: 12px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
 }
 
 .brand {
@@ -77,8 +89,8 @@ a {
   place-items: center;
   width: 44px;
   height: 44px;
-  border-radius: 8px;
-  background: var(--accent);
+  border-radius: 9px;
+  background: var(--tool-color);
   color: #fff;
   font-weight: 900;
 }
@@ -89,7 +101,7 @@ a {
 }
 
 .brand strong {
-  font-size: 19px;
+  font-size: 21px;
 }
 
 .brand small {
@@ -128,12 +140,13 @@ a {
 .primary-btn,
 .secondary-btn,
 .card-btn {
-  min-height: 46px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  min-height: 40px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-s);
   background: #fff;
   color: var(--text);
-  font-weight: 900;
+  font-size: 13.5px;
+  font-weight: 600;
 }
 
 .mode-tab.active,
@@ -155,7 +168,7 @@ a {
 .panel,
 .note-card {
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--panel);
   box-shadow: var(--shadow);
 }
@@ -192,18 +205,19 @@ label {
   gap: 7px;
   margin-top: 14px;
   color: var(--muted);
-  font-weight: 900;
+  font-size: 12.5px;
+  font-weight: 600;
 }
 
 input,
 select,
 textarea {
   width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-s);
   background: #fff;
   color: var(--text);
-  padding: 12px 13px;
+  padding: 9px 11px;
   outline: none;
 }
 
@@ -383,7 +397,7 @@ textarea:focus {
 
 .note-title {
   margin-top: 7px;
-  font-size: 21px;
+  font-size: 15.5px;
   font-weight: 900;
   line-height: 1.28;
   word-break: break-word;
@@ -392,7 +406,8 @@ textarea:focus {
 .note-target {
   margin-top: 4px;
   color: var(--muted);
-  font-weight: 800;
+  font-size: 12.5px;
+  font-weight: 600;
 }
 
 .note-status {
@@ -631,6 +646,65 @@ textarea:focus {
     max-height: calc(100vh - 168px);
     overflow: auto;
     padding-right: 2px;
+  }
+
+  .note-card {
+    margin-bottom: 11px;
+    box-shadow: var(--shadow);
+  }
+
+  .note-head {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 13px 16px 6px;
+    border-bottom: 0;
+  }
+
+  .note-meta {
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .status-pill,
+  .priority-pill,
+  .due-pill {
+    padding: 2.5px 9px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .note-body {
+    padding: 0 16px 10px;
+  }
+
+  .note-section {
+    border: 0;
+    background: transparent;
+    padding: 3px 0;
+  }
+
+  .note-section span {
+    display: none;
+  }
+
+  .note-section p {
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .note-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 7px;
+    padding: 8px 16px 13px;
+    border-top: 0;
+    background: transparent;
+  }
+
+  .note-actions .card-btn {
+    min-height: 30px;
+    padding: 0 10px;
+    font-size: 12.5px;
   }
 }
 
