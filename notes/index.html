@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>追蹤筆記</title>
+    <link rel="stylesheet" href="styles.css?v=20260612-notes-v1" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="回內部工具台">
+          <span class="brand-mark">NT</span>
+          <span>
+            <strong>追蹤筆記</strong>
+            <small>零散事項、進度與待追蹤清單</small>
+          </span>
+        </a>
+        <div class="status-chip" id="syncStatus">雲端同步中</div>
+      </header>
+
+      <nav class="mode-tabs" aria-label="頁面切換">
+        <button class="mode-tab active" type="button" data-view="form">新增筆記</button>
+        <button class="mode-tab" type="button" data-view="list">追蹤清單</button>
+      </nav>
+
+      <section class="view active" id="formView">
+        <form class="note-form" id="noteForm">
+          <input id="noteId" type="hidden" />
+
+          <section class="panel">
+            <div class="panel-head">
+              <p>NOTE</p>
+              <h1>案件內容</h1>
+            </div>
+
+            <label>
+              案件內容
+              <input id="noteTitle" type="text" placeholder="例：某客人要確認毛巾報價" />
+            </label>
+
+            <div class="two-grid">
+              <label>
+                對象
+                <input id="noteTarget" type="text" placeholder="例：王小姐 / 廠商 / 內部" />
+              </label>
+              <label>
+                目前進度
+                <select id="noteStatus">
+                  <option value="todo">待處理</option>
+                  <option value="working">處理中</option>
+                  <option value="quote">問報價中</option>
+                  <option value="production">生產中</option>
+                  <option value="customer_wait">客戶沒回應中</option>
+                  <option value="vendor_wait">等廠商回覆</option>
+                  <option value="sample">收樣品</option>
+                  <option value="paused">暫停</option>
+                  <option value="done">已完成</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              工作內容
+              <textarea id="noteWork" rows="4" placeholder="寫下下一步要做什麼、目前卡在哪裡"></textarea>
+            </label>
+
+            <div class="two-grid">
+              <label>
+                期待時程
+                <input id="noteDue" type="date" />
+              </label>
+              <label>
+                重要程度
+                <select id="notePriority">
+                  <option value="normal">一般</option>
+                  <option value="high">重要</option>
+                  <option value="urgent">急件</option>
+                  <option value="low">低</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              備註
+              <textarea id="noteMemo" rows="3" placeholder="補充資訊、對話摘要、價格、注意事項"></textarea>
+            </label>
+          </section>
+
+          <div class="form-actions">
+            <button class="primary-btn" type="submit">儲存筆記</button>
+            <button class="secondary-btn" type="button" id="clearButton">清除</button>
+          </div>
+          <div class="save-status" id="saveStatus" role="status" aria-live="polite"></div>
+        </form>
+      </section>
+
+      <section class="view" id="listView">
+        <div class="list-tools">
+          <div class="filter-bar" id="filterBar">
+            <button class="filter-btn active" type="button" data-filter="active">未完成</button>
+            <button class="filter-btn" type="button" data-filter="todo">待處理</button>
+            <button class="filter-btn" type="button" data-filter="waiting">等回覆</button>
+            <button class="filter-btn" type="button" data-filter="soon">即將到期</button>
+            <button class="filter-btn" type="button" data-filter="done">已完成</button>
+            <button class="filter-btn" type="button" data-filter="all">全部</button>
+          </div>
+          <button class="print-btn" type="button" id="printListButton">列印清單</button>
+        </div>
+
+        <div class="summary-grid" id="summaryGrid"></div>
+        <div class="note-list" id="noteList"></div>
+      </section>
+    </main>
+
+    <script src="script.js?v=20260612-notes-v1"></script>
+  </body>
+</html>

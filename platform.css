@@ -99,7 +99,7 @@ h1 {
 
 .tool-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
   margin-top: 18px;
 }
@@ -161,6 +161,12 @@ h1 {
   --tool-main: #b45309;
   --tool-soft: #fff7ed;
   --tool-border: #fed7aa;
+}
+
+.tool-notes {
+  --tool-main: #7a5c1c;
+  --tool-soft: #fff7da;
+  --tool-border: #ead89a;
 }
 
 .tool-content strong,
