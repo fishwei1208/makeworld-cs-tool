@@ -1213,9 +1213,14 @@ textarea:focus {
 
 /* Final desktop workbench override. Keep this last so logistics matches the reference layout. */
 @media screen {
+  .app-shell {
+    display: block;
+  }
+
   .tool-layout {
+    width: 100%;
     display: grid;
-    grid-template-columns: minmax(360px, 0.78fr) minmax(0, 1.12fr);
+    grid-template-columns: minmax(360px, 0.74fr) minmax(620px, 1.26fr);
     gap: 22px;
     align-items: start;
     margin-top: 22px;
@@ -1336,15 +1341,15 @@ textarea:focus {
   }
 }
 
-@media screen and (max-width: 980px) {
+@media screen and (max-width: 1180px) {
   .tool-layout {
     grid-template-columns: 1fr;
   }
-}
 
-@media screen and (max-width: 1280px) {
-  .tool-layout {
-    grid-template-columns: 1fr;
+  .tool-layout #listView,
+  .tool-layout .case-list,
+  .tool-layout .case-table-card {
+    width: 100%;
   }
 }
 

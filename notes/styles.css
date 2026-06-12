@@ -835,9 +835,14 @@ textarea:focus {
 
 /* Final desktop workbench override. Keep this last so the tools match the reference layout. */
 @media screen {
+  .app-shell {
+    display: block;
+  }
+
   .tool-layout {
+    width: 100%;
     display: grid;
-    grid-template-columns: minmax(360px, 0.8fr) minmax(0, 1.15fr);
+    grid-template-columns: minmax(360px, 0.8fr) minmax(620px, 1.15fr);
     gap: 22px;
     align-items: start;
     margin-top: 22px;
@@ -903,13 +908,7 @@ textarea:focus {
   }
 }
 
-@media screen and (max-width: 980px) {
-  .tool-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media screen and (max-width: 1280px) {
+@media screen and (max-width: 1180px) {
   .tool-layout {
     grid-template-columns: 1fr;
   }
