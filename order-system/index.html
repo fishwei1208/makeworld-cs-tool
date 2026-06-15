@@ -817,6 +817,10 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
         <div><div class="card-title">面紙資訊</div></div>
       </div>
       <div class="field-group">
+        <div>
+          <label>供應商</label>
+          <input id="f-tissue-supplier" type="text" value="建豪" readonly>
+        </div>
         <div><label>品名</label><input id="f-tissue-name" type="text" placeholder="面紙"></div>
         <div>
           <label>面紙數量</label>
@@ -826,6 +830,11 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
             <option value="300">300</option>
             <option value="400">400</option>
             <option value="500">500</option>
+            <option value="1000">1000</option>
+            <option value="2000">2000</option>
+            <option value="3000">3000</option>
+            <option value="4000">4000</option>
+            <option value="5000">5000</option>
             <option value="custom">自填</option>
           </select>
           <div class="tissue-custom" id="tissue-custom-wrap">
@@ -1414,7 +1423,7 @@ function collectCurrentItem(silent=false){
   }
   if(currentCat==='tissue'){
     const qty=getTissueQty()||1;
-    return {id:Date.now()+Math.random(),category:'tissue',supplier:'',style:document.getElementById('f-tissue-name').value.trim()||'面紙',color:'—',size:'—',qty,note:document.getElementById('f-tissue-note').value.trim()};
+    return {id:Date.now()+Math.random(),category:'tissue',supplier:'建豪',style:document.getElementById('f-tissue-name').value.trim()||'面紙',color:'—',size:'—',qty,note:document.getElementById('f-tissue-note').value.trim()};
   }
   const style=document.getElementById('f-other-name').value.trim()||'未填商品';
   return {id:Date.now()+Math.random(),category:'other',supplier:'',style,color:document.getElementById('f-other-spec').value.trim()||'—',size:'—',qty:parseInt(document.getElementById('f-other-qty').value)||1,note:document.getElementById('f-other-note').value.trim()};
@@ -1580,7 +1589,7 @@ function fillItemFields(it){
     document.getElementById('f-tissue-name').value=it.style&&it.style!=='面紙'?it.style:'';
     const qty=String(itemQty(it));
     const preset=document.getElementById('f-tissue-qty-preset');
-    if(['100','200','300','400','500'].includes(qty)){
+    if(['100','200','300','400','500','1000','2000','3000','4000','5000'].includes(qty)){
       preset.value=qty;
       document.getElementById('f-tissue-qty-custom').value='';
     }else{
