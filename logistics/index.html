@@ -25,10 +25,9 @@
           <input id="caseId" type="hidden" />
           <input id="caseReference" type="hidden" />
 
-          <section class="panel">
+          <section class="panel logistics-entry-panel">
             <div class="panel-head">
-              <p>STEP 1</p>
-              <h1>案件資訊</h1>
+              <h1>新增案件</h1>
             </div>
 
             <div class="source-grid">
@@ -67,18 +66,6 @@
             </label>
 
             <label>
-              備註
-              <textarea id="caseNote" rows="3" placeholder="可填寫客服對話重點、金額、注意事項"></textarea>
-            </label>
-          </section>
-
-          <section class="panel">
-            <div class="panel-head">
-              <p>STEP 2</p>
-              <h2>處理方式</h2>
-            </div>
-
-            <label>
               處理方式
               <select id="caseMethod">
                 <option value="原超商重新寄出">原超商重新寄出</option>
@@ -114,14 +101,19 @@
               </label>
             </div>
 
+            <label>
+              備註
+              <textarea id="caseNote" rows="3" placeholder="可填寫客服對話重點、金額、注意事項"></textarea>
+            </label>
+
+            <div class="form-actions">
+              <button class="primary-btn" type="submit">儲存案件</button>
+              <button class="secondary-btn" type="button" id="clearButton">清除</button>
+            </div>
+            <div class="save-status" id="saveStatus" role="status" aria-live="polite"></div>
+
             <input id="caseStatus" type="hidden" value="pending" />
           </section>
-
-          <div class="form-actions">
-            <button class="primary-btn" type="submit">儲存案件</button>
-            <button class="secondary-btn" type="button" id="clearButton">清除</button>
-          </div>
-          <div class="save-status" id="saveStatus" role="status" aria-live="polite"></div>
         </form>
       </section>
 
