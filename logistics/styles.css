@@ -1688,17 +1688,17 @@ textarea:focus {
 
   .case-table th:nth-child(2),
   .case-table td:nth-child(2) {
-    width: 62px;
+    width: 58px;
   }
 
   .case-table th:nth-child(3),
   .case-table td:nth-child(3) {
-    width: 46px;
+    width: 44px;
   }
 
   .case-table th:nth-child(4),
   .case-table td:nth-child(4) {
-    width: 86px;
+    width: 108px;
   }
 
   .case-table th:nth-child(5),
@@ -1734,8 +1734,12 @@ textarea:focus {
   }
 
   .case-name-cell strong {
+    display: block;
     font-size: 13px;
     line-height: 1.45;
+    overflow-wrap: normal;
+    white-space: nowrap;
+    word-break: keep-all;
   }
 
   .muted-cell,
