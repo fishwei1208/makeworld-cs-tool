@@ -544,6 +544,77 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
   .payment-options,.status-options{grid-template-columns:1fr 1fr}
 }
 
+/* Desktop clean order workspace */
+@media (min-width:721px){
+  body{background:#f3f4ef;font-size:14px;line-height:1.5}
+  .topbar{height:72px;padding:0 28px;background:#f3f4ef;border-bottom:0;box-shadow:none}
+  .logo{font-family:'Noto Sans TC',sans-serif;font-size:22px;font-weight:900;letter-spacing:0;text-transform:none;color:var(--text)}
+  .logo-mark{width:34px;height:34px;border-radius:9px;font-size:12px}
+  .topbar-tabs{gap:4px;background:#e9ebe5;border-radius:10px;padding:4px}
+  .ttab{min-height:34px;padding:0 16px;border-radius:8px;font-size:13px;font-weight:900;background:transparent;color:#4e5a53}
+  .ttab.active{background:#fff;color:var(--text);box-shadow:0 1px 4px rgba(20,30,25,.14)}
+
+  #page-new{justify-content:center;align-items:flex-start;gap:20px;padding:18px 28px 34px;overflow:auto;background:#f3f4ef}
+  .order-workspace-main{display:grid;gap:14px;width:min(840px,calc(100vw - 440px));max-width:840px}
+  .order-workspace-main>.form-card{max-width:none!important;width:100%!important;padding:18px;background:#fff;border:1px solid #d9ded8;border-radius:12px;box-shadow:0 5px 18px rgba(20,30,25,.07)}
+  .order-workspace-main>.order-info-card{padding:18px!important;box-shadow:0 5px 18px rgba(20,30,25,.07)!important}
+  .order-workspace-main>.product-entry-card{padding:18px;margin-top:0}
+  .order-workspace-main>.form-card>.divider,
+  .order-workspace-main>.form-card>div[style*="height:18px"]{display:none}
+  .order-card-title,.card-title{font-size:17px;margin-bottom:14px}
+  .field-group{gap:11px}
+  .field-row{gap:12px}
+  .clean-grid{gap:12px}
+  label{font-size:12px;font-weight:800;color:#4a554f;margin-bottom:5px;letter-spacing:0}
+  input,select,textarea,
+  .order-info-clean input,
+  .order-info-clean select{
+    min-height:40px;background:#fff;border:1px solid #c8d0ca;border-radius:8px;padding:8px 12px;font-size:14px;color:var(--text)
+  }
+  textarea{min-height:66px}
+  textarea.tall{min-height:86px}
+  .order-note-field textarea{min-height:64px}
+  .source-other.show,.style-other.show,.towel-other.show,.tissue-custom.show{margin-top:7px}
+  .clean-delivery-toggle{padding:3px;border-radius:10px;background:#ebece7;border:1px solid #dfe3de}
+  .clean-delivery-toggle .dtbtn{min-width:96px;min-height:32px;padding:6px 12px;font-size:13px}
+  .pickup-note.show{min-height:40px;padding:8px 12px}
+
+  .item-type-panel{display:flex;justify-content:flex-end;align-items:center;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:-6px 0 12px auto!important;position:relative;z-index:2}
+  .item-type-panel .section-label{display:none}
+  .item-type-panel select{width:300px;min-height:38px;border-color:#d7dcd5;background:#ebece7;color:#26302a}
+
+  .fsec .form-card-header{display:flex!important;margin:0 0 14px!important;padding:0!important;border:0!important}
+  .fsec .card-icon{display:none}
+  .fsec .card-title{font-size:17px;margin:0}
+  .size-grid{gap:6px}
+  .sz-btn{min-width:34px;padding:5px 10px;border-radius:7px;font-size:12px;background:#fff}
+  .bulk-shirt-box{padding:12px;background:#f9fbf9}
+  .bulk-shirt-box textarea{min-height:90px}
+  .img-upload-area{padding:14px;border-radius:8px;background:#fff}
+  .img-upload-icon{display:none}
+  .img-upload-text{font-size:12px}
+  .img-upload-hint{display:none}
+  .btn-add-item{width:auto;min-height:38px;margin-top:12px;padding:0 16px;border-radius:8px;font-size:14px}
+  .order-items-panel{background:#fff!important;padding:14px;border:1px solid #d9ded8;border-radius:10px}
+  .item-empty{padding:22px 12px;border:1px dashed #cfd6d0;border-radius:10px;background:#fff;color:#8a9690;font-size:13px}
+  .btn-submit,.btn-reset{width:auto;min-height:38px;padding:0 16px;border-radius:8px;font-size:14px}
+  .btn-submit{display:inline-flex;align-items:center;margin-right:8px;box-shadow:none}
+  .btn-reset{display:inline-flex;margin-top:0;background:#fff}
+  .save-status{font-size:13px;padding:8px 10px}
+
+  .preview-card{width:360px;top:18px;max-height:calc(100vh - 108px);padding:14px;background:#fff;border:1px solid #d9ded8;border-radius:12px;box-shadow:0 8px 28px rgba(20,30,25,.08)}
+  .preview-head{display:none}
+  .preview-section{background:#fff;border:1px solid #d9ded8;border-radius:9px;padding:12px;margin-bottom:10px}
+  .preview-section h4{font-size:13px;color:#0f3f2d;margin-bottom:10px}
+  .preview-line{font-size:13px;line-height:1.65;padding:1px 0}
+  .preview-line b{color:#7a8580;font-weight:700}
+  .preview-line span{text-align:right;font-weight:700;color:#202923}
+  .preview-item{border:0;border-radius:0;border-bottom:1px solid #e5e8e3;background:#fff;padding:8px 0;margin:0}
+  .preview-item-title{font-size:13px}
+  .preview-item-meta{font-size:12px}
+  .preview-empty{padding:18px 8px;color:#8a9690;font-size:13px}
+}
+
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
@@ -573,6 +644,7 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
 <!-- ════════ PAGE 1: 新增訂單 ════════ -->
 <div class="page active" id="page-new">
 
+  <section class="order-workspace-main">
   <!-- CARD: 訂單資料 -->
   <div class="form-card order-info-card" style="max-width:920px;width:100%">
     <div class="order-card-title">訂單資料</div>
@@ -677,8 +749,9 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
         <textarea id="f-order-note" placeholder="整筆訂單共通需求，例如：同圖案、同位置、急件、包裝提醒、出貨注意事項"></textarea>
       </div>
     </div>
+  </div>
 
-    <div class="divider" style="margin:18px 0"></div>
+  <div class="form-card product-entry-card">
 
     <div class="soft-panel item-type-panel">
       <div class="section-label">ITEM TYPE</div>
@@ -897,6 +970,7 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
     <button class="btn-reset" onclick="clearForm()">清除表單</button>
 
   </div>
+  </section>
   <aside class="preview-card">
     <div class="preview-head">
       <h3>訂單預覽</h3>
