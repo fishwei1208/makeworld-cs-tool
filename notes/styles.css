@@ -1133,3 +1133,210 @@ textarea:focus {
     font-weight: 900;
   }
 }
+
+/* Notes list as logistics-style table */
+@media screen and (min-width: 761px) {
+  .note-list {
+    display: block;
+    max-height: calc(100vh - 170px);
+    overflow: auto;
+  }
+
+  .note-table-card {
+    overflow: hidden;
+    border: 1px solid #d9ded8;
+    border-radius: 0 0 8px 8px;
+    background: #fff;
+    box-shadow: 0 7px 24px rgba(20, 30, 25, 0.07);
+  }
+
+  .note-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+
+  .note-table th {
+    padding: 8px 8px;
+    border-bottom: 1px solid #d9ded8;
+    background: #f8f8f5;
+    color: #46515a;
+    font-size: 11.5px;
+    font-weight: 900;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .note-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #e4e6e3;
+    line-height: 1.45;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+  }
+
+  .note-table tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .note-table th:nth-child(1),
+  .note-table td:nth-child(1) {
+    width: 88px;
+  }
+
+  .note-table th:nth-child(2),
+  .note-table td:nth-child(2) {
+    width: 70px;
+  }
+
+  .note-table th:nth-child(3),
+  .note-table td:nth-child(3) {
+    width: 66px;
+  }
+
+  .note-table th:nth-child(4),
+  .note-table td:nth-child(4) {
+    width: 108px;
+  }
+
+  .note-table th:nth-child(7),
+  .note-table td:nth-child(7) {
+    width: 78px;
+  }
+
+  .compact-status {
+    width: 72px;
+    min-width: 72px;
+    min-height: 31px;
+    padding: 4px 6px;
+    font-size: 12px;
+  }
+
+  .note-date-cell,
+  .note-source-cell,
+  .note-name-cell,
+  .note-work-cell,
+  .note-progress-cell {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .note-name-cell strong {
+    display: block;
+    font-size: 13px;
+    line-height: 1.45;
+    overflow-wrap: normal;
+    white-space: nowrap;
+    word-break: keep-all;
+  }
+
+  .note-work-cell,
+  .note-progress-cell {
+    color: #2d3731;
+    font-weight: 700;
+    word-break: break-word;
+  }
+
+  .note-progress-cell {
+    color: var(--muted);
+  }
+
+  .note-action-cell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-content: flex-start;
+  }
+
+  .note-action-cell .card-btn {
+    min-height: 31px;
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 900;
+  }
+
+  .note-action-cell .delete {
+    border-color: transparent;
+    background: transparent;
+    padding-inline: 2px;
+  }
+
+  .note-row.status-working .compact-status,
+  .note-row.status-production .compact-status {
+    background: #e4ecfd;
+    color: #1d4ed8;
+  }
+
+  .note-row.status-todo .compact-status,
+  .note-row.status-quote .compact-status,
+  .note-row.status-customer_wait .compact-status,
+  .note-row.status-vendor_wait .compact-status,
+  .note-row.status-sample .compact-status {
+    background: #fdf0dd;
+    color: #b45309;
+  }
+
+  .note-row.status-done .compact-status {
+    background: #e2f3e7;
+    color: #15803d;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .note-table,
+  .note-table thead,
+  .note-table tbody,
+  .note-table tr,
+  .note-table th,
+  .note-table td {
+    display: block;
+    width: 100% !important;
+  }
+
+  .note-table thead {
+    display: none;
+  }
+
+  .note-table-card {
+    overflow: visible;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .note-table tr {
+    margin-bottom: 10px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .note-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid var(--line);
+    padding: 8px 12px;
+  }
+
+  .note-table td:last-child {
+    border-bottom: 0;
+  }
+
+  .note-table td::before {
+    content: attr(data-label);
+    flex: 0 0 76px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 900;
+  }
+
+  .note-action-cell {
+    display: flex !important;
+    justify-content: flex-end !important;
+  }
+}

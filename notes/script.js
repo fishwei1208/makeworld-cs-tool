@@ -249,7 +249,24 @@ function renderNotes() {
     target.innerHTML = `<div class="empty">目前沒有符合條件的追蹤筆記</div>`;
     return;
   }
-  target.innerHTML = rows.map(noteCard).join("");
+  target.innerHTML = `
+    <div class="note-table-card">
+      <table class="note-table">
+        <thead>
+          <tr>
+            <th>狀態</th>
+            <th>日期</th>
+            <th>來源</th>
+            <th>名字</th>
+            <th>需求內容</th>
+            <th>目前進度</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>${rows.map(noteRow).join("")}</tbody>
+      </table>
+    </div>
+  `;
 }
 
 function renderSummary() {
@@ -316,6 +333,27 @@ function noteCard(item) {
   `;
 }
 
+function noteRow(item) {
+  return `
+    <tr class="note-row status-${escapeHtml(item.status)}">
+      <td data-label="狀態">
+        <select class="note-status compact-status" onchange="setNoteStatus('${escapeAttr(item.id)}', this.value)">
+          ${Object.entries(statusLabels).map(([value, label]) => `<option value="${value}" ${item.status === value ? "selected" : ""}>${label}</option>`).join("")}
+        </select>
+      </td>
+      <td data-label="日期" class="note-date-cell">${escapeHtml(noteDateLabel(item))}</td>
+      <td data-label="來源" class="note-source-cell">${escapeHtml(item.target || "—")}</td>
+      <td data-label="名字" class="note-name-cell"><strong>${escapeHtml(item.title || "—")}</strong></td>
+      <td data-label="需求內容" class="note-work-cell">${escapeHtml(item.work || "—")}</td>
+      <td data-label="目前進度" class="note-progress-cell">${escapeHtml(item.memo || "—")}</td>
+      <td data-label="操作" class="note-action-cell">
+        <button class="card-btn edit" type="button" onclick="editNote('${escapeAttr(item.id)}')">編輯</button>
+        <button class="card-btn delete" type="button" onclick="deleteNote('${escapeAttr(item.id)}')">刪除</button>
+      </td>
+    </tr>
+  `;
+}
+
 function setNoteStatus(id, status) {
   const now = new Date().toISOString();
   let changed = null;
@@ -372,6 +410,19 @@ function dueLabel(value) {
   if (days === 0) return { text: "今天到期", className: "due-soon" };
   if (days <= 3) return { text: `${value} 到期`, className: "due-soon" };
   return { text: `${value} 到期`, className: "" };
+}
+
+function noteDateLabel(item) {
+  if (item.due) return formatShortDate(item.due);
+  return formatShortDate(item.updatedAt);
+}
+
+function formatShortDate(value) {
+  if (!value) return "—";
+  const date = value.includes("T") ? new Date(value) : new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return value;
+  const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
+  return `${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}（${weekdays[date.getDay()]}）`;
 }
 
 function formatDateTime(value) {
