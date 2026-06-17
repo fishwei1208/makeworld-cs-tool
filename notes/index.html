@@ -33,11 +33,20 @@
             <div class="two-grid note-title-grid">
               <label>
                 來源
-                <input id="noteTarget" type="text" placeholder="例：王小姐 / 廠商 / 內部" />
+                <select id="noteTarget">
+                  <option value="FB">FB</option>
+                  <option value="LINE@">LINE@</option>
+                  <option value="threads">threads</option>
+                  <option value="電話">電話</option>
+                  <option value="布碼科技">布碼科技</option>
+                  <option value="官網">官網</option>
+                  <option value="內部">內部</option>
+                  <option value="其他">其他</option>
+                </select>
               </label>
               <label>
                 名稱
-                <input id="noteTitle" type="text" placeholder="例：毛巾報價 / 某客人訂單" />
+                <input id="noteTitle" type="text" />
               </label>
             </div>
 
@@ -63,23 +72,15 @@
             </div>
 
             <label class="work-field">
-              工作內容
-              <textarea id="noteWork" rows="5" placeholder="寫下下一步要做什麼、目前卡在哪裡"></textarea>
+              需求內容
+              <textarea id="noteWork" rows="5"></textarea>
             </label>
 
-            <label class="priority-field">
-              重要程度
-              <select id="notePriority">
-                <option value="normal">一般</option>
-                <option value="high">重要</option>
-                <option value="urgent">急件</option>
-                <option value="low">低</option>
-              </select>
-            </label>
+            <input id="notePriority" type="hidden" value="normal" />
 
             <label>
-              備註
-              <textarea id="noteMemo" rows="3" placeholder="補充資訊、對話摘要、價格、注意事項"></textarea>
+              目前進度
+              <textarea id="noteMemo" rows="3"></textarea>
             </label>
           </section>
 

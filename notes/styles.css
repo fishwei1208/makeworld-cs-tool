@@ -999,6 +999,10 @@ textarea:focus {
     width: calc(50% - 6px);
   }
 
+  input[type="hidden"] {
+    display: none;
+  }
+
   #noteMemo {
     min-height: 86px;
   }

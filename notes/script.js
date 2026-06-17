@@ -290,7 +290,6 @@ function noteCard(item) {
         <div>
           <div class="note-meta">
             <span class="status-pill">${escapeHtml(statusLabels[item.status] || item.status)}</span>
-            <span class="priority-pill priority-${escapeHtml(item.priority)}">${escapeHtml(priorityLabels[item.priority] || item.priority)}</span>
             <span class="due-pill ${escapeHtml(dueInfo.className)}">${escapeHtml(dueInfo.text)}</span>
             <span>更新 ${escapeHtml(formatDateTime(item.updatedAt))}</span>
           </div>
@@ -303,10 +302,10 @@ function noteCard(item) {
       </div>
       <div class="note-body">
         <div class="note-section">
-          <span>工作內容</span>
+          <span>需求內容</span>
           <p>${escapeHtml(item.work || "—")}</p>
         </div>
-        ${item.memo ? `<div class="note-section"><span>備註</span><p>${escapeHtml(item.memo)}</p></div>` : ""}
+        ${item.memo ? `<div class="note-section"><span>目前進度</span><p>${escapeHtml(item.memo)}</p></div>` : ""}
       </div>
       <div class="note-actions">
         <button class="card-btn edit" type="button" onclick="editNote('${escapeAttr(item.id)}')">編輯</button>
