@@ -927,3 +927,205 @@ textarea:focus {
     overflow-x: auto;
   }
 }
+
+/* Tracking note practical layout */
+@media screen and (min-width: 761px) {
+  .app-shell {
+    width: min(1240px, calc(100% - 56px));
+    padding-top: 20px;
+  }
+
+  .topbar {
+    margin-bottom: 20px;
+  }
+
+  .tool-layout {
+    grid-template-columns: 500px minmax(0, 1fr);
+    gap: 24px;
+    margin-top: 0;
+  }
+
+  .note-form {
+    border: 1px solid #d9ded8;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 8px 28px rgba(20, 30, 25, 0.08);
+    padding: 34px 36px;
+  }
+
+  .tool-layout .panel {
+    padding: 0;
+  }
+
+  .panel-head {
+    margin-bottom: 18px;
+  }
+
+  .panel-head h1 {
+    font-size: 22px;
+    line-height: 1.2;
+  }
+
+  .note-title-grid,
+  .note-progress-grid,
+  .two-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  label {
+    margin-top: 12px;
+    gap: 6px;
+    color: #3f4a44;
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+    border: 1px solid #c8d0ca;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 15px;
+  }
+
+  .work-field textarea {
+    min-height: 118px;
+  }
+
+  .priority-field {
+    width: calc(50% - 6px);
+  }
+
+  #noteMemo {
+    min-height: 86px;
+  }
+
+  .form-actions {
+    margin-top: 30px;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    min-height: 40px;
+    padding: 0 18px;
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  .tool-layout .list-tools {
+    grid-template-columns: minmax(0, 1fr) 180px auto;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .tool-layout .filter-bar {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 9px;
+    background: #e9ebe5;
+  }
+
+  .tool-layout .filter-btn {
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  .list-search,
+  .print-btn {
+    min-height: 44px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .note-list {
+    max-height: calc(100vh - 170px);
+    overflow: auto;
+    gap: 10px;
+  }
+
+  .note-card {
+    border: 1px solid #d9ded8;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 7px 24px rgba(20, 30, 25, 0.07);
+  }
+
+  .note-head {
+    grid-template-columns: minmax(0, 1fr) 138px;
+    align-items: start;
+    padding: 14px 16px 4px;
+    border-bottom: 0;
+  }
+
+  .note-meta {
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .status-pill,
+  .priority-pill,
+  .due-pill {
+    padding: 3px 9px;
+    font-size: 12px;
+  }
+
+  .note-title {
+    margin-top: 8px;
+    font-size: 17px;
+  }
+
+  .note-target {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .note-status {
+    width: 138px;
+    min-width: 0;
+    min-height: 42px;
+  }
+
+  .note-body {
+    padding: 0 16px 8px;
+  }
+
+  .note-section {
+    border: 0;
+    background: transparent;
+    padding: 4px 0;
+  }
+
+  .note-section span {
+    display: none;
+  }
+
+  .note-section p {
+    color: #4c5751;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .note-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    padding: 8px 16px 14px;
+    border-top: 0;
+    background: transparent;
+  }
+
+  .note-actions .card-btn {
+    min-height: 32px;
+    padding: 0 12px;
+    font-size: 13px;
+    font-weight: 900;
+  }
+}

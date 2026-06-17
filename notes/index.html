@@ -30,18 +30,24 @@
               <h1>案件內容</h1>
             </div>
 
-            <label>
-              案件內容
-              <input id="noteTitle" type="text" placeholder="例：某客人要確認毛巾報價" />
-            </label>
-
-            <div class="two-grid">
+            <div class="two-grid note-title-grid">
               <label>
-                對象
+                來源
                 <input id="noteTarget" type="text" placeholder="例：王小姐 / 廠商 / 內部" />
               </label>
               <label>
-                目前進度
+                名稱
+                <input id="noteTitle" type="text" placeholder="例：毛巾報價 / 某客人訂單" />
+              </label>
+            </div>
+
+            <div class="two-grid note-progress-grid">
+              <label>
+                時程
+                <input id="noteDue" type="date" />
+              </label>
+              <label>
+                進度
                 <select id="noteStatus">
                   <option value="todo">待處理</option>
                   <option value="working">處理中</option>
@@ -56,26 +62,20 @@
               </label>
             </div>
 
-            <label>
+            <label class="work-field">
               工作內容
-              <textarea id="noteWork" rows="4" placeholder="寫下下一步要做什麼、目前卡在哪裡"></textarea>
+              <textarea id="noteWork" rows="5" placeholder="寫下下一步要做什麼、目前卡在哪裡"></textarea>
             </label>
 
-            <div class="two-grid">
-              <label>
-                期待時程
-                <input id="noteDue" type="date" />
-              </label>
-              <label>
-                重要程度
-                <select id="notePriority">
-                  <option value="normal">一般</option>
-                  <option value="high">重要</option>
-                  <option value="urgent">急件</option>
-                  <option value="low">低</option>
-                </select>
-              </label>
-            </div>
+            <label class="priority-field">
+              重要程度
+              <select id="notePriority">
+                <option value="normal">一般</option>
+                <option value="high">重要</option>
+                <option value="urgent">急件</option>
+                <option value="low">低</option>
+              </select>
+            </label>
 
             <label>
               備註
