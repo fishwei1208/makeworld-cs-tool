@@ -273,8 +273,7 @@ function renderCases() {
         <thead>
           <tr>
             <th>狀態</th>
-            <th>日期</th>
-            <th>來源</th>
+            <th>日期 / 來源</th>
             <th>名字</th>
             <th>目的</th>
             <th>處理方式</th>
@@ -357,11 +356,13 @@ function caseRow(item) {
           ${Object.entries(stateLabels).map(([value, label]) => `<option value="${value}" ${item.status === value ? "selected" : ""}>${label}</option>`).join("")}
         </select>
       </td>
-      <td data-label="日期" class="mono">${escapeHtml(formatShortDate(item.updatedAt))}</td>
-      <td data-label="來源">${escapeHtml(item.source || "—")}</td>
-      <td data-label="名字"><strong>${escapeHtml(caseDisplayTitle(item))}</strong></td>
-      <td data-label="目的">${escapeHtml(purpose || "—")}</td>
-      <td data-label="處理方式">${escapeHtml(item.method || "—")}</td>
+      <td data-label="日期 / 來源" class="case-date-source">
+        <span class="mono">${escapeHtml(formatShortDate(item.updatedAt))}</span>
+        <span>${escapeHtml(sourceLabel(item) || item.source || "—")}</span>
+      </td>
+      <td data-label="名字" class="case-name-cell"><strong>${escapeHtml(caseDisplayTitle(item))}</strong></td>
+      <td data-label="目的" class="purpose-cell">${escapeHtml(purpose || "—")}</td>
+      <td data-label="處理方式" class="method-cell">${escapeHtml(item.method || "—")}</td>
       <td data-label="寄送資訊" class="muted-cell">${escapeHtml(delivery || "—")}</td>
       <td data-label="備註" class="note-cell">${escapeHtml(item.note || "—")}</td>
       <td data-label="操作" class="action-cell">
