@@ -232,13 +232,14 @@ function showSaved(text) {
 }
 
 function sortNotes(a, b) {
-  const doneA = a.status === "done" ? 1 : 0;
-  const doneB = b.status === "done" ? 1 : 0;
-  if (doneA !== doneB) return doneA - doneB;
-  const dueA = a.due ? new Date(`${a.due}T00:00:00`).getTime() : Infinity;
-  const dueB = b.due ? new Date(`${b.due}T00:00:00`).getTime() : Infinity;
-  if (dueA !== dueB) return dueA - dueB;
-  return new Date(b.updatedAt) - new Date(a.updatedAt);
+  return noteSortTime(b) - noteSortTime(a);
+}
+
+function noteSortTime(item) {
+  const created = new Date(item.createdAt || item.updatedAt || 0).getTime();
+  if (!Number.isNaN(created) && created > 0) return created;
+  const numericId = Number(item.id);
+  return Number.isNaN(numericId) ? 0 : numericId;
 }
 
 function renderNotes() {
@@ -255,7 +256,8 @@ function renderNotes() {
         <thead>
           <tr>
             <th>狀態</th>
-            <th>日期</th>
+            <th>建立日期</th>
+            <th>預計時程</th>
             <th>來源</th>
             <th>名字</th>
             <th>需求內容</th>
@@ -341,7 +343,8 @@ function noteRow(item) {
           ${Object.entries(statusLabels).map(([value, label]) => `<option value="${value}" ${item.status === value ? "selected" : ""}>${label}</option>`).join("")}
         </select>
       </td>
-      <td data-label="日期" class="note-date-cell">${escapeHtml(noteDateLabel(item))}</td>
+      <td data-label="建立日期" class="note-date-cell">${escapeHtml(noteDateLabel(item))}</td>
+      <td data-label="預計時程" class="note-due-cell">${escapeHtml(noteDueDateLabel(item))}</td>
       <td data-label="來源" class="note-source-cell">${escapeHtml(item.target || "—")}</td>
       <td data-label="名字" class="note-name-cell"><strong>${escapeHtml(item.title || "—")}</strong></td>
       <td data-label="需求內容" class="note-work-cell">${escapeHtml(item.work || "—")}</td>
@@ -413,8 +416,11 @@ function dueLabel(value) {
 }
 
 function noteDateLabel(item) {
-  if (item.due) return formatShortDate(item.due);
-  return formatShortDate(item.updatedAt);
+  return formatShortDate(item.createdAt || item.updatedAt);
+}
+
+function noteDueDateLabel(item) {
+  return item.due ? formatShortDate(item.due) : "—";
 }
 
 function formatShortDate(value) {

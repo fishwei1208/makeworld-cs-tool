@@ -1192,16 +1192,21 @@ textarea:focus {
 
   .note-table th:nth-child(3),
   .note-table td:nth-child(3) {
-    width: 66px;
+    width: 70px;
   }
 
   .note-table th:nth-child(4),
   .note-table td:nth-child(4) {
+    width: 66px;
+  }
+
+  .note-table th:nth-child(5),
+  .note-table td:nth-child(5) {
     width: 108px;
   }
 
-  .note-table th:nth-child(7),
-  .note-table td:nth-child(7) {
+  .note-table th:nth-child(8),
+  .note-table td:nth-child(8) {
     width: 78px;
   }
 
@@ -1214,6 +1219,7 @@ textarea:focus {
   }
 
   .note-date-cell,
+  .note-due-cell,
   .note-source-cell,
   .note-name-cell,
   .note-work-cell,
