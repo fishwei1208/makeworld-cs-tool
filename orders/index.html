@@ -191,6 +191,8 @@ textarea.tall{min-height:100px}
 .style-other.show{display:block}
 .towel-other{display:none;margin-top:8px}
 .towel-other.show{display:block}
+.other-supplier-custom{display:none;margin-top:8px}
+.other-supplier-custom.show{display:block}
 .tissue-custom{display:none;margin-top:8px}
 .tissue-custom.show{display:block}
 .payment-options{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
@@ -574,7 +576,7 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
   textarea{min-height:66px}
   textarea.tall{min-height:86px}
   .order-note-field textarea{min-height:64px}
-  .source-other.show,.style-other.show,.towel-other.show,.tissue-custom.show{margin-top:7px}
+.source-other.show,.style-other.show,.towel-other.show,.tissue-custom.show,.other-supplier-custom.show{margin-top:7px}
   .clean-delivery-toggle{padding:3px;border-radius:10px;background:#ebece7;border:1px solid #dfe3de}
   .clean-delivery-toggle .dtbtn{min-width:96px;min-height:32px;padding:6px 12px;font-size:13px}
   .pickup-note.show{min-height:40px;padding:8px 12px}
@@ -925,6 +927,18 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
         <div><div class="card-title">商品資訊</div></div>
       </div>
       <div class="field-group">
+        <div>
+          <label>供應商</label>
+          <select id="f-other-supplier" onchange="onOtherSupplierChange()">
+            <option value="冠達">冠達</option>
+            <option value="酷頂">酷頂</option>
+            <option value="建豪">建豪</option>
+            <option value="custom">自行填寫</option>
+          </select>
+          <div class="other-supplier-custom" id="other-supplier-custom-wrap">
+            <input id="f-other-supplier-custom" type="text" placeholder="請輸入供應商名稱">
+          </div>
+        </div>
         <div class="field-row other-item-row">
           <div><label>商品名稱</label><input id="f-other-name" type="text" placeholder="任意商品名稱"></div>
           <div><label>規格 / 說明</label><input id="f-other-spec" type="text" placeholder="顏色、尺寸、型號…"></div>
@@ -1400,6 +1414,16 @@ function getTissueQty(){
   const preset=document.getElementById('f-tissue-qty-preset').value;
   return preset==='custom'?parseInt(document.getElementById('f-tissue-qty-custom').value):parseInt(preset);
 }
+function onOtherSupplierChange(){
+  const isCustom=document.getElementById('f-other-supplier').value==='custom';
+  document.getElementById('other-supplier-custom-wrap').classList.toggle('show',isCustom);
+  if(isCustom)setTimeout(()=>document.getElementById('f-other-supplier-custom').focus(),0);
+  renderOrderPreview();
+}
+function getOtherSupplierValue(){
+  const supplier=document.getElementById('f-other-supplier').value;
+  return supplier==='custom'?(document.getElementById('f-other-supplier-custom').value.trim()||'未填供應商'):supplier;
+}
 
 // ══ CATEGORY ══
 function setCat(cat){
@@ -1500,7 +1524,7 @@ function collectCurrentItem(silent=false){
     return {id:Date.now()+Math.random(),category:'tissue',supplier:'建豪',style:document.getElementById('f-tissue-name').value.trim()||'面紙',color:'—',size:'—',qty,note:document.getElementById('f-tissue-note').value.trim()};
   }
   const style=document.getElementById('f-other-name').value.trim()||'未填商品';
-  return {id:Date.now()+Math.random(),category:'other',supplier:'',style,color:document.getElementById('f-other-spec').value.trim()||'—',size:'—',qty:parseInt(document.getElementById('f-other-qty').value)||1,note:document.getElementById('f-other-note').value.trim()};
+  return {id:Date.now()+Math.random(),category:'other',supplier:getOtherSupplierValue(),style,color:document.getElementById('f-other-spec').value.trim()||'—',size:'—',qty:parseInt(document.getElementById('f-other-qty').value)||1,note:document.getElementById('f-other-note').value.trim()};
 }
 function parseShirtBulkRows(){
   const el=document.getElementById('f-shirt-bulk');
@@ -1674,6 +1698,16 @@ function fillItemFields(it){
     document.getElementById('f-tissue-note').value=it.note||'';
     return;
   }
+  const supplier=it.supplier||'冠達';
+  const supplierSelect=document.getElementById('f-other-supplier');
+  if(['冠達','酷頂','建豪'].includes(supplier)){
+    supplierSelect.value=supplier;
+    document.getElementById('f-other-supplier-custom').value='';
+  }else{
+    supplierSelect.value='custom';
+    document.getElementById('f-other-supplier-custom').value=supplier==='未填供應商'?'':supplier;
+  }
+  onOtherSupplierChange();
   document.getElementById('f-other-name').value=it.style||'';
   document.getElementById('f-other-spec').value=it.color&&it.color!=='—'?it.color:'';
   document.getElementById('f-other-qty').value=itemQty(it);
@@ -1710,7 +1744,9 @@ function clearItemFields(cat){
     document.getElementById('f-tissue-qty-preset').value='100';
     onTissueQtyChange();
   }else{
-    ['f-other-name','f-other-spec','f-other-note'].forEach(id=>document.getElementById(id).value='');
+    ['f-other-name','f-other-spec','f-other-note','f-other-supplier-custom'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('f-other-supplier').value='冠達';
+    onOtherSupplierChange();
     document.getElementById('f-other-qty').value=1;
   }
 }
@@ -1957,7 +1993,7 @@ function buildProcessTable(list){
 }
 function setOrderStatus(id,status){
   orders=orders.map(o=>o.id===id?{...o,orderStatus:status,statusUpdatedAt:new Date().toISOString()}:o);
-  save();updateStats();renderProcessOrders();
+  save();updateStats();renderProcessOrders();renderOrders();
   const order=orders.find(o=>o.id===id);
   if(order)syncCloudOrder(order);
   if(status==='done')toast('已移到歷史紀錄');
@@ -2022,12 +2058,12 @@ function buildTable(list,del,filter='all'){
     const itemHtml=items.map(it=>lineItemHtml(it)).join('');
     const total=items.reduce((s,it)=>s+itemQty(it),0);
     const editLabel=o.editedAt?`<br><span style="font-size:11px;color:var(--red)">重新編輯：${esc(formatDateTime(o.editedAt))}</span>`:'';
-    h+=`<tr class="row-${o.orderStatus||'pending'}">${del?`<td class="pick-cell"><input class="print-check" type="checkbox" value="${o.id}" aria-label="選擇列印 ${orderCode(o)}"></td>`:''}<td><div class="order-code">${String(i+1).padStart(2,'0')}</div><div class="order-code">${orderCode(o)}</div></td><td><span class="tag ${orderStatusClass(o)}">${orderStatusLabel(o)}</span></td><td style="font-family:'DM Mono',monospace;font-size:13px;white-space:nowrap">${dLabel}${editLabel}</td><td><span class="tag t-size">${esc(o.source||'—')}</span></td><td>${imgCell}</td><td><div style="font-weight:600;font-size:14px">${esc(o.customer||o.name||'')}</div></td><td style="font-family:'DM Mono',monospace;font-weight:700;color:var(--accent)">${esc(moneyLabel(o.orderAmount))}</td><td><span class="tag ${o.paymentStatus==='cod'?'cb-other':'t-size'}">${esc(paymentLabel(o))}</span></td><td><div style="font-weight:600;font-size:14px">${esc(o.recipientName||o.name||'')}</div><div style="font-size:12px;color:var(--text-dim)">${esc(o.recipientPhone||o.phone||'')}</div></td><td>${dStr}</td><td><div class="order-items-cell">${itemHtml}</div></td><td style="font-family:'DM Mono',monospace;font-weight:700;color:var(--accent);font-size:16px">${total}</td>${delBtn}</tr>`;
+    h+=`<tr class="row-${o.orderStatus||'pending'}">${del?`<td class="pick-cell"><input class="print-check" type="checkbox" value="${o.id}" aria-label="選擇列印 ${orderCode(o)}"></td>`:''}<td><div class="order-code">${String(i+1).padStart(2,'0')}</div><div class="order-code">${orderCode(o)}</div></td><td><select class="status-select ${orderStatusClass(o)}" onchange="setOrderStatus(${o.id},this.value)"><option value="pending" ${(o.orderStatus||'pending')==='pending'?'selected':''}>待處理</option><option value="processing" ${(o.orderStatus||'pending')==='processing'?'selected':''}>處理中</option><option value="done" ${(o.orderStatus||'pending')==='done'?'selected':''}>已完成</option></select></td><td style="font-family:'DM Mono',monospace;font-size:13px;white-space:nowrap">${dLabel}${editLabel}</td><td><span class="tag t-size">${esc(o.source||'—')}</span></td><td>${imgCell}</td><td><div style="font-weight:600;font-size:14px">${esc(o.customer||o.name||'')}</div></td><td style="font-family:'DM Mono',monospace;font-weight:700;color:var(--accent)">${esc(moneyLabel(o.orderAmount))}</td><td><span class="tag ${o.paymentStatus==='cod'?'cb-other':'t-size'}">${esc(paymentLabel(o))}</span></td><td><div style="font-weight:600;font-size:14px">${esc(o.recipientName||o.name||'')}</div><div style="font-size:12px;color:var(--text-dim)">${esc(o.recipientPhone||o.phone||'')}</div></td><td>${dStr}</td><td><div class="order-items-cell">${itemHtml}</div></td><td style="font-family:'DM Mono',monospace;font-weight:700;color:var(--accent);font-size:16px">${total}</td>${delBtn}</tr>`;
   });
   return h+'</tbody></table>';
 }
 function lineItemHtml(it){
-  const sup=(it.category==='shirt'||it.category==='towel')&&it.supplier?` <span class="tag ${SUPCLS[it.supplier]||'t-size'}">${esc(it.supplier)}</span>`:'';
+  const sup=it.supplier?` <span class="tag ${SUPCLS[it.supplier]||'t-size'}">${esc(it.supplier)}</span>`:'';
   const detail=[];
   const ss=shirtStyleText(it);
   if(ss)detail.push(`款式：${esc(ss)}`);
