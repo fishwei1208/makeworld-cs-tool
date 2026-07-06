@@ -714,6 +714,16 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
       </div>
       <div class="field-row r2 clean-grid">
         <div>
+          <label>憑證需求</label>
+          <select id="f-document-requirement">
+            <option value="none">皆不需要</option>
+            <option value="receipt">需要收據</option>
+            <option value="invoice">需要發票</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row r2 clean-grid">
+        <div>
           <label>訂單金額</label>
           <input id="f-order-amount" type="number" min="0" placeholder="請輸入整筆訂單金額">
         </div>
@@ -1164,6 +1174,7 @@ function normalizeOrder(o){
       recipientName:o.recipientName||o.name||'',
       recipientPhone:o.recipientPhone||o.phone||'',
       orderAmount:o.orderAmount||'',
+      documentRequirement:o.documentRequirement||'none',
       orderNote:o.orderNote||'',
       paymentStatus:o.paymentStatus||'paid',
       paymentAmount:o.paymentAmount||'',
@@ -1172,7 +1183,7 @@ function normalizeOrder(o){
     };
   }
   const item={id:o?.id||Date.now(),category:o?.category||'other',supplier:o?.supplier||'',style:o?.style||'',color:o?.color||'',size:o?.size||'',qty:o?.qty||1,note:o?.note||''};
-  return {id:o?.id||Date.now(),source:o?.source||'',customer:o?.customer||o?.name||'',recipientName:o?.recipientName||o?.name||'',recipientPhone:o?.recipientPhone||o?.phone||'',orderAmount:o?.orderAmount||'',orderNote:o?.orderNote||'',paymentStatus:o?.paymentStatus||'paid',paymentAmount:o?.paymentAmount||'',orderStatus:o?.orderStatus||'pending',editedAt:o?.editedAt||'',name:o?.name||'',phone:o?.phone||'',date:o?.date||todayVal(),delivery:o?.delivery||{type:'cvs',brand:'',store:''},imgs:o?.imgs||[],items:[item]};
+  return {id:o?.id||Date.now(),source:o?.source||'',customer:o?.customer||o?.name||'',recipientName:o?.recipientName||o?.name||'',recipientPhone:o?.recipientPhone||o?.phone||'',orderAmount:o?.orderAmount||'',documentRequirement:o?.documentRequirement||'none',orderNote:o?.orderNote||'',paymentStatus:o?.paymentStatus||'paid',paymentAmount:o?.paymentAmount||'',orderStatus:o?.orderStatus||'pending',editedAt:o?.editedAt||'',name:o?.name||'',phone:o?.phone||'',date:o?.date||todayVal(),delivery:o?.delivery||{type:'cvs',brand:'',store:''},imgs:o?.imgs||[],items:[item]};
 }
 function cleanOrderForSync(order){
   return {
@@ -1351,6 +1362,11 @@ function paymentLabel(o){
   if(o.paymentStatus==='onsite')return `現場付款${o.paymentAmount?` $${o.paymentAmount}`:''}`;
   if(o.paymentStatus==='unpaid')return '未付款';
   return '已付款';
+}
+function documentRequirementLabel(value){
+  if(value==='receipt')return '需要收據';
+  if(value==='invoice')return '需要發票';
+  return '皆不需要';
 }
 function moneyLabel(v){
   const raw=String(v??'').trim();
@@ -1762,6 +1778,7 @@ function addOrder(){
   const recipientPhone=document.getElementById('f-recipient-phone').value.trim();
   const source=getSourceValue();
   const orderAmount=document.getElementById('f-order-amount').value.trim();
+  const documentRequirement=document.getElementById('f-document-requirement').value;
   const orderNote=document.getElementById('f-order-note').value.trim();
   const payment=getPaymentInfo();
   const existingOrder=editingOrderId?orders.find(o=>o.id===editingOrderId):null;
@@ -1785,7 +1802,7 @@ function addOrder(){
   if(drafts.length){orderItems.push(...drafts);clearItemFields(currentCat)}
 
   const delivery=getDraftDelivery();
-  const payload={id:editingOrderId||Date.now(),source,customer,recipientName,recipientPhone,orderAmount,orderNote,paymentStatus:payment.status,paymentAmount:payment.amount,orderStatus,name:recipientName,phone:recipientPhone,date,createdAt,delivery,imgs:[...pendingImgs],items:orderItems.map(it=>({...it}))};
+  const payload={id:editingOrderId||Date.now(),source,customer,recipientName,recipientPhone,orderAmount,documentRequirement,orderNote,paymentStatus:payment.status,paymentAmount:payment.amount,orderStatus,name:recipientName,phone:recipientPhone,date,createdAt,delivery,imgs:[...pendingImgs],items:orderItems.map(it=>({...it}))};
   const wasEditing=!!editingOrderId;
   setOrderSubmitState(true,wasEditing?'更新中...':'儲存中...');
   if(editingOrderId){
@@ -1867,6 +1884,7 @@ function editOrder(id){
   document.getElementById('f-recipient-name').value=o.recipientName||o.name||'';
   document.getElementById('f-recipient-phone').value=o.recipientPhone||o.phone||'';
   document.getElementById('f-order-amount').value=o.orderAmount||'';
+  document.getElementById('f-document-requirement').value=o.documentRequirement||'none';
   document.getElementById('f-order-note').value=o.orderNote||'';
   const payRadio=document.querySelector(`input[name="payment-status"][value="${o.paymentStatus||'paid'}"]`)||document.querySelector('input[name="payment-status"][value="paid"]');
   payRadio.checked=true;
@@ -1897,6 +1915,7 @@ function clearForm(){
   ['f-customer','f-recipient-name','f-recipient-phone','f-source-other','f-order-amount','f-order-note','f-payment-amount','f-cvs-store','f-address'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
   document.getElementById('f-source').value='FB';
   onSourceChange();
+  document.getElementById('f-document-requirement').value='none';
   document.querySelector('input[name="payment-status"][value="paid"]').checked=true;
   onPaymentChange();
   ['shirt','towel','tissue','other'].forEach(clearItemFields);
@@ -2104,9 +2123,9 @@ function closeLightbox(){document.getElementById('lightbox').classList.remove('s
 function exportCSV(){
   const exportOrders=orders.filter(o=>(o.orderStatus||'pending')==='done');
   if(!exportOrders.length){toast('尚無已完成訂單資料');return}
-  const h=['訂單編號','明細序','訂單狀態','日期','重新編輯日期','星期','來源管道','客戶名稱','訂單金額','整筆備註','付款狀態','現場付款金額','類別','收件人','收件人電話','配送','超商品牌','門市','地址','廠商','衣服款式','品名/商品','顏色/材質/規格','尺寸','數量','備註'];
+  const h=['訂單編號','明細序','訂單狀態','日期','重新編輯日期','星期','來源管道','客戶名稱','訂單金額','憑證需求','整筆備註','付款狀態','現場付款金額','類別','收件人','收件人電話','配送','超商品牌','門市','地址','廠商','衣服款式','品名/商品','顏色/材質/規格','尺寸','數量','備註'];
   const rows=[];
-  exportOrders.forEach(o=>{const d=o.date?new Date(o.date+'T00:00:00'):null;getItems(o).forEach((it,idx)=>rows.push([orderCode(o),idx+1,orderStatusLabel(o),o.date||'',formatDateTime(o.editedAt),d?WDAYS[d.getDay()]:'',o.source||'',o.customer||o.name||'',o.orderAmount||'',o.orderNote||'',paymentLabel(o),o.paymentAmount||'',CAT_LABEL[it.category]||it.category,o.recipientName||o.name||'',o.recipientPhone||o.phone||'',deliveryExportType(o),o.delivery.brand||'',o.delivery.store||'',o.delivery.address||'',it.supplier||'',shirtStyleText(it),it.style,it.color||'',it.size||'',itemQty(it),it.note||'']))});
+  exportOrders.forEach(o=>{const d=o.date?new Date(o.date+'T00:00:00'):null;getItems(o).forEach((it,idx)=>rows.push([orderCode(o),idx+1,orderStatusLabel(o),o.date||'',formatDateTime(o.editedAt),d?WDAYS[d.getDay()]:'',o.source||'',o.customer||o.name||'',o.orderAmount||'',documentRequirementLabel(o.documentRequirement),o.orderNote||'',paymentLabel(o),o.paymentAmount||'',CAT_LABEL[it.category]||it.category,o.recipientName||o.name||'',o.recipientPhone||o.phone||'',deliveryExportType(o),o.delivery.brand||'',o.delivery.store||'',o.delivery.address||'',it.supplier||'',shirtStyleText(it),it.style,it.color||'',it.size||'',itemQty(it),it.note||'']))});
   const csv=[h,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
   dl('\uFEFF'+csv,`訂單_${todayStr()}.csv`,'text/csv');
 }
@@ -2165,6 +2184,7 @@ function renderOrderPreview(){
   const recipient=document.getElementById('f-recipient-name').value.trim()||'—';
   const phone=document.getElementById('f-recipient-phone').value.trim()||'—';
   const orderAmount=document.getElementById('f-order-amount').value.trim();
+  const documentRequirement=document.getElementById('f-document-requirement').value;
   const orderNote=document.getElementById('f-order-note').value.trim();
   const payment=getPaymentInfo();
   const drafts=hasCurrentItemDraft()?collectCurrentItems(true):[];
@@ -2183,6 +2203,7 @@ function renderOrderPreview(){
     <div class="preview-line"><b>客戶</b><span>${esc(customer)}</span></div>
     <div class="preview-line"><b>收件人</b><span>${esc(recipient)}</span></div>
     <div class="preview-line"><b>電話</b><span>${esc(phone)}</span></div>
+    <div class="preview-line"><b>憑證</b><span>${esc(documentRequirementLabel(documentRequirement))}</span></div>
     <div class="preview-line"><b>金額</b><span>${esc(moneyLabel(orderAmount))}</span></div>
     <div class="preview-line"><b>付款</b><span>${esc(paymentLabel({paymentStatus:payment.status,paymentAmount:payment.amount}))}</span></div>
     <div class="preview-line"><b>配送</b><span>${esc(deliveryText({delivery:getDraftDelivery()})||'—')}</span></div>
@@ -2210,7 +2231,8 @@ function printDesignImages(o,items){
   const imgs=Array.isArray(o.imgs)?o.imgs.filter(img=>img&&imgSrc(img)):[];
   if(!imgs.length)return '';
   const sizeClass=imgs.length===1?'one':imgs.length===2?'two':'many';
-  const frameHeight=imgs.length===1?'145mm':imgs.length===2?'82mm':'48mm';
+  const hasDocumentAlert=o.documentRequirement==='receipt'||o.documentRequirement==='invoice';
+  const frameHeight=imgs.length===1?(hasDocumentAlert?'128mm':'145mm'):imgs.length===2?(hasDocumentAlert?'74mm':'82mm'):(hasDocumentAlert?'43mm':'48mm');
   const frameStyle=`height:${frameHeight};width:100%;margin:0;break-inside:avoid;page-break-inside:avoid;display:flex;align-items:center;justify-content:center;overflow:hidden`;
   const imageStyle='display:block;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;object-position:center';
   return `<div class="design-block image-${sizeClass}">
@@ -2228,6 +2250,8 @@ function buildQuoteOrdersHtml(list,scope='all'){
     const total=items.reduce((s,it)=>s+itemQty(it),0);
     const d=o.date?formatDate(o.date):'—';
     const paymentBanner=o.paymentStatus==='cod'?'<div class="cod-alert"><span>超商貨到付款</span><span>超商貨到付款</span><span>超商貨到付款</span></div>':'';
+    const documentText=o.documentRequirement==='receipt'?'請附上收據':o.documentRequirement==='invoice'?'請附上發票':'';
+    const documentBanner=documentText?`<div style="border:6px solid #dc2626;border-radius:10px;background:#fff7cc;color:#b91c1c;text-align:center;font-size:30px;font-weight:900;letter-spacing:4px;line-height:1.15;padding:10px 12px;margin:0 0 8px"><span style="display:block;font-size:15px;letter-spacing:2px;margin-bottom:3px">出貨重要提醒</span>${documentText}</div>`:'';
     const brandLabel=isBumaOrder(o)?'布碼科技':'MakeWorld';
     const brandClass=isBumaOrder(o)?'brand buma-card-brand':'brand';
     const orderTitle=isBumaOrder(o)?'出貨訂單':'訂單明細';
@@ -2238,9 +2262,10 @@ function buildQuoteOrdersHtml(list,scope='all'){
         <div class="print-supplier"><span>製作廠商</span><strong>${esc(supplierLabel)}</strong></div>
       </div>
       ${paymentBanner}
+      ${documentBanner}
       <div class="info-grid">
         <div class="info-box"><h3>訂單資料</h3><p><b>訂單狀態</b>${esc(orderStatusLabel(o))}</p><p><b>訂單日期</b>${esc(d)}</p><p><b>來源管道</b>${esc(o.source||'—')}</p>${o.editedAt?`<p><b>重新編輯</b>${esc(formatDateTime(o.editedAt))}</p>`:''}</div>
-        <div class="info-box"><h3>客戶資料</h3><p><b>客戶名稱</b>${esc(o.customer||o.name||'—')}</p><p><b>訂單金額</b>${esc(moneyLabel(o.orderAmount))}</p><p><b>付款狀態</b>${esc(paymentLabel(o))}</p></div>
+        <div class="info-box"><h3>客戶資料</h3><p><b>客戶名稱</b>${esc(o.customer||o.name||'—')}</p><p><b>憑證需求</b>${esc(documentRequirementLabel(o.documentRequirement))}</p><p><b>訂單金額</b>${esc(moneyLabel(o.orderAmount))}</p><p><b>付款狀態</b>${esc(paymentLabel(o))}</p></div>
       </div>
       <div class="recipient-box">
         <h3>收件資訊</h3>
