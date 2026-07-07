@@ -694,6 +694,10 @@ textarea:focus {
   margin-bottom: 14px;
 }
 
+.compact-title .secondary-button {
+  min-height: 36px;
+}
+
 .compact-title h3 {
   font-size: 19px;
 }
@@ -1386,8 +1390,10 @@ textarea:focus {
   }
 
   .quote-workspace #stepQuote {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto auto auto auto auto auto;
+    align-content: start;
+    gap: 10px;
   }
 
   .quote-workspace #stepQuote .section-title {
@@ -1403,15 +1409,39 @@ textarea:focus {
   }
 
   .quote-workspace #stepQuote > .form-grid:not(.output-settings) {
-    order: 3;
+    order: 4;
   }
 
   .quote-workspace .quote-sheet {
-    order: 4;
+    order: 3;
   }
 
   .quote-workspace .action-row {
     order: 5;
+  }
+
+  .quote-workspace .compact-title {
+    align-items: center;
+  }
+
+  .quote-workspace .output-settings {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .quote-workspace .output-settings label:last-child {
+    grid-column: auto;
+  }
+
+  .quote-workspace .manual-item-box .form-grid.two {
+    grid-template-columns: 1.5fr 1.1fr 0.7fr 0.8fr;
+  }
+
+  .quote-workspace #stepQuote > .form-grid:not(.output-settings) {
+    margin-bottom: 0;
+  }
+
+  .quote-workspace #stepQuote > .form-grid:not(.output-settings) textarea {
+    min-height: 52px;
   }
 
   .quote-workspace .output-options,
@@ -1433,8 +1463,9 @@ textarea:focus {
   }
 
   body:not(.is-printing-quote).quote-workspace .quote-sheet {
-    max-height: 360px;
-    overflow: auto;
+    width: 100%;
+    max-height: none;
+    overflow: visible;
   }
 
   .quote-workspace .quote-output-logo {
@@ -1453,7 +1484,7 @@ textarea:focus {
   }
 
   .quote-workspace .quote-total-box {
-    grid-template-columns: minmax(150px, 1fr) 94px minmax(190px, auto);
+    grid-template-columns: minmax(180px, 1fr) 110px minmax(230px, auto);
     gap: 10px;
   }
 
