@@ -869,6 +869,119 @@ textarea:focus {
   padding: 22px 14px;
 }
 
+.pdf-export-stage {
+  position: fixed;
+  left: -12000px;
+  top: 0;
+  width: 794px;
+  background: #fff;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.pdf-export-stage .quote-sheet {
+  width: 794px;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  background: #fff;
+}
+
+.pdf-export-stage .quote-sheet-head {
+  display: block;
+  padding: 0 0 14px;
+  border-bottom: 2px solid #111827;
+  background: white;
+}
+
+.pdf-export-stage .quote-logo-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 96px;
+  margin-bottom: 10px;
+}
+
+.pdf-export-stage .quote-title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 34px;
+}
+
+.pdf-export-stage .quote-output-logo {
+  width: 392px;
+  height: 84px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.pdf-export-stage .quote-output-logo.buma {
+  width: 106px;
+  height: 92px;
+}
+
+.pdf-export-stage .quote-sheet-head h3 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.15;
+}
+
+.pdf-export-stage .quote-customer-block {
+  padding: 16px 0;
+}
+
+.pdf-export-stage .quote-table-wrap {
+  overflow: visible;
+}
+
+.pdf-export-stage .quote-table {
+  table-layout: fixed;
+}
+
+.pdf-export-stage .quote-table th,
+.pdf-export-stage .quote-table td {
+  padding: 9px 10px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.pdf-export-stage .quote-table th {
+  font-size: 12px;
+}
+
+.pdf-export-stage .quote-action-col {
+  display: none !important;
+}
+
+.pdf-export-stage .quote-total-box {
+  grid-template-columns: minmax(0, 1fr) 106px 260px;
+  min-height: 132px;
+  padding: 18px 0 0;
+}
+
+.pdf-export-stage .quote-stamp-slot {
+  min-height: 96px;
+}
+
+.pdf-export-stage .quote-stamp {
+  width: 96px;
+  height: 96px;
+}
+
+.pdf-export-stage .quote-total-line {
+  grid-template-columns: 118px 128px;
+  font-size: 14px;
+}
+
+.pdf-export-stage .quote-contact {
+  overflow-wrap: anywhere;
+}
+
 .quote-total-box {
   position: relative;
   display: grid;

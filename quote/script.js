@@ -116,7 +116,7 @@ function bindEvents() {
   $("quoteItems").addEventListener("click", handleItemAction);
   $("saveButton").addEventListener("click", saveCurrentQuote);
   $("resetButton").addEventListener("click", resetAll);
-  $("printButton").addEventListener("click", printQuoteSheet);
+  $("printButton").addEventListener("click", downloadQuotePdf);
   $("mailButton").addEventListener("click", openMailDraft);
   $("historySearch").addEventListener("input", renderHistory);
   $("historyList").addEventListener("click", handleHistoryAction);
@@ -127,6 +127,78 @@ function bindEvents() {
 function printQuoteSheet() {
   prepareQuotePrint();
   requestAnimationFrame(() => window.print());
+}
+
+async function downloadQuotePdf() {
+  render();
+  const quote = calculateQuote();
+  if (!quote.items.length) {
+    showToast("請先加入報價項目");
+    return;
+  }
+  const sheet = $("quoteSheet");
+  const pdfLib = window.jspdf?.jsPDF;
+  if (!sheet || !window.html2canvas || !pdfLib) {
+    showToast("PDF 工具載入中，先開啟列印備援");
+    printQuoteSheet();
+    return;
+  }
+
+  const button = $("printButton");
+  const originalText = button?.textContent || "";
+  if (button) {
+    button.disabled = true;
+    button.textContent = "PDF 產生中...";
+  }
+
+  const stage = document.createElement("div");
+  stage.className = "pdf-export-stage";
+  const clone = sheet.cloneNode(true);
+  clone.id = "quoteSheetPdfClone";
+  clone.querySelectorAll(".quote-action-col").forEach((el) => el.remove());
+  stage.appendChild(clone);
+  document.body.appendChild(stage);
+
+  try {
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const canvas = await window.html2canvas(clone, {
+      backgroundColor: "#ffffff",
+      scale: Math.min(2.5, Math.max(2, window.devicePixelRatio || 2)),
+      useCORS: true,
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: clone.scrollWidth,
+      windowHeight: clone.scrollHeight
+    });
+    const pdf = new pdfLib({ orientation: "portrait", unit: "mm", format: "a4" });
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const margin = 7;
+    const maxWidth = pageWidth - margin * 2;
+    const maxHeight = pageHeight - margin * 2;
+    const canvasRatio = canvas.height / canvas.width;
+    let imageWidth = maxWidth;
+    let imageHeight = imageWidth * canvasRatio;
+    if (imageHeight > maxHeight) {
+      imageHeight = maxHeight;
+      imageWidth = imageHeight / canvasRatio;
+    }
+    const x = (pageWidth - imageWidth) / 2;
+    const y = margin;
+    pdf.addImage(canvas.toDataURL("image/jpeg", 0.96), "JPEG", x, y, imageWidth, imageHeight, undefined, "FAST");
+    pdf.save(`${getQuoteFileName(quote)}.pdf`);
+    showToast("PDF 已產生");
+  } catch (error) {
+    console.error(error);
+    showToast("PDF 產生失敗，改用列印備援");
+    printQuoteSheet();
+  } finally {
+    stage.remove();
+    if (button) {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  }
 }
 
 function prepareQuotePrint() {
