@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MakeWorld 報價工作台</title>
-    <link rel="stylesheet" href="styles.css?v=20260708-direct-pdf-download-1" />
+    <link rel="stylesheet" href="styles.css?v=20260708-company-settings-preview-2" />
   </head>
   <body>
     <main class="app-shell">
@@ -114,6 +114,13 @@
                   </div>
                 </div>
                 <div class="form-grid two">
+                  <label>出單公司
+                    <select id="outputCompany">
+                      <option value="deshui">得水實業（發票）</option>
+                      <option value="chimei">奇美廣告（收據）</option>
+                      <option value="buma">布碼科技（收據）</option>
+                    </select>
+                  </label>
                   <label>報價單 Logo
                     <select id="outputLogo">
                       <option value="makeworld">地圖製造 logo</option>
@@ -351,11 +358,6 @@
                     <p class="eyebrow">Quote</p>
                     <h3>報價單出單</h3>
                   </div>
-                  <div class="segmented company-segment" role="group" aria-label="出單公司">
-                    <button class="active" type="button" data-company="deshui">得水實業<br><small>發票</small></button>
-                    <button type="button" data-company="chimei">奇美廣告<br><small>收據</small></button>
-                    <button type="button" data-company="buma">布碼科技<br><small>收據</small></button>
-                  </div>
                 </div>
 
                 <div class="quote-mode-note">
@@ -424,6 +426,7 @@
 
                 <div class="action-row">
                   <button class="ghost-button mobile-only-action" type="button" data-manual-back="3">回預覽設定</button>
+                  <button class="secondary-button" type="button" id="saveQuoteBottomButton">儲存紀錄</button>
                   <button class="primary-button" type="button" id="printButton">產生 PDF</button>
                   <button class="secondary-button" type="button" id="mailButton">寄送 Email 草稿</button>
                 </div>
@@ -506,6 +509,6 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-    <script src="script.js?v=20260708-direct-pdf-download-1"></script>
+    <script src="script.js?v=20260708-company-settings-preview-2"></script>
   </body>
 </html>

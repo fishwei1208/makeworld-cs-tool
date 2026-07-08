@@ -2169,7 +2169,7 @@ textarea:focus {
 
   .manual-mode.manual-step-3 .quote-total-box,
   .manual-mode.manual-step-4 .quote-total-box {
-    display: flex;
+    display: grid;
   }
 
   .manual-mode .output-options {

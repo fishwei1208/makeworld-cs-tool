@@ -57,6 +57,7 @@ const escapeHtml = (value) =>
 
 function init() {
   setDefaultDates();
+  syncQuoteSettingsToCompany(state.company, { syncLogo: true });
   bindEvents();
   renderPricing();
   updateProductVisibility();
@@ -100,12 +101,9 @@ function bindEvents() {
     });
   });
 
-  document.querySelectorAll("[data-company]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.company = button.dataset.company;
-      document.querySelectorAll("[data-company]").forEach((el) => el.classList.toggle("active", el === button));
-      render();
-    });
+  $("outputCompany")?.addEventListener("change", (event) => {
+    syncQuoteSettingsToCompany(event.target.value, { syncLogo: true });
+    render();
   });
 
   $("newItemButton").addEventListener("click", startNewItem);
@@ -115,6 +113,7 @@ function bindEvents() {
   $("quoteTableBody").addEventListener("click", handleQuoteTableAction);
   $("quoteItems").addEventListener("click", handleItemAction);
   $("saveButton").addEventListener("click", saveCurrentQuote);
+  $("saveQuoteBottomButton")?.addEventListener("click", saveCurrentQuote);
   $("resetButton").addEventListener("click", resetAll);
   $("printButton").addEventListener("click", downloadQuotePdf);
   $("mailButton").addEventListener("click", openMailDraft);
@@ -235,6 +234,19 @@ function getLocalDateStamp(date = new Date()) {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}${month}${day}`;
+}
+
+function syncQuoteSettingsToCompany(companyKey, options = {}) {
+  state.company = companies[companyKey] ? companyKey : "deshui";
+  const companySelect = $("outputCompany");
+  if (companySelect) companySelect.value = state.company;
+  const logoSelect = $("outputLogo");
+  if (options.syncLogo && logoSelect) {
+    logoSelect.value = state.company === "buma" ? "buma" : "makeworld";
+  }
+  document.querySelectorAll("[data-company]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.company === state.company);
+  });
 }
 
 function setView(view) {
@@ -577,6 +589,7 @@ function addManualItem() {
   ["manualName", "manualSpec", "manualQty", "manualPrice"].forEach((id) => {
     if ($(id)) $(id).value = "";
   });
+  if (document.body.classList.contains("manual-mode")) setManualStep(3);
   render();
   showToast("已加入手動報價項目");
 }
@@ -634,6 +647,8 @@ function calculateQuote() {
   const itemsForPreview = state.items.map((item) => (item.id === currentItem.id ? currentItem : item));
   const subtotal = itemsForPreview.reduce((sum, item) => sum + item.subtotal, 0);
   const costTotal = itemsForPreview.reduce((sum, item) => sum + item.costTotal, 0);
+  const companyKey = $("outputCompany")?.value || state.company;
+  state.company = companies[companyKey] ? companyKey : "deshui";
   const company = companies[state.company] || companies.deshui;
   const stampChoice = $("outputStamp")?.value || "auto";
   const stamp = resolveQuoteStamp(company, stampChoice);
@@ -1012,8 +1027,7 @@ function loadQuote(quote) {
     }
     el.value = value;
   });
-  state.company = quote.form?.company || quote.companyKey || (quote.taxType === "invoice" ? "deshui" : "chimei");
-  document.querySelectorAll("[data-company]").forEach((button) => button.classList.toggle("active", button.dataset.company === state.company));
+  syncQuoteSettingsToCompany(quote.form?.company || quote.companyKey || (quote.taxType === "invoice" ? "deshui" : "chimei"), { syncLogo: false });
   state.items = quote.items || [];
   state.editingId = null;
   setView("workspace");
@@ -1025,7 +1039,7 @@ function resetAll() {
   state.items = [];
   state.editingId = null;
   state.productType = "shirt";
-  state.company = "deshui";
+  syncQuoteSettingsToCompany("deshui", { syncLogo: true });
   document.querySelectorAll("input, textarea").forEach((el) => {
     if (el.type === "date") return;
     if (el.type === "checkbox") el.checked = false;
@@ -1033,7 +1047,6 @@ function resetAll() {
   });
   document.querySelectorAll("select").forEach((el) => (el.selectedIndex = 0));
   setDefaultDates();
-  document.querySelectorAll("[data-company]").forEach((button) => button.classList.toggle("active", button.dataset.company === state.company));
   setStep("customer");
   render();
 }
