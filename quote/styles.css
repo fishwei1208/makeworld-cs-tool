@@ -682,6 +682,10 @@ textarea:focus {
   background: #f7fafc;
 }
 
+.quote-settings-panel {
+  display: none;
+}
+
 .manual-item-box {
   margin-bottom: 18px;
   border: 1px solid var(--line);
@@ -840,6 +844,29 @@ textarea:focus {
   display: block;
   margin-top: 4px;
   color: var(--muted);
+}
+
+.quote-action-col {
+  width: 74px;
+  text-align: center !important;
+  white-space: nowrap;
+}
+
+.quote-remove-button {
+  min-height: 30px;
+  border: 1px solid rgba(182, 66, 53, 0.24);
+  border-radius: 6px;
+  background: #fff1ef;
+  color: var(--danger);
+  padding: 0 9px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.quote-empty-row td {
+  color: var(--muted);
+  text-align: center;
+  padding: 22px 14px;
 }
 
 .quote-total-box {
@@ -1217,9 +1244,13 @@ textarea:focus {
   .quote-workspace .work-grid {
     display: grid;
     grid-template-columns: minmax(320px, 0.48fr) minmax(560px, 1fr);
-    grid-template-areas: "customer quote";
+    grid-template-rows: 402px auto minmax(0, 1fr);
+    grid-template-areas:
+      "customer quote"
+      "settings quote"
+      ". quote";
     gap: 14px;
-    align-items: stretch;
+    align-items: start;
     height: 100%;
     min-height: 0;
     overflow: hidden;
@@ -1239,6 +1270,11 @@ textarea:focus {
 
   .quote-workspace #stepCustomer {
     grid-area: customer;
+  }
+
+  .quote-workspace #quoteSettingsPanel {
+    display: block;
+    grid-area: settings;
   }
 
   .quote-workspace #stepQuote {
@@ -1261,6 +1297,15 @@ textarea:focus {
     min-height: 0;
     overflow: auto;
     scrollbar-width: thin;
+  }
+
+  .quote-workspace #stepCustomer {
+    overflow: visible;
+  }
+
+  .quote-workspace #quoteSettingsPanel {
+    box-shadow: 0 8px 18px rgba(16, 39, 55, 0.06);
+    padding: 12px;
   }
 
   .quote-workspace #stepCustomer::before {
@@ -1400,12 +1445,8 @@ textarea:focus {
     order: 0;
   }
 
-  .quote-workspace .output-settings {
-    order: 1;
-  }
-
   .quote-workspace .manual-item-box {
-    order: 2;
+    order: 1;
   }
 
   .quote-workspace #stepQuote > .form-grid:not(.output-settings) {
@@ -1424,12 +1465,13 @@ textarea:focus {
     align-items: center;
   }
 
-  .quote-workspace .output-settings {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .quote-workspace #quoteSettingsPanel .form-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
-  .quote-workspace .output-settings label:last-child {
-    grid-column: auto;
+  .quote-workspace #quoteSettingsPanel .compact-title {
+    margin-bottom: 8px;
   }
 
   .quote-workspace .manual-item-box .form-grid.two {
@@ -1878,7 +1920,8 @@ textarea:focus {
   }
 
   .manual-mode #stepCustomer,
-  .manual-mode #stepQuote {
+  .manual-mode #stepQuote,
+  .manual-mode #quoteSettingsPanel {
     display: none;
     scroll-margin-top: 16px;
   }
@@ -1891,6 +1934,15 @@ textarea:focus {
   .manual-mode.manual-step-3 #stepQuote,
   .manual-mode.manual-step-4 #stepQuote {
     display: flex;
+  }
+
+  .manual-mode.manual-step-3 #quoteSettingsPanel {
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: var(--shadow);
+    padding: 14px;
   }
 
   .manual-mode .editor-panel {
@@ -1972,7 +2024,6 @@ textarea:focus {
   }
 
   .manual-mode.manual-step-3 #stepQuote > .section-title,
-  .manual-mode.manual-step-3 #stepQuote > .output-settings,
   .manual-mode.manual-step-3 #stepQuote > .quote-sheet,
   .manual-mode.manual-step-3 #stepQuote > .form-grid {
     display: block;
@@ -2018,6 +2069,7 @@ textarea:focus {
 
   .manual-mode .manual-item-box .form-grid,
   .manual-mode #stepQuote > .form-grid,
+  .manual-mode #quoteSettingsPanel .form-grid,
   .manual-mode .output-options {
     grid-template-columns: 1fr;
   }
@@ -2580,6 +2632,10 @@ textarea:focus {
   #quoteSheet .quote-table th {
     background: #f6f8fb;
     font-size: 8pt;
+  }
+
+  #quoteSheet .quote-action-col {
+    display: none !important;
   }
 
   #quoteSheet .quote-table th:nth-child(1),

@@ -112,6 +112,7 @@ function bindEvents() {
   $("commitItemButton").addEventListener("click", commitCurrentItem);
   $("commitTopButton").addEventListener("click", commitCurrentItem);
   $("addManualItemButton").addEventListener("click", addManualItem);
+  $("quoteTableBody").addEventListener("click", handleQuoteTableAction);
   $("quoteItems").addEventListener("click", handleItemAction);
   $("saveButton").addEventListener("click", saveCurrentQuote);
   $("resetButton").addEventListener("click", resetAll);
@@ -558,9 +559,7 @@ function resetItemFields() {
 
 function calculateQuote() {
   const currentItem = getCurrentItem();
-  const committedItems = state.items.map((item) => (item.id === currentItem.id ? currentItem : item));
-  const hasCurrent = currentItem.product.qty > 0 && !committedItems.some((item) => item.id === currentItem.id);
-  const itemsForPreview = hasCurrent ? [...committedItems, currentItem] : committedItems;
+  const itemsForPreview = state.items.map((item) => (item.id === currentItem.id ? currentItem : item));
   const subtotal = itemsForPreview.reduce((sum, item) => sum + item.subtotal, 0);
   const costTotal = itemsForPreview.reduce((sum, item) => sum + item.costTotal, 0);
   const company = companies[state.company] || companies.deshui;
@@ -612,7 +611,7 @@ function resolveQuoteStamp(company, choice) {
 
 function captureQuoteForm() {
   const values = {};
-  document.querySelectorAll("#stepCustomer input, #stepQuote input, #stepQuote textarea, #stepQuote select").forEach((el) => {
+  document.querySelectorAll("#stepCustomer input, #quoteSettingsPanel select, #stepQuote input, #stepQuote textarea, #stepQuote select").forEach((el) => {
     if (el.id) values[el.id] = el.value;
   });
   return { company: state.company, values };
@@ -708,12 +707,12 @@ function renderQuoteSheet(quote) {
     <div class="quote-customer-line"><span>聯絡管道</span><strong>${escapeHtml(quote.channel || "未填")}</strong></div>
   `;
 
-  const rows = quote.items.length ? quote.items : [quote.currentItem];
-  $("quoteTableBody").innerHTML = rows
+  $("quoteTableBody").innerHTML = quote.items.length
+    ? quote.items
     .map((item) => {
       const itemTypeNote = item.productType === "manual" ? "" : item.product.type;
       return `
-        <tr>
+        <tr data-id="${escapeHtml(item.id)}">
           <td>
             <strong>${escapeHtml(item.product.name)}</strong>
             ${itemTypeNote ? `<small>${escapeHtml(itemTypeNote)}</small>` : ""}
@@ -722,10 +721,12 @@ function renderQuoteSheet(quote) {
           <td class="num">${item.product.qty || 0}</td>
           <td class="num">${money(item.unitPrice)}</td>
           <td class="num">${money(item.subtotal)}</td>
+          <td class="quote-action-col"><button class="quote-remove-button" type="button" data-action="remove-quote-item">移除</button></td>
         </tr>
       `;
     })
-    .join("");
+    .join("")
+    : `<tr class="quote-empty-row"><td colspan="6">尚未加入報價項目。請在上方手動新增，或從成本計算送到報價單。</td></tr>`;
 
   $("quoteTotalBox").innerHTML = `
     <div class="quote-signature">
@@ -743,6 +744,17 @@ function renderQuoteSheet(quote) {
       </div>
     </div>
   `;
+}
+
+function handleQuoteTableAction(event) {
+  const button = event.target.closest("[data-action='remove-quote-item']");
+  const row = event.target.closest("[data-id]");
+  if (!button || !row) return;
+  const id = row.dataset.id;
+  state.items = state.items.filter((item) => item.id !== id);
+  if (state.editingId === id) state.editingId = null;
+  render();
+  showToast("已移除報價項目");
 }
 
 function renderPartSummaries(item) {
