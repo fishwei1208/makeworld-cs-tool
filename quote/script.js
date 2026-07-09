@@ -161,6 +161,7 @@ async function downloadQuotePdf() {
   clone.querySelectorAll(".quote-action-col").forEach((el) => el.remove());
   stage.appendChild(clone);
   document.body.appendChild(stage);
+  document.body.classList.add("is-exporting-pdf");
 
   try {
     await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -196,6 +197,7 @@ async function downloadQuotePdf() {
     showToast("PDF 產生失敗，改用列印備援");
     printQuoteSheet();
   } finally {
+    document.body.classList.remove("is-exporting-pdf");
     stage.remove();
     if (button) {
       button.disabled = false;

@@ -879,7 +879,7 @@ textarea:focus {
   z-index: -1;
 }
 
-.pdf-export-stage .quote-sheet {
+.pdf-export-stage #quoteSheetPdfClone {
   width: 794px;
   max-width: none;
   max-height: none;
@@ -891,95 +891,132 @@ textarea:focus {
   background: #fff;
 }
 
-.pdf-export-stage .quote-sheet-head {
+.pdf-export-stage #quoteSheetPdfClone .quote-sheet-head {
   display: block;
-  padding: 0 0 14px;
+  padding: 0 0 16px;
   border-bottom: 2px solid #111827;
   background: white;
 }
 
-.pdf-export-stage .quote-logo-row {
+.pdf-export-stage #quoteSheetPdfClone .quote-logo-row {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 96px;
-  margin-bottom: 10px;
+  width: 100%;
+  min-height: 104px;
+  margin: 0 0 10px;
 }
 
-.pdf-export-stage .quote-title-row {
+.pdf-export-stage #quoteSheetPdfClone .quote-title-row {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 34px;
 }
 
-.pdf-export-stage .quote-output-logo {
-  width: 392px;
-  height: 84px;
+.pdf-export-stage #quoteSheetPdfClone .quote-output-logo {
+  display: block;
+  width: 430px;
+  height: 96px;
+  max-width: 100%;
   object-fit: contain;
   object-position: center;
 }
 
-.pdf-export-stage .quote-output-logo.buma {
+.pdf-export-stage #quoteSheetPdfClone .quote-output-logo.buma {
   width: 106px;
   height: 92px;
 }
 
-.pdf-export-stage .quote-sheet-head h3 {
+.pdf-export-stage #quoteSheetPdfClone .quote-sheet-head h3 {
   margin: 0;
   font-size: 30px;
   line-height: 1.15;
 }
 
-.pdf-export-stage .quote-customer-block {
+.pdf-export-stage #quoteSheetPdfClone .quote-customer-block {
   padding: 16px 0;
 }
 
-.pdf-export-stage .quote-table-wrap {
+.pdf-export-stage #quoteSheetPdfClone .quote-table-wrap {
   overflow: visible;
 }
 
-.pdf-export-stage .quote-table {
+.pdf-export-stage #quoteSheetPdfClone .quote-table {
   table-layout: fixed;
 }
 
-.pdf-export-stage .quote-table th,
-.pdf-export-stage .quote-table td {
+.pdf-export-stage #quoteSheetPdfClone .quote-table th,
+.pdf-export-stage #quoteSheetPdfClone .quote-table td {
   padding: 9px 10px;
   font-size: 14px;
   line-height: 1.35;
 }
 
-.pdf-export-stage .quote-table th {
+.pdf-export-stage #quoteSheetPdfClone .quote-table th {
   font-size: 12px;
 }
 
-.pdf-export-stage .quote-action-col {
+.pdf-export-stage #quoteSheetPdfClone .quote-action-col {
   display: none !important;
 }
 
-.pdf-export-stage .quote-total-box {
-  grid-template-columns: minmax(0, 1fr) 106px 260px;
-  min-height: 132px;
-  padding: 18px 0 0;
+.pdf-export-stage #quoteSheetPdfClone .quote-total-box {
+  grid-template-columns: minmax(250px, 1fr) 118px minmax(250px, 1fr);
+  align-items: end;
+  gap: 30px;
+  min-height: 174px;
+  padding: 26px 0 0;
 }
 
-.pdf-export-stage .quote-stamp-slot {
-  min-height: 96px;
+.pdf-export-stage #quoteSheetPdfClone .quote-signature {
+  align-self: end;
+  gap: 24px;
+  font-size: 15px;
 }
 
-.pdf-export-stage .quote-stamp {
+.pdf-export-stage #quoteSheetPdfClone .quote-signature div {
+  grid-template-columns: 72px minmax(210px, 1fr);
+  gap: 10px;
+}
+
+.pdf-export-stage #quoteSheetPdfClone .quote-stamp-slot {
+  justify-content: center;
+  align-items: center;
+  min-height: 108px;
+}
+
+.pdf-export-stage #quoteSheetPdfClone .quote-stamp {
   width: 96px;
   height: 96px;
 }
 
-.pdf-export-stage .quote-total-line {
-  grid-template-columns: 118px 128px;
-  font-size: 14px;
+.pdf-export-stage #quoteSheetPdfClone .quote-total-stack {
+  align-self: end;
+  justify-content: stretch;
+  gap: 8px;
 }
 
-.pdf-export-stage .quote-contact {
+.pdf-export-stage #quoteSheetPdfClone .quote-total-line {
+  grid-template-columns: minmax(112px, 1fr) minmax(124px, auto);
+  font-size: 15px;
+}
+
+.pdf-export-stage #quoteSheetPdfClone .quote-total-line.grand {
+  font-size: 17px;
+}
+
+.pdf-export-stage #quoteSheetPdfClone .quote-contact {
+  margin-top: 14px;
+  padding-top: 10px;
   overflow-wrap: anywhere;
+  font-size: 16px;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.pdf-export-stage #quoteSheetPdfClone .quote-contact strong {
+  font-size: 16px;
 }
 
 .quote-total-box {
