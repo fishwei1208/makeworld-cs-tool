@@ -874,21 +874,26 @@ textarea:focus {
   left: -12000px;
   top: 0;
   width: 794px;
+  min-height: 1123px;
+  padding: 0;
   background: #fff;
   pointer-events: none;
   z-index: -1;
 }
 
 .pdf-export-stage #quoteSheetPdfClone {
-  width: 794px;
+  width: 675px;
   max-width: none;
   max-height: none;
-  margin: 0;
+  min-height: 1123px;
+  margin: 0 auto;
   border: 0;
   border-radius: 0;
   box-shadow: none;
   overflow: visible;
   background: #fff;
+  display: flex;
+  flex-direction: column;
 }
 
 .pdf-export-stage #quoteSheetPdfClone .quote-sheet-head {
@@ -916,16 +921,20 @@ textarea:focus {
 
 .pdf-export-stage #quoteSheetPdfClone .quote-output-logo {
   display: block;
-  width: 430px;
-  height: 96px;
-  max-width: 100%;
+  width: auto;
+  height: auto;
+  max-width: 430px;
+  max-height: 96px;
+  margin: 0 auto;
   object-fit: contain;
   object-position: center;
 }
 
 .pdf-export-stage #quoteSheetPdfClone .quote-output-logo.buma {
-  width: 106px;
-  height: 92px;
+  width: auto;
+  height: auto;
+  max-width: 106px;
+  max-height: 92px;
 }
 
 .pdf-export-stage #quoteSheetPdfClone .quote-sheet-head h3 {
@@ -965,7 +974,8 @@ textarea:focus {
   grid-template-columns: minmax(250px, 1fr) 118px minmax(250px, 1fr);
   align-items: end;
   gap: 30px;
-  min-height: 174px;
+  min-height: 196px;
+  margin-top: auto;
   padding: 26px 0 0;
 }
 

@@ -165,14 +165,14 @@ async function downloadQuotePdf() {
 
   try {
     await new Promise((resolve) => requestAnimationFrame(resolve));
-    const canvas = await window.html2canvas(clone, {
+    const canvas = await window.html2canvas(stage, {
       backgroundColor: "#ffffff",
       scale: Math.min(2.5, Math.max(2, window.devicePixelRatio || 2)),
       useCORS: true,
       scrollX: 0,
       scrollY: 0,
-      windowWidth: clone.scrollWidth,
-      windowHeight: clone.scrollHeight
+      windowWidth: stage.scrollWidth,
+      windowHeight: stage.scrollHeight
     });
     const pdf = new pdfLib({ orientation: "portrait", unit: "mm", format: "a4" });
     const pageWidth = 210;
