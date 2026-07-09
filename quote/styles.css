@@ -947,6 +947,10 @@ textarea:focus {
   padding: 16px 0;
 }
 
+.pdf-export-stage #quoteSheetPdfClone .quote-customer-line {
+  font-size: 16px;
+}
+
 .pdf-export-stage #quoteSheetPdfClone .quote-table-wrap {
   overflow: visible;
 }
@@ -958,12 +962,12 @@ textarea:focus {
 .pdf-export-stage #quoteSheetPdfClone .quote-table th,
 .pdf-export-stage #quoteSheetPdfClone .quote-table td {
   padding: 9px 10px;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.35;
 }
 
 .pdf-export-stage #quoteSheetPdfClone .quote-table th {
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .pdf-export-stage #quoteSheetPdfClone .quote-action-col {
@@ -971,18 +975,15 @@ textarea:focus {
 }
 
 .pdf-export-stage #quoteSheetPdfClone .quote-total-box {
-  grid-template-columns: minmax(250px, 1fr) 118px minmax(250px, 1fr);
-  align-items: end;
-  gap: 30px;
-  min-height: 196px;
-  margin-top: auto;
-  padding: 26px 0 0;
+  flex: 1;
+  min-height: 276px;
+  padding: 12px 0 0;
 }
 
 .pdf-export-stage #quoteSheetPdfClone .quote-signature {
-  align-self: end;
+  align-self: center;
   gap: 24px;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .pdf-export-stage #quoteSheetPdfClone .quote-signature div {
@@ -993,7 +994,8 @@ textarea:focus {
 .pdf-export-stage #quoteSheetPdfClone .quote-stamp-slot {
   justify-content: center;
   align-items: center;
-  min-height: 108px;
+  min-height: 100px;
+  margin-bottom: 10px;
 }
 
 .pdf-export-stage #quoteSheetPdfClone .quote-stamp {
@@ -1002,26 +1004,28 @@ textarea:focus {
 }
 
 .pdf-export-stage #quoteSheetPdfClone .quote-total-stack {
-  align-self: end;
+  align-self: flex-end;
   justify-content: stretch;
   gap: 8px;
+  width: 250px;
+  margin-bottom: 28px;
 }
 
 .pdf-export-stage #quoteSheetPdfClone .quote-total-line {
   grid-template-columns: minmax(112px, 1fr) minmax(124px, auto);
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .pdf-export-stage #quoteSheetPdfClone .quote-total-line.grand {
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .pdf-export-stage #quoteSheetPdfClone .quote-contact {
-  margin-top: 14px;
-  padding-top: 10px;
+  margin-top: 0;
+  padding-top: 8px;
   overflow-wrap: anywhere;
   font-size: 16px;
-  line-height: 1.55;
+  line-height: 1.45;
   text-align: left;
 }
 
@@ -1031,17 +1035,15 @@ textarea:focus {
 
 .quote-total-box {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(180px, 1fr) 148px minmax(260px, auto);
-  align-items: end;
-  gap: 18px;
+  display: flex;
+  flex-direction: column;
   min-height: 172px;
   padding: 16px 20px 28px;
 }
 
 .quote-total-stack {
   display: grid;
-  justify-content: end;
+  align-self: flex-end;
   gap: 8px;
 }
 
@@ -1062,8 +1064,22 @@ textarea:focus {
   border-top: 2px solid var(--ink);
   padding-top: 10px;
   color: var(--ink);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 900;
+}
+
+.quote-bottom-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(220px, auto);
+  align-items: end;
+  gap: 32px;
+  margin-top: auto;
+}
+
+.quote-contact-wrap {
+  display: grid;
+  justify-items: stretch;
+  align-self: end;
 }
 
 .quote-stamp {
@@ -1075,8 +1091,8 @@ textarea:focus {
 
 .quote-stamp-slot {
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
+  justify-content: flex-start;
+  align-items: center;
   min-height: 128px;
 }
 
@@ -1695,8 +1711,7 @@ textarea:focus {
   }
 
   .quote-workspace .quote-total-box {
-    grid-template-columns: minmax(180px, 1fr) 110px minmax(230px, auto);
-    gap: 10px;
+    gap: 12px;
   }
 
   .quote-workspace .quote-stamp,
@@ -2225,7 +2240,7 @@ textarea:focus {
 
   .manual-mode.manual-step-3 .quote-total-box,
   .manual-mode.manual-step-4 .quote-total-box {
-    display: grid;
+    display: flex;
   }
 
   .manual-mode .output-options {
@@ -2823,22 +2838,22 @@ textarea:focus {
   }
 
   #quoteSheet .quote-total-box {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 28mm 72mm;
-    align-items: end;
+    display: flex;
+    flex-direction: column;
     gap: 4mm;
-    min-height: 35mm;
+    min-height: 62mm;
     padding: 5mm 0 0;
     overflow: visible;
   }
 
   #quoteSheet .quote-signature {
     gap: 4mm;
-    font-size: 9.5pt;
+    font-size: 12pt;
   }
 
   #quoteSheet .quote-stamp-slot {
     min-height: 25mm;
+    margin-bottom: 2mm;
   }
 
   #quoteSheet .quote-stamp {
@@ -2850,13 +2865,14 @@ textarea:focus {
 
   #quoteSheet .quote-total-stack {
     gap: 2mm;
+    align-self: flex-end;
     min-width: 0;
   }
 
   #quoteSheet .quote-total-line {
     grid-template-columns: 30mm minmax(36mm, 1fr);
     gap: 2mm;
-    font-size: 9pt;
+    font-size: 12pt;
     min-width: 0;
   }
 
@@ -2864,13 +2880,26 @@ textarea:focus {
     margin-top: 1mm;
     padding-top: 2mm;
     font-size: 12pt;
+    font-weight: 900;
+  }
+
+  #quoteSheet .quote-bottom-row {
+    grid-template-columns: minmax(0, 1fr) 72mm;
+    align-items: end;
+    gap: 8mm;
+    margin-top: auto;
   }
 
   #quoteSheet .quote-contact {
     margin-top: 2mm;
     padding-top: 2mm;
     line-height: 1.45;
+    font-size: 12pt;
     max-width: 100%;
     overflow-wrap: anywhere;
+  }
+
+  #quoteSheet .quote-contact strong {
+    font-size: 12pt;
   }
 }

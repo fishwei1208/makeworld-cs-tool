@@ -824,18 +824,22 @@ function renderQuoteSheet(quote) {
     : `<tr class="quote-empty-row"><td colspan="6">尚未加入報價項目。請在上方手動新增，或從成本計算送到報價單。</td></tr>`;
 
   $("quoteTotalBox").innerHTML = `
-    <div class="quote-signature">
-      <div><span>客戶簽名</span><b></b></div>
-      <div><span>日期</span><b></b></div>
-    </div>
-    <div class="quote-stamp-slot">${stampHtml}</div>
     <div class="quote-total-stack">
       <div class="quote-total-line"><span>品項小計</span><strong>${money(quote.subtotal)}</strong></div>
       <div class="quote-total-line"><span>${quote.taxType === "invoice" ? "營業稅 5%" : "營業稅"}</span><strong>${money(quote.tax)}</strong></div>
       <div class="quote-total-line grand"><span>報價總額</span><strong>${money(quote.grandTotal)}</strong></div>
+    </div>
+    <div class="quote-bottom-row">
+      <div class="quote-signature">
+        <div><span>客戶簽名</span><b></b></div>
+        <div><span>日期</span><b></b></div>
+      </div>
+      <div class="quote-contact-wrap">
+        <div class="quote-stamp-slot">${stampHtml}</div>
       <div class="quote-contact">
         <strong>${escapeHtml(contact.name)} ${escapeHtml(contact.phone)}</strong>
         <span>${escapeHtml(contact.address)}</span>
+      </div>
       </div>
     </div>
   `;
