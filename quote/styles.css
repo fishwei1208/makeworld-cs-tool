@@ -1551,7 +1551,14 @@ textarea:focus {
     display: grid;
     grid-template-rows: auto auto auto auto auto auto;
     align-content: start;
+    align-self: stretch;
     gap: 10px;
+    height: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    padding-bottom: 18px;
   }
 
   .quote-workspace #stepQuote .section-title {
