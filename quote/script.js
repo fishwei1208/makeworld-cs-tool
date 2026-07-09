@@ -119,6 +119,7 @@ function bindEvents() {
   $("mailButton").addEventListener("click", openMailDraft);
   $("historySearch").addEventListener("input", renderHistory);
   $("historyList").addEventListener("click", handleHistoryAction);
+  window.addEventListener("resize", updateMobileQuotePreviewScale);
   window.addEventListener("beforeprint", prepareQuotePrint);
   window.addEventListener("afterprint", cleanupQuotePrint);
 }
@@ -154,6 +155,9 @@ async function downloadQuotePdf() {
   stage.className = "pdf-export-stage";
   const clone = sheet.cloneNode(true);
   clone.id = "quoteSheetPdfClone";
+  clone.style.removeProperty("zoom");
+  clone.style.removeProperty("--quote-preview-scale");
+  clone.style.removeProperty("--mobile-quote-scale");
   clone.querySelectorAll(".quote-action-col").forEach((el) => el.remove());
   stage.appendChild(clone);
   document.body.appendChild(stage);
@@ -740,18 +744,20 @@ function updateMobileQuotePreviewScale() {
   const sheet = $("quoteSheet");
   const stepQuote = $("stepQuote");
   if (!sheet || !stepQuote) return;
-  const isMobileManualPreview =
-    window.matchMedia("(max-width: 720px)").matches &&
+  const isManualPreview =
     document.body.classList.contains("manual-mode") &&
     (document.body.classList.contains("manual-step-3") || document.body.classList.contains("manual-step-4"));
-  if (!isMobileManualPreview) {
+  const isQuoteWorkspace = document.body.classList.contains("quote-workspace");
+  if (!isManualPreview && !isQuoteWorkspace) {
+    sheet.style.removeProperty("--quote-preview-scale");
     sheet.style.removeProperty("--mobile-quote-scale");
     sheet.style.removeProperty("zoom");
     return;
   }
-  const availableWidth = Math.max(260, stepQuote.clientWidth - 28);
+  const availableWidth = Math.max(260, stepQuote.clientWidth - (isManualPreview ? 28 : 24));
   const naturalWidth = 720;
-  const scale = Math.min(1, availableWidth / naturalWidth);
+  const scale = Math.min(1, Math.max(0.52, availableWidth / naturalWidth));
+  sheet.style.setProperty("--quote-preview-scale", scale.toFixed(3));
   sheet.style.setProperty("--mobile-quote-scale", scale.toFixed(3));
   sheet.style.zoom = scale.toFixed(3);
 }

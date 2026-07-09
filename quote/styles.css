@@ -1618,9 +1618,11 @@ textarea:focus {
   }
 
   body:not(.is-printing-quote).quote-workspace .quote-sheet {
-    width: 100%;
+    width: 720px;
     max-height: none;
+    max-width: none;
     overflow: visible;
+    transform-origin: top left;
   }
 
   .quote-workspace .quote-output-logo {
