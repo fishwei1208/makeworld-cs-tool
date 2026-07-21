@@ -367,6 +367,7 @@ function caseRow(item) {
       <td data-label="寄送資訊" class="muted-cell">${escapeHtml(delivery || "—")}</td>
       <td data-label="備註" class="note-cell">${escapeHtml(item.note || "—")}</td>
       <td data-label="操作" class="action-cell">
+        <button class="card-btn print" type="button" onclick="printCase('${escapeAttr(item.id)}')">列印</button>
         <button class="card-btn" type="button" onclick="editCase('${escapeAttr(item.id)}')">編輯</button>
         <button class="card-btn danger" type="button" onclick="deleteCase('${escapeAttr(item.id)}')">刪除</button>
       </td>

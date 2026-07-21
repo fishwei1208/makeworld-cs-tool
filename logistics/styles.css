@@ -375,6 +375,7 @@ textarea:focus {
 .case-table th:nth-child(4) { width: 76px; }
 .case-table th:nth-child(5) { width: 96px; }
 .case-table th:nth-child(8) { width: 92px; }
+.case-table th:nth-child(9) { width: 104px; }
 
 .case-table td {
   border-bottom: 1px solid var(--line);
@@ -1711,9 +1712,9 @@ textarea:focus {
     width: 80px;
   }
 
-  .case-table th:nth-child(9),
-  .case-table td:nth-child(9) {
-    width: 78px;
+.case-table th:nth-child(9),
+.case-table td:nth-child(9) {
+    width: 102px;
   }
 
   .compact-status {
