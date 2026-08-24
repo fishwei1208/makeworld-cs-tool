@@ -247,6 +247,13 @@ textarea.tall{min-height:100px}
 .status-option.pending:has(input:checked){border-color:var(--red);background:var(--red-lt);color:var(--red)}
 .status-option.processing:has(input:checked){border-color:var(--amber);background:var(--amber-lt);color:var(--amber)}
 .status-option.done:has(input:checked){border-color:var(--green);background:var(--green-lt);color:var(--green)}
+.quick-paste-box{margin:0 0 14px;padding:12px;border:1.5px dashed #bfd2ca;border-radius:12px;background:#f6faf8}
+.quick-paste-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.quick-paste-head strong{display:block;font-size:13px;color:var(--text)}
+.quick-paste-head span{display:block;margin-top:2px;font-size:11.5px;color:var(--text-dim);font-weight:700}
+.quick-paste-box textarea{width:100%;min-height:74px;resize:vertical;border:1px solid var(--border);border-radius:9px;padding:10px 12px;font-size:14px;line-height:1.55;background:#fff;font-family:'Noto Sans TC',sans-serif}
+.quick-paste-btn{border:1px solid var(--accent);border-radius:9px;background:var(--accent);color:#fff;padding:8px 12px;font-size:13px;font-weight:800;white-space:nowrap;cursor:pointer}
+.quick-paste-btn:hover{filter:brightness(.96)}
 
 /* ORDER ITEMS */
 .order-items-panel{background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:12px}
@@ -267,9 +274,9 @@ textarea.tall{min-height:100px}
 .item-qty{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:var(--accent);
   background:var(--accent-lt);border-radius:8px;padding:7px 10px;text-align:center;min-width:48px}
 .item-empty{font-size:12px;color:var(--text-dim);padding:12px;text-align:center;background:#fff;border-radius:9px;border:1px dashed var(--border)}
-.rm-item{background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;
-  border-radius:5px;padding:3px 6px}
-.rm-item:hover{color:var(--red);background:var(--red-lt)}
+.rm-item{background:#fff1f1;border:1px solid #f2b8b5;color:var(--red);cursor:pointer;font-size:11px;
+  border-radius:6px;padding:3px 8px;font-weight:800}
+.rm-item:hover{color:#fff;background:var(--red);border-color:var(--red)}
 .item-actions{display:flex;align-items:center;gap:4px;margin-left:auto}
 .line-edit-btn{background:var(--accent-lt);border:1px solid var(--accent);color:var(--accent);
   cursor:pointer;font-size:11px;padding:3px 7px;border-radius:5px;font-weight:700}
@@ -652,6 +659,17 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
   <!-- CARD: 訂單資料 -->
   <div class="form-card order-info-card" style="max-width:920px;width:100%">
     <div class="order-card-title">訂單資料</div>
+
+    <div class="quick-paste-box">
+      <div class="quick-paste-head">
+        <div>
+          <strong>快速貼上收件資料</strong>
+          <span>貼上姓名、電話、地址，系統會自動帶入欄位</span>
+        </div>
+        <button type="button" class="quick-paste-btn" onclick="parseCustomerInfo()">解析帶入</button>
+      </div>
+      <textarea id="f-quick-customer" rows="3" placeholder="例：王小明 0912345678 台中市西屯區台灣大道三段..."></textarea>
+    </div>
 
     <div class="field-group compact-order-info order-info-clean">
       <input id="f-date" type="hidden">
@@ -1144,6 +1162,49 @@ save();
 
 // ══ DATA HELPERS ══
 function esc(v){return String(v??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]))}
+function cleanPastedText(v){return String(v||'').replace(/\r/g,'\n').replace(/[：:]/g,' ').replace(/[，,]/g,' ').replace(/\s+/g,' ').trim()}
+function parseCustomerInfo(){
+  const box=document.getElementById('f-quick-customer');
+  const raw=box?.value||'';
+  const flat=cleanPastedText(raw);
+  if(!flat){toast('請先貼上姓名、電話或地址');return}
+  const phoneMatch=flat.match(/(?:\+?886[-\s]?)?0?9\d{2}[-\s]?\d{3}[-\s]?\d{3}|0\d{1,2}[-\s]?\d{6,8}/);
+  const phone=phoneMatch?phoneMatch[0].replace(/\s+/g,'').replace(/^(\+?886)-?/,'0'):'';
+  const lines=raw.replace(/\r/g,'\n').split(/\n+/).map(s=>cleanPastedText(s)).filter(Boolean);
+  const addressKeywords=/縣|市|區|鄉|鎮|村|里|路|街|巷|弄|號|樓|室|大道|段/;
+  const extractAddress=(text)=>{
+    const source=cleanPastedText(text);
+    const city=source.match(/((?:台北|臺北|新北|桃園|台中|臺中|台南|臺南|高雄|基隆|新竹|苗栗|彰化|南投|雲林|嘉義|屏東|宜蘭|花蓮|台東|臺東|澎湖|金門|連江)[縣市].*)/);
+    if(city)return city[1].trim();
+    return source.split(/\s+/).find(part=>addressKeywords.test(part)&&part.length>=6&&!/^0\d/.test(part))||'';
+  };
+  let address='';
+  for(const line of lines){address=extractAddress(line);if(address)break}
+  if(!address){
+    const withoutPhone=flat.replace(phoneMatch?.[0]||'',' ').trim();
+    address=extractAddress(withoutPhone);
+  }
+  const noise=/^(姓名|名字|收件人|電話|手機|地址|宅配|寄送|聯絡人|門市|店號|店名)$/;
+  const namePool=lines
+    .map(line=>line.replace(phoneMatch?.[0]||'','').replace(address,'').trim())
+    .flatMap(line=>line.split(/\s+/))
+    .map(s=>s.replace(/^(姓名|名字|收件人|聯絡人)\s*/,'').trim())
+    .filter(s=>s&&!noise.test(s)&&!/^\d+$/.test(s)&&!addressKeywords.test(s)&&s.length<=12);
+  const name=namePool[0]||'';
+  if(name){
+    document.getElementById('f-recipient-name').value=name;
+    const customer=document.getElementById('f-customer');
+    if(!customer.value.trim())customer.value=name;
+  }
+  if(phone)document.getElementById('f-recipient-phone').value=phone;
+  if(address){
+    setDel('home');
+    document.getElementById('f-address').value=address;
+  }
+  renderOrderPreview();
+  const filled=[name&&'姓名',phone&&'電話',address&&'地址'].filter(Boolean).join('、');
+  toast(filled?`已帶入${filled}`:'沒有判讀到明確欄位，請稍微調整格式');
+}
 function getItems(o){return Array.isArray(o.items)?o.items:normalizeOrder(o).items}
 function itemQty(it){return parseInt(it.qty)||1}
 function colorMetaLabel(it){
@@ -1633,7 +1694,7 @@ function renderLineItems(){
   const c=document.getElementById('line-items');
   document.getElementById('line-count').textContent=`${orderItems.length} ITEMS`;
   if(!orderItems.length){c.innerHTML='<div class="item-empty">先在上方填一項商品，再按「加入商品明細」。同一筆訂單可混搭衣服、毛巾、面紙與其他商品。</div>';return}
-  c.innerHTML=orderItems.map((it,i)=>`<div class="item-card"><div class="item-main"><div class="item-head">${CATB[it.category]||esc(CAT_LABEL[it.category]||it.category)}${it.supplier?`<span class="tag ${SUPCLS[it.supplier]||''}">${esc(it.supplier)}</span>`:''}<div class="item-actions"><button class="line-edit-btn" onclick="editLineItem(${i})">${editingLineIndex===i?'編輯中':'編輯'}</button><button class="rm-item" onclick="removeLineItem(${i})">✕</button></div></div><div class="item-name">${esc(it.style)}</div><div class="item-meta">${itemDetailText(it)}${it.note?`<br>備註：${esc(it.note)}`:''}</div></div><div class="item-qty">×${itemQty(it)}</div></div>`).join('');
+  c.innerHTML=orderItems.map((it,i)=>`<div class="item-card"><div class="item-main"><div class="item-head">${CATB[it.category]||esc(CAT_LABEL[it.category]||it.category)}${it.supplier?`<span class="tag ${SUPCLS[it.supplier]||''}">${esc(it.supplier)}</span>`:''}<div class="item-actions"><button class="line-edit-btn" onclick="editLineItem(${i})">${editingLineIndex===i?'編輯中':'編輯'}</button><button class="rm-item" onclick="removeLineItem(${i})">刪除</button></div></div><div class="item-name">${esc(it.style)}</div><div class="item-meta">${itemDetailText(it)}${it.note?`<br>備註：${esc(it.note)}`:''}</div></div><div class="item-qty">×${itemQty(it)}</div></div>`).join('');
 }
 function updateLineItemButton(){
   const btn=document.getElementById('btn-add-line');
