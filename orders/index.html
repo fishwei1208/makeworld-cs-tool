@@ -2280,7 +2280,7 @@ function printItemRows(o,scope='all'){
   return items.map((it,idx)=>`<tr>
     <td class="num">${idx+1}</td>
     <td>${esc(CAT_LABEL[it.category]||it.category)}</td>
-    <td>${esc(it.supplier||'—')}</td>
+    <td>${esc(supplierPrintLabel(it.supplier)||'—')}</td>
     <td>${esc(shirtStyleText(it)||'—')}</td>
     <td><strong>${esc(it.style)}</strong>${it.note?`<div class="note">${esc(it.note)}</div>`:''}</td>
     <td>${esc(it.color||'—')}</td>
@@ -2302,8 +2302,14 @@ function printDesignImages(o,items){
   </div>`;
 }
 function orderSupplierLabel(items){
-  const suppliers=[...new Set(items.map(it=>it.supplier).filter(Boolean))];
+  const suppliers=[...new Set(items.map(it=>supplierPrintLabel(it.supplier)).filter(Boolean))];
   return suppliers.length?suppliers.join(' / '):'未填供應商';
+}
+function supplierPrintLabel(name){
+  const text=String(name||'').trim();
+  if(!text)return '';
+  const shortNames={TOMS:'T',UA:'U',冠達:'冠',酷頂:'酷',廣福:'廣',建豪:'建',愛力:'愛'};
+  return shortNames[text]||text.slice(0,1);
 }
 function buildQuoteOrdersHtml(list,scope='all'){
   return list.map(o=>{
@@ -2320,7 +2326,7 @@ function buildQuoteOrdersHtml(list,scope='all'){
     return `<section class="quote-card">
       <div class="quote-head">
         <div><div class="${brandClass}">${esc(brandLabel)}</div><h2>${esc(orderTitle)}</h2><div class="order-no">${orderCode(o)}</div></div>
-        <div class="print-supplier"><span>製作廠商</span><strong>${esc(supplierLabel)}</strong></div>
+        <div class="print-supplier"><span>車縫工廠</span><strong>${esc(supplierLabel)}</strong></div>
       </div>
       ${paymentBanner}
       ${documentBanner}
@@ -2339,7 +2345,7 @@ function buildQuoteOrdersHtml(list,scope='all'){
       </div>
       ${o.orderNote?`<div class="order-note-print"><b>整筆備註</b><span>${esc(o.orderNote)}</span></div>`:''}
       <div class="pick-sheet">
-        <table class="quote-table"><thead><tr><th>#</th><th>類別</th><th>廠商</th><th>衣服款式</th><th>品名 / 商品</th><th>顏色 / 材質 / 規格</th><th>尺寸</th><th>數量</th></tr></thead><tbody>${printItemRows(o,scope)}</tbody></table>
+        <table class="quote-table"><thead><tr><th>#</th><th>類別</th><th>車縫</th><th>衣服款式</th><th>品名 / 商品</th><th>顏色 / 材質 / 規格</th><th>尺寸</th><th>數量</th></tr></thead><tbody>${printItemRows(o,scope)}</tbody></table>
         <div class="quote-total"><span>合計品項 ${items.length} 項</span><strong>總件數 ${total}</strong></div>
         ${printDesignImages(o,items)}
       </div>
