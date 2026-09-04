@@ -248,11 +248,13 @@ textarea.tall{min-height:100px}
 .status-option.processing:has(input:checked){border-color:var(--amber);background:var(--amber-lt);color:var(--amber)}
 .status-option.done:has(input:checked){border-color:var(--green);background:var(--green-lt);color:var(--green)}
 .quick-paste-box{margin:0 0 14px;padding:12px;border:1.5px dashed #bfd2ca;border-radius:12px;background:#f6faf8}
+.order-note-parser{border-style:solid;background:#f3f8f5}
 .quick-paste-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
 .quick-paste-head strong{display:block;font-size:13px;color:var(--text)}
 .quick-paste-head span{display:block;margin-top:2px;font-size:11.5px;color:var(--text-dim);font-weight:700}
 .quick-paste-box textarea{width:100%;min-height:74px;resize:vertical;border:1px solid var(--border);border-radius:9px;padding:10px 12px;font-size:14px;line-height:1.55;background:#fff;font-family:'Noto Sans TC',sans-serif}
 .quick-paste-btn{border:1px solid var(--accent);border-radius:9px;background:var(--accent);color:#fff;padding:8px 12px;font-size:13px;font-weight:800;white-space:nowrap;cursor:pointer}
+.order-note-parser .quick-paste-btn{background:var(--green);border-color:var(--green)}
 .quick-paste-btn:hover{filter:brightness(.96)}
 
 /* ORDER ITEMS */
@@ -659,6 +661,17 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
   <!-- CARD: 訂單資料 -->
   <div class="form-card order-info-card" style="max-width:920px;width:100%">
     <div class="order-card-title">訂單資料</div>
+
+    <div class="quick-paste-box order-note-parser">
+      <div class="quick-paste-head">
+        <div>
+          <strong>整張訂單筆記本</strong>
+          <span>貼上記事本內容，系統會自動整理來源、客戶、商品、收件資訊</span>
+        </div>
+        <button type="button" class="quick-paste-btn" onclick="parseOrderNotebook()">解析整張訂單</button>
+      </div>
+      <textarea id="f-order-notebook" rows="5" placeholder="例：&#10;火星來的雷夢 @ig&#10;面紙500&#10;賴玉珊&#10;0911622513&#10;台中市南屯區河南路四段168號8樓之6"></textarea>
+    </div>
 
     <div class="quick-paste-box">
       <div class="quick-paste-head">
@@ -1163,20 +1176,25 @@ save();
 // ══ DATA HELPERS ══
 function esc(v){return String(v??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]))}
 function cleanPastedText(v){return String(v||'').replace(/\r/g,'\n').replace(/[：:]/g,' ').replace(/[，,]/g,' ').replace(/\s+/g,' ').trim()}
+function normalizePhone(v){return String(v||'').replace(/\s+/g,'').replace(/^(\+?886)-?/,'0')}
+function extractAddressFromText(text){
+  const source=cleanPastedText(text);
+  const addressKeywords=/縣|市|區|鄉|鎮|村|里|路|街|巷|弄|號|樓|室|大道|段/;
+  const city=source.match(/((?:台北|臺北|新北|桃園|台中|臺中|台南|臺南|高雄|基隆|新竹|苗栗|彰化|南投|雲林|嘉義|屏東|宜蘭|花蓮|台東|臺東|澎湖|金門|連江)[縣市].*)/);
+  if(city)return city[1].trim();
+  return source.split(/\s+/).find(part=>addressKeywords.test(part)&&part.length>=6&&!/^0\d/.test(part))||'';
+}
 function parseCustomerInfo(){
   const box=document.getElementById('f-quick-customer');
   const raw=box?.value||'';
   const flat=cleanPastedText(raw);
   if(!flat){toast('請先貼上姓名、電話或地址');return}
   const phoneMatch=flat.match(/(?:\+?886[-\s]?)?0?9\d{2}[-\s]?\d{3}[-\s]?\d{3}|0\d{1,2}[-\s]?\d{6,8}/);
-  const phone=phoneMatch?phoneMatch[0].replace(/\s+/g,'').replace(/^(\+?886)-?/,'0'):'';
+  const phone=phoneMatch?normalizePhone(phoneMatch[0]):'';
   const lines=raw.replace(/\r/g,'\n').split(/\n+/).map(s=>cleanPastedText(s)).filter(Boolean);
   const addressKeywords=/縣|市|區|鄉|鎮|村|里|路|街|巷|弄|號|樓|室|大道|段/;
   const extractAddress=(text)=>{
-    const source=cleanPastedText(text);
-    const city=source.match(/((?:台北|臺北|新北|桃園|台中|臺中|台南|臺南|高雄|基隆|新竹|苗栗|彰化|南投|雲林|嘉義|屏東|宜蘭|花蓮|台東|臺東|澎湖|金門|連江)[縣市].*)/);
-    if(city)return city[1].trim();
-    return source.split(/\s+/).find(part=>addressKeywords.test(part)&&part.length>=6&&!/^0\d/.test(part))||'';
+    return extractAddressFromText(text);
   };
   let address='';
   for(const line of lines){address=extractAddress(line);if(address)break}
@@ -1204,6 +1222,101 @@ function parseCustomerInfo(){
   renderOrderPreview();
   const filled=[name&&'姓名',phone&&'電話',address&&'地址'].filter(Boolean).join('、');
   toast(filled?`已帶入${filled}`:'沒有判讀到明確欄位，請稍微調整格式');
+}
+function parseOrderNotebook(){
+  const box=document.getElementById('f-order-notebook');
+  const raw=box?.value||'';
+  const flat=cleanPastedText(raw);
+  if(!flat){toast('請先貼上訂單筆記內容');return}
+  const lines=raw.replace(/\r/g,'\n').split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  const cleanLines=lines.map(cleanPastedText).filter(Boolean);
+  const phoneMatch=flat.match(/(?:\+?886[-\s]?)?0?9\d{2}[-\s]?\d{3}[-\s]?\d{3}|0\d{1,2}[-\s]?\d{6,8}/);
+  const phone=phoneMatch?normalizePhone(phoneMatch[0]):'';
+  const address=extractAddressFromText(flat.replace(phoneMatch?.[0]||'',' '));
+  const source=parseNotebookSource(flat);
+  const customer=parseNotebookCustomer(cleanLines,source);
+  const recipient=parseNotebookRecipient(cleanLines,customer,phone,address);
+  const parsedItems=parseNotebookItems(cleanLines);
+  if(source)setSourceValue(source);
+  if(customer)document.getElementById('f-customer').value=customer;
+  if(recipient)document.getElementById('f-recipient-name').value=recipient;
+  if(phone)document.getElementById('f-recipient-phone').value=phone;
+  if(address){
+    setDel('home');
+    document.getElementById('f-address').value=address;
+  }
+  const alreadyParsedItems=box?.dataset.parsedItemsText===raw;
+  if(parsedItems.length&&!alreadyParsedItems){
+    orderItems.push(...parsedItems);
+    renderLineItems();
+    setCat(parsedItems[0].category||currentCat);
+    if(box)box.dataset.parsedItemsText=raw;
+  }
+  renderOrderPreview();
+  const filled=[source&&'來源',customer&&'客戶',recipient&&'收件人',phone&&'電話',address&&'地址',parsedItems.length&&(alreadyParsedItems?'商品已帶入':`${parsedItems.length} 筆商品`)].filter(Boolean).join('、');
+  toast(filled?`已解析：${filled}`:'沒有判讀到明確內容，請稍微調整文字');
+}
+function parseNotebookSource(text){
+  const lower=String(text||'').toLowerCase();
+  if(/@?\s*ig|instagram|ins/.test(lower))return 'IG';
+  if(/@?\s*fb|facebook|臉書/.test(lower))return 'FB';
+  if(/line\s*@|line@|賴/.test(lower))return 'LINE@';
+  if(/threads/.test(lower))return 'threads';
+  if(/電話/.test(lower))return '電話';
+  if(/布碼/.test(lower))return '布碼科技';
+  return '';
+}
+function parseNotebookCustomer(lines,source){
+  const sourceRe=/@?\s*(ig|fb|line@?|threads|instagram|facebook|ins)\b/ig;
+  const header=lines.find(line=>/@\s*\w+|instagram|facebook|threads|line@?|臉書/i.test(line));
+  if(header){
+    const name=header.replace(sourceRe,'').replace(/[@＠].*$/,'').trim();
+    if(name)return name;
+  }
+  return lines.find(line=>isNotebookNameCandidate(line,source))||'';
+}
+function parseNotebookRecipient(lines,customer,phone,address){
+  const candidates=lines
+    .map(line=>line.replace(phone||'','').replace(address||'').replace(/@.*/,'').trim())
+    .filter(line=>line&&line!==customer&&isNotebookNameCandidate(line));
+  return candidates.length?candidates[candidates.length-1]:'';
+}
+function isNotebookNameCandidate(line){
+  if(!line||isNotebookDate(line)||isNotebookProductLine(line))return false;
+  if(/0\d{1,3}[-\s]?\d{3,4}/.test(line))return false;
+  if(extractAddressFromText(line))return false;
+  if(/^(姓名|名字|收件人|電話|手機|地址|宅配|寄送|聯絡人|門市|店號|店名)$/i.test(line))return false;
+  return line.length<=24&&!/^\d+$/.test(line);
+}
+function isNotebookDate(line){
+  return /\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*日|星期[一二三四五六日天]/.test(line);
+}
+function isNotebookProductLine(line){
+  return /面紙|毛巾|浴巾|方巾|衣服|短T|短Ｔ|T恤|帽|抱枕|客製/.test(line)&&/\d+/.test(line);
+}
+function parseNotebookItems(lines){
+  const items=[];
+  lines.forEach(line=>{
+    const clean=cleanPastedText(line);
+    if(!clean||isNotebookDate(clean))return;
+    const tissue=clean.match(/面紙\s*(\d+)|(\d+)\s*(?:包|張)?\s*面紙/);
+    if(tissue){
+      const qty=parseInt(tissue[1]||tissue[2],10)||1;
+      items.push({id:Date.now()+Math.random(),category:'tissue',supplier:'建豪',style:'面紙',color:'—',size:'—',qty,note:''});
+      items[items.length-1].qty=qty;
+      return;
+    }
+    const towel=clean.match(/(.{0,24}?(?:毛巾|浴巾|方巾).{0,20}?)\s*(\d+)\s*(?:條|件)?$/);
+    if(towel){
+      items.push({id:Date.now()+Math.random(),category:'towel',supplier:'酷頂',style:towel[1].trim()||'毛巾',color:'基礎材質',size:'110*28',qty:parseInt(towel[2],10)||1,note:''});
+      return;
+    }
+    const shirtSpecs=parseShirtBulkLine(clean,'','');
+    if(shirtSpecs.length){
+      shirtSpecs.forEach(spec=>items.push({...buildShirtItemFromSpec(spec),id:Date.now()+Math.random()}));
+    }
+  });
+  return items;
 }
 function getItems(o){return Array.isArray(o.items)?o.items:normalizeOrder(o).items}
 function itemQty(it){return parseInt(it.qty)||1}
@@ -1374,6 +1487,20 @@ function onSourceChange(){
   document.getElementById('source-other-wrap').classList.toggle('show',isOther);
   if(isOther)setTimeout(()=>document.getElementById('f-source-other').focus(),0);
   renderOrderPreview();
+}
+function setSourceValue(source){
+  const select=document.getElementById('f-source');
+  const other=document.getElementById('f-source-other');
+  if(!select||!source)return;
+  const option=[...select.options].find(o=>o.value===source);
+  if(option){
+    select.value=source;
+    if(other)other.value='';
+  }else{
+    select.value='其他';
+    if(other)other.value=source;
+  }
+  onSourceChange();
 }
 function getSourceValue(){
   const source=document.getElementById('f-source').value;
@@ -2021,7 +2148,9 @@ function editOrder(id){
 function clearForm(){
   const status=document.getElementById('save-status');
   if(status){status.textContent='';status.classList.remove('show')}
-  ['f-customer','f-recipient-name','f-recipient-phone','f-source-other','f-order-amount','f-order-note','f-payment-amount','f-cvs-store','f-address'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  ['f-order-notebook','f-customer','f-recipient-name','f-recipient-phone','f-source-other','f-order-amount','f-order-note','f-payment-amount','f-cvs-store','f-address'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  const notebook=document.getElementById('f-order-notebook');
+  if(notebook)delete notebook.dataset.parsedItemsText;
   document.getElementById('f-source').value='FB';
   onSourceChange();
   document.getElementById('f-document-requirement').value='none';
