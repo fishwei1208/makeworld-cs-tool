@@ -2503,7 +2503,7 @@ function buildQuoteOrdersHtml(list,scope='all'){
     return `<section class="quote-card">
       <div class="quote-head">
         <div><div class="${brandClass}">${esc(brandLabel)}</div><h2>${esc(orderTitle)}</h2><div class="order-no">${orderCode(o)}</div></div>
-        <div class="print-supplier"><span>車縫工廠</span><strong>${esc(supplierLabel)}</strong></div>
+        <div class="print-supplier"><span>製作代號</span><strong>${esc(supplierLabel)}</strong></div>
       </div>
       ${paymentBanner}
       ${documentBanner}
@@ -2522,7 +2522,7 @@ function buildQuoteOrdersHtml(list,scope='all'){
       </div>
       ${o.orderNote?`<div class="order-note-print"><b>整筆備註</b><span>${esc(o.orderNote)}</span></div>`:''}
       <div class="pick-sheet">
-        <table class="quote-table"><thead><tr><th>#</th><th>類別</th><th>車縫</th><th>衣服款式</th><th>品名 / 商品</th><th>顏色 / 材質 / 規格</th><th>尺寸</th><th>數量</th></tr></thead><tbody>${printItemRows(o,scope)}</tbody></table>
+        <table class="quote-table"><thead><tr><th>#</th><th>類別</th><th>代號</th><th>衣服款式</th><th>品名 / 商品</th><th>顏色 / 材質 / 規格</th><th>尺寸</th><th>數量</th></tr></thead><tbody>${printItemRows(o,scope)}</tbody></table>
         <div class="quote-total"><span>合計品項 ${items.length} 項</span><strong>總件數 ${total}</strong></div>
         ${printDesignImages(o,items)}
       </div>
