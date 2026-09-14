@@ -1184,41 +1184,50 @@ function extractAddressFromText(text){
   if(city)return city[1].trim();
   return source.split(/\s+/).find(part=>addressKeywords.test(part)&&part.length>=6&&!/^0\d/.test(part))||'';
 }
-function parseCustomerInfo(){
-  const box=document.getElementById('f-quick-customer');
-  const raw=box?.value||'';
-  const flat=cleanPastedText(raw);
-  if(!flat){toast('請先貼上姓名、電話或地址');return}
-  const phoneMatch=flat.match(/(?:\+?886[-\s]?)?0?9\d{2}[-\s]?\d{3}[-\s]?\d{3}|0\d{1,2}[-\s]?\d{6,8}/);
+function parseContactDetails(raw){
+  // Keep field boundaries before removing punctuation or collapsing whitespace.
+  const labelPattern=/(?:寄送地址|收件地址|配送地址|宅配地址|地址|收件人姓名|收件人|聯絡人|連絡人|姓名|名字|聯絡電話|連絡電話|收件電話|手機號碼|電話|手機|客戶暱稱|客戶名稱|訂購人|暱稱)\s*[：:]/g;
+  const matches=[...String(raw||'').matchAll(labelPattern)];
+  const fields={};
+  matches.forEach((match,index)=>{
+    const label=match[0].replace(/[：:\s]/g,'');
+    const value=String(raw).slice(match.index+match[0].length,matches[index+1]?.index)
+      .split(/\r?\n/)[0].trim();
+    const key=/地址/.test(label)?'address':/電話|手機/.test(label)?'phone':/客戶|訂購人|暱稱/.test(label)?'customer':'recipient';
+    if(value&&!fields[key])fields[key]=value;
+  });
+  const phonePattern=/(?:\+?886[-\s]?)?0?9\d{2}[-\s]?\d{3}[-\s]?\d{3}|0\d{1,2}[-\s]?\d{6,8}/;
+  const lines=String(raw||'').split(/\r?\n/).map(cleanPastedText).filter(Boolean);
+  const phoneMatch=(fields.phone||String(raw||'')).match(phonePattern);
   const phone=phoneMatch?normalizePhone(phoneMatch[0]):'';
-  const lines=raw.replace(/\r/g,'\n').split(/\n+/).map(s=>cleanPastedText(s)).filter(Boolean);
-  const addressKeywords=/縣|市|區|鄉|鎮|村|里|路|街|巷|弄|號|樓|室|大道|段/;
-  const extractAddress=(text)=>{
-    return extractAddressFromText(text);
-  };
-  let address='';
-  for(const line of lines){address=extractAddress(line);if(address)break}
+  let address=fields.address||'';
   if(!address){
-    const withoutPhone=flat.replace(phoneMatch?.[0]||'',' ').trim();
-    address=extractAddress(withoutPhone);
+    for(const line of lines){
+      address=extractAddressFromText(line.replace(phoneMatch?.[0]||'',' '));
+      if(address)break;
+    }
   }
-  const noise=/^(姓名|名字|收件人|電話|手機|地址|宅配|寄送|聯絡人|門市|店號|店名)$/;
-  const namePool=lines
-    .map(line=>line.replace(phoneMatch?.[0]||'','').replace(address,'').trim())
-    .flatMap(line=>line.split(/\s+/))
-    .map(s=>s.replace(/^(姓名|名字|收件人|聯絡人)\s*/,'').trim())
-    .filter(s=>s&&!noise.test(s)&&!/^\d+$/.test(s)&&!addressKeywords.test(s)&&s.length<=12);
-  const name=namePool[0]||'';
-  if(name){
-    document.getElementById('f-recipient-name').value=name;
-    const customer=document.getElementById('f-customer');
-    if(!customer.value.trim())customer.value=name;
-  }
+  const unlabeled=String(raw||'').split(/\r?\n/).filter(line=>{
+    labelPattern.lastIndex=0;
+    return !labelPattern.test(line);
+  }).map(cleanPastedText).filter(Boolean);
+  const names=unlabeled.map(line=>line.replace(phoneMatch?.[0]||'','').replace(address,'').trim())
+    .filter(line=>isNotebookNameCandidate(line)&&!/@|instagram|facebook|line|threads/i.test(line));
+  const customer=cleanPastedText(fields.customer||'');
+  const recipient=cleanPastedText(fields.recipient||names[names.length-1]||'');
+  return {phone,address:cleanPastedText(address),customer,recipient,unlabeled,names};
+}
+function parseCustomerInfo(){
+  const raw=document.getElementById('f-quick-customer')?.value||'';
+  if(!cleanPastedText(raw)){toast('請先貼上姓名、電話或地址');return}
+  const details=parseContactDetails(raw);
+  const {phone,address,recipient:name}=details;
+  if(name)document.getElementById('f-recipient-name').value=name;
+  const customer=document.getElementById('f-customer');
+  if(details.customer)customer.value=details.customer;
+  else if(!customer.value.trim()&&(details.names[0]||name))customer.value=details.names[0]||name;
   if(phone)document.getElementById('f-recipient-phone').value=phone;
-  if(address){
-    setDel('home');
-    document.getElementById('f-address').value=address;
-  }
+  if(address){setDel('home');document.getElementById('f-address').value=address;}
   renderOrderPreview();
   const filled=[name&&'姓名',phone&&'電話',address&&'地址'].filter(Boolean).join('、');
   toast(filled?`已帶入${filled}`:'沒有判讀到明確欄位，請稍微調整格式');
@@ -1228,17 +1237,14 @@ function parseOrderNotebook(){
   const raw=box?.value||'';
   const flat=cleanPastedText(raw);
   if(!flat){toast('請先貼上訂單筆記內容');return}
-  const lines=raw.replace(/\r/g,'\n').split(/\n+/).map(s=>s.trim()).filter(Boolean);
-  const cleanLines=lines.map(cleanPastedText).filter(Boolean);
-  const phoneMatch=flat.match(/(?:\+?886[-\s]?)?0?9\d{2}[-\s]?\d{3}[-\s]?\d{3}|0\d{1,2}[-\s]?\d{6,8}/);
-  const phone=phoneMatch?normalizePhone(phoneMatch[0]):'';
-  const address=extractAddressFromText(flat.replace(phoneMatch?.[0]||'',' '));
-  const source=parseNotebookSource(flat);
-  const customer=parseNotebookCustomer(cleanLines,source);
-  const recipient=parseNotebookRecipient(cleanLines,customer,phone,address);
-  const parsedItems=parseNotebookItems(cleanLines);
+  const details=parseContactDetails(raw);
+  const {phone,address}=details;
+  const source=parseNotebookSource(details.unlabeled.join(' '));
+  const customer=details.customer||parseNotebookCustomer(details.unlabeled,source)||details.recipient;
+  const recipient=details.recipient||parseNotebookRecipient(details.unlabeled,customer,phone,address);
+  const parsedItems=parseNotebookItems(details.unlabeled);
   if(source)setSourceValue(source);
-  if(customer)document.getElementById('f-customer').value=customer;
+  if(customer&&(details.customer||!document.getElementById('f-customer').value.trim()))document.getElementById('f-customer').value=customer;
   if(recipient)document.getElementById('f-recipient-name').value=recipient;
   if(phone)document.getElementById('f-recipient-phone').value=phone;
   if(address){
