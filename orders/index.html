@@ -874,7 +874,7 @@ input,select,textarea{font-size:16px;padding:9px 12px;border-radius:10px}
         </div>
         <div class="bulk-shirt-box">
           <label>衣服明細筆記本（自動判讀款式 / 顏色 / 尺寸 / 數量）</label>
-          <textarea id="f-shirt-bulk" placeholder="直接貼上或手打即可，不用嚴格照格式&#10;例：客製化短T 白色 S 3、M 4、L 5&#10;黑色 XL 2&#10;霧藍 2L x1"></textarea>
+          <textarea id="f-shirt-bulk" placeholder="直接貼上或手打即可，不用嚴格照格式&#10;例：短Ｔ&#10;黑 M*5&#10;白 XL*5&#10;也可寫：白色 S 3、M 4、黑色 L 2"></textarea>
           <div class="bulk-hint">有填這裡時，系統會優先判讀這段文字。上方品名留空時，會嘗試從文字自動拆出品名；同一行可放多個尺寸數量。</div>
         </div>
       </div>
@@ -1176,46 +1176,65 @@ save();
 // ══ DATA HELPERS ══
 function esc(v){return String(v??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]))}
 function cleanPastedText(v){return String(v||'').replace(/\r/g,'\n').replace(/[：:]/g,' ').replace(/[，,]/g,' ').replace(/\s+/g,' ').trim()}
-function normalizePhone(v){return String(v||'').replace(/\s+/g,'').replace(/^(\+?886)-?/,'0')}
+function normalizePhone(v){return String(v||'').normalize('NFKC').replace(/[^\d+]/g,'').replace(/^\+?8860?/,'0')}
+function contactPhoneMatches(text){
+  return [...String(text||'').matchAll(/(?<!\d)(?:(?:\+?886[- ]?0?|0)9\d{2}[- ]?\d{3}[- ]?\d{3}|\(?0[2-8]\d?\)?[- ]?\d{3,4}[- ]?\d{4})(?!\d)/g)];
+}
 function extractAddressFromText(text){
-  const source=cleanPastedText(text);
-  const addressKeywords=/縣|市|區|鄉|鎮|村|里|路|街|巷|弄|號|樓|室|大道|段/;
-  const city=source.match(/((?:台北|臺北|新北|桃園|台中|臺中|台南|臺南|高雄|基隆|新竹|苗栗|彰化|南投|雲林|嘉義|屏東|宜蘭|花蓮|台東|臺東|澎湖|金門|連江)[縣市].*)/);
-  if(city)return city[1].trim();
-  return source.split(/\s+/).find(part=>addressKeywords.test(part)&&part.length>=6&&!/^0\d/.test(part))||'';
+  const source=cleanPastedText(String(text||'').normalize('NFKC'));
+  // End at the house/floor/room, rather than swallowing the recipient after it.
+  const city='(?:台北|臺北|新北|桃園|台中|臺中|台南|臺南|高雄|基隆|新竹|苗栗|彰化|南投|雲林|嘉義|屏東|宜蘭|花蓮|台東|臺東|澎湖|金門|連江)[縣市]';
+  const tail='[^\\s，,：:;；\\n]{1,60}?(?:路|街|大道|村|里)[^\\s，,：:;；\\n]{0,30}?\\d+(?:[-之]\\d+)?號(?:之\\d+)?(?:\\s*(?:地下)?[BＢb]?\\d+(?:[-之]\\d+)?(?:樓|F|f)(?:之\\d+)?)*(?:\\s*\\d+室)?';
+  const match=source.match(new RegExp('(?:\\d{3,6}\\s*)?'+city+tail))||source.match(new RegExp('(?:^|\\s)([\\u3400-\\u9fff]{2,4}[區鄉鎮市]'+tail+')'));
+  return match?match[0].trim():'';
+}
+function isContactName(text){
+  const name=cleanPastedText(text);
+  if(!name||/備註|備注|備忘|麻煩|請|謝謝|感謝|寄送|配送|宅配|自取|門市|店號|收到|付款|貨到|發票|收據|面紙|毛巾|浴巾|短[ＴT]|衣服|尺寸|顏色|地址|電話|手機|訂單|編號/.test(name))return false;
+  return /^[\u3400-\u9fff]{2,5}(?:\s*(?:先生|小姐|女士|太太))?$/.test(name)||/^[A-Za-z]+(?:[ .'-][A-Za-z]+){1,4}$/.test(name);
 }
 function parseContactDetails(raw){
-  // Keep field boundaries before removing punctuation or collapsing whitespace.
-  const labelPattern=/(?:寄送地址|收件地址|配送地址|宅配地址|地址|收件人姓名|收件人|聯絡人|連絡人|姓名|名字|聯絡電話|連絡電話|收件電話|手機號碼|電話|手機|客戶暱稱|客戶名稱|訂購人|暱稱)\s*[：:]/g;
-  const matches=[...String(raw||'').matchAll(labelPattern)];
-  const fields={};
-  matches.forEach((match,index)=>{
-    const label=match[0].replace(/[：:\s]/g,'');
-    const value=String(raw).slice(match.index+match[0].length,matches[index+1]?.index)
-      .split(/\r?\n/)[0].trim();
-    const key=/地址/.test(label)?'address':/電話|手機/.test(label)?'phone':/客戶|訂購人|暱稱/.test(label)?'customer':'recipient';
-    if(value&&!fields[key])fields[key]=value;
+  const text=String(raw||'').normalize('NFKC').replace(/\r\n?/g,'\n');
+  // Split labels first, keeping unlabeled product/source lines for the notebook.
+  const labelPattern=/(?:寄送地址|收件地址|配送地址|宅配地址|地址|收件人姓名|收件人|聯絡人|連絡人|姓名|名字|聯絡電話|連絡電話|收件電話|手機號碼|電話|手機|客戶暱稱|客戶名稱|訂購人|暱稱|備註|備注)\s*(?:[:：]|(?=\s))\s*/g;
+  const fields={},unlabeled=[];
+  text.split('\n').forEach(line=>{
+    const matches=[...line.matchAll(labelPattern)];
+    if(!matches.length){if(line.trim())unlabeled.push(cleanPastedText(line));return;}
+    if(line.slice(0,matches[0].index).trim())unlabeled.push(cleanPastedText(line.slice(0,matches[0].index)));
+    matches.forEach((match,index)=>{
+      const label=match[0].replace(/[：:\s]/g,'');
+      const value=line.slice(match.index+match[0].length,matches[index+1]?.index).trim();
+      const key=/備/.test(label)?'note':/地址/.test(label)?'address':/電話|手機/.test(label)?'phone':/客戶|訂購人|暱稱/.test(label)?'customer':'recipient';
+      if(value&&!fields[key])fields[key]=value;
+    });
   });
-  const phonePattern=/(?:\+?886[-\s]?)?0?9\d{2}[-\s]?\d{3}[-\s]?\d{3}|0\d{1,2}[-\s]?\d{6,8}/;
-  const lines=String(raw||'').split(/\r?\n/).map(cleanPastedText).filter(Boolean);
-  const phoneMatch=(fields.phone||String(raw||'')).match(phonePattern);
-  const phone=phoneMatch?normalizePhone(phoneMatch[0]):'';
-  let address=fields.address||'';
-  if(!address){
-    for(const line of lines){
-      address=extractAddressFromText(line.replace(phoneMatch?.[0]||'',' '));
-      if(address)break;
-    }
+  const phoneMatches=contactPhoneMatches(fields.phone||[fields.recipient,fields.address,...unlabeled].filter(Boolean).join('\n'));
+  const phones=[...new Set(phoneMatches.map(match=>normalizePhone(match[0])))];
+  const phone=phones.length===1?phones[0]:'';
+  const warnings=phones.length>1?['有多個電話，請確認收件電話']:[];
+  const stripPhones=value=>{
+    let result=value;
+    contactPhoneMatches(result).forEach(match=>{result=result.replace(match[0],' ')});
+    return result;
+  };
+  const addressCandidates=[...new Set([fields.address,fields.recipient,...unlabeled].filter(Boolean).map(line=>extractAddressFromText(stripPhones(line))).filter(Boolean))];
+  const address=fields.address?(extractAddressFromText(stripPhones(fields.address))||cleanPastedText(stripPhones(fields.address))):addressCandidates.length===1?addressCandidates[0]:'';
+  if(!fields.address&&addressCandidates.length>1)warnings.push('有多個地址，請確認收件地址');
+  const residual=unlabeled.map(line=>{
+    let rest=stripPhones(line);
+    addressCandidates.forEach(value=>{rest=rest.replace(value,' ')});
+    return rest.replace(/^[\s,，;；/]+|[\s,，;；/]+$/g,'').trim();
+  });
+  const names=residual.filter(isContactName);
+  let recipient=fields.recipient?cleanPastedText(stripPhones(fields.recipient).replace(address,'')):'';
+  if(!recipient){
+    // Prefer a name physically next to a phone; it is stronger evidence than a note.
+    const adjacent=unlabeled.map((line,i)=>contactPhoneMatches(line).length&&isContactName(residual[i])?residual[i]:'').filter(Boolean);
+    recipient=adjacent.length===1?adjacent[0]:names.length===1?names[0]:'';
+    if(!recipient&&names.length>1)warnings.push('有多個姓名，請確認收件人');
   }
-  const unlabeled=String(raw||'').split(/\r?\n/).filter(line=>{
-    labelPattern.lastIndex=0;
-    return !labelPattern.test(line);
-  }).map(cleanPastedText).filter(Boolean);
-  const names=unlabeled.map(line=>line.replace(phoneMatch?.[0]||'','').replace(address,'').trim())
-    .filter(line=>isNotebookNameCandidate(line)&&!/@|instagram|facebook|line|threads/i.test(line));
-  const customer=cleanPastedText(fields.customer||'');
-  const recipient=cleanPastedText(fields.recipient||names[names.length-1]||'');
-  return {phone,address:cleanPastedText(address),customer,recipient,unlabeled,names};
+  return {phone,address,customer:cleanPastedText(fields.customer||''),recipient,unlabeled,names,warnings};
 }
 function parseCustomerInfo(){
   const raw=document.getElementById('f-quick-customer')?.value||'';
@@ -1225,12 +1244,12 @@ function parseCustomerInfo(){
   if(name)document.getElementById('f-recipient-name').value=name;
   const customer=document.getElementById('f-customer');
   if(details.customer)customer.value=details.customer;
-  else if(!customer.value.trim()&&(details.names[0]||name))customer.value=details.names[0]||name;
+  else if(!customer.value.trim()&&name)customer.value=name;
   if(phone)document.getElementById('f-recipient-phone').value=phone;
   if(address){setDel('home');document.getElementById('f-address').value=address;}
   renderOrderPreview();
   const filled=[name&&'姓名',phone&&'電話',address&&'地址'].filter(Boolean).join('、');
-  toast(filled?`已帶入${filled}`:'沒有判讀到明確欄位，請稍微調整格式');
+  toast([filled?`已帶入${filled}`:'沒有判讀到明確欄位，請稍微調整格式',...details.warnings].join('；'));
 }
 function parseOrderNotebook(){
   const box=document.getElementById('f-order-notebook');
@@ -1241,7 +1260,7 @@ function parseOrderNotebook(){
   const {phone,address}=details;
   const source=parseNotebookSource(details.unlabeled.join(' '));
   const customer=details.customer||parseNotebookCustomer(details.unlabeled,source)||details.recipient;
-  const recipient=details.recipient||parseNotebookRecipient(details.unlabeled,customer,phone,address);
+  const recipient=details.recipient;
   const parsedItems=parseNotebookItems(details.unlabeled);
   if(source)setSourceValue(source);
   if(customer&&(details.customer||!document.getElementById('f-customer').value.trim()))document.getElementById('f-customer').value=customer;
@@ -1260,13 +1279,13 @@ function parseOrderNotebook(){
   }
   renderOrderPreview();
   const filled=[source&&'來源',customer&&'客戶',recipient&&'收件人',phone&&'電話',address&&'地址',parsedItems.length&&(alreadyParsedItems?'商品已帶入':`${parsedItems.length} 筆商品`)].filter(Boolean).join('、');
-  toast(filled?`已解析：${filled}`:'沒有判讀到明確內容，請稍微調整文字');
+  toast([filled?`已解析：${filled}`:'沒有判讀到明確內容，請稍微調整文字',...details.warnings].join('；'));
 }
 function parseNotebookSource(text){
   const lower=String(text||'').toLowerCase();
   if(/@?\s*ig|instagram|ins/.test(lower))return 'IG';
   if(/@?\s*fb|facebook|臉書/.test(lower))return 'FB';
-  if(/line\s*@|line@|賴/.test(lower))return 'LINE@';
+  if(/\bline\b|line@|用賴|加賴/.test(lower))return 'LINE@';
   if(/threads/.test(lower))return 'threads';
   if(/電話/.test(lower))return '電話';
   if(/布碼/.test(lower))return '布碼科技';
@@ -1279,20 +1298,7 @@ function parseNotebookCustomer(lines,source){
     const name=header.replace(sourceRe,'').replace(/[@＠].*$/,'').trim();
     if(name)return name;
   }
-  return lines.find(line=>isNotebookNameCandidate(line,source))||'';
-}
-function parseNotebookRecipient(lines,customer,phone,address){
-  const candidates=lines
-    .map(line=>line.replace(phone||'','').replace(address||'').replace(/@.*/,'').trim())
-    .filter(line=>line&&line!==customer&&isNotebookNameCandidate(line));
-  return candidates.length?candidates[candidates.length-1]:'';
-}
-function isNotebookNameCandidate(line){
-  if(!line||isNotebookDate(line)||isNotebookProductLine(line))return false;
-  if(/0\d{1,3}[-\s]?\d{3,4}/.test(line))return false;
-  if(extractAddressFromText(line))return false;
-  if(/^(姓名|名字|收件人|電話|手機|地址|宅配|寄送|聯絡人|門市|店號|店名)$/i.test(line))return false;
-  return line.length<=24&&!/^\d+$/.test(line);
+  return ''; // Without an explicit source header, use the parsed recipient as fallback.
 }
 function isNotebookDate(line){
   return /\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*日|星期[一二三四五六日天]/.test(line);
@@ -1302,6 +1308,7 @@ function isNotebookProductLine(line){
 }
 function parseNotebookItems(lines){
   const items=[];
+  let shirtProduct='',shirtColor='';
   lines.forEach(line=>{
     const clean=cleanPastedText(line);
     if(!clean||isNotebookDate(clean))return;
@@ -1317,9 +1324,13 @@ function parseNotebookItems(lines){
       items.push({id:Date.now()+Math.random(),category:'towel',supplier:'酷頂',style:towel[1].trim()||'毛巾',color:'基礎材質',size:'110*28',qty:parseInt(towel[2],10)||1,note:''});
       return;
     }
-    const shirtSpecs=parseShirtBulkLine(clean,'','');
+    if(isShirtHeading(clean)){shirtProduct=clean;shirtColor='';return;}
+    const shirtSpecs=parseShirtBulkLine(clean,'',shirtProduct,shirtColor);
     if(shirtSpecs.length){
-      shirtSpecs.forEach(spec=>items.push({...buildShirtItemFromSpec(spec),id:Date.now()+Math.random()}));
+      shirtSpecs.forEach(spec=>{
+        shirtProduct=spec.productName||shirtProduct;shirtColor=spec.color;
+        items.push({...buildShirtItemFromSpec(spec),id:Date.now()+Math.random()});
+      });
     }
   });
   return items;
@@ -1738,65 +1749,49 @@ function collectCurrentItem(silent=false){
   const style=document.getElementById('f-other-name').value.trim()||'未填商品';
   return {id:Date.now()+Math.random(),category:'other',supplier:getOtherSupplierValue(),style,color:document.getElementById('f-other-spec').value.trim()||'—',size:'—',qty:parseInt(document.getElementById('f-other-qty').value)||1,note:document.getElementById('f-other-note').value.trim()};
 }
+function isShirtHeading(line){
+  return /(?:短[ＴT]|長[ＴT]|[ＴT]恤|上衣|排汗衫|帽[ＴT]|POLO|背心|衣服)/i.test(line)&&!/[\d@]/.test(line)&&line.length<=40;
+}
 function parseShirtBulkRows(){
-  const el=document.getElementById('f-shirt-bulk');
-  const text=(el?.value||'').trim();
-  if(!text)return [];
+  const text=(document.getElementById('f-shirt-bulk')?.value||'').trim();
   const productInput=document.getElementById('f-product-name').value.trim();
-  const colorInput=document.getElementById('f-color').value.trim();
-  let inferredProduct='';
+  let product='',color=document.getElementById('f-color').value.trim();
   const rows=[];
-  text.split(/\n+/).map(raw=>raw.trim()).filter(Boolean).forEach(raw=>{
-    const line=raw.replace(/[，、；;]/g,' ').replace(/\s+/g,' ').trim();
-    const parsed=parseShirtBulkLine(line,productInput,inferredProduct,colorInput);
-    if(parsed.length){
-      parsed.forEach(spec=>{
-        if(!productInput&&!spec.productName&&inferredProduct)spec.productName=inferredProduct;
-        rows.push(spec);
-      });
-      return;
-    }
-    if(!productInput&&!inferredProduct)inferredProduct=line.replace(/^(品名|款式|商品)\s*[:：]\s*/,'').trim();
+  text.split(/\r\n?|\n/).map(line=>line.trim()).filter(Boolean).forEach(line=>{
+    if(isShirtHeading(line)){product=line;color='';return;}
+    const parsed=parseShirtBulkLine(line,productInput,product,color);
+    parsed.forEach(spec=>{product=spec.productName||product;color=spec.color;rows.push(spec);});
+    if(!parsed.length&&!productInput&&!product)product=line.replace(/^(品名|款式|商品)\s*[:：]\s*/,'').trim();
   });
   return rows;
 }
 function parseShirtBulkLine(line,productInput='',inferredProduct='',colorInput=''){
-  const clean=line.replace(/[＊×]/g,'x').replace(/[：=]/g,':').trim();
-  const sizePattern='KID\\s*110|KID\\s*130|2XS|XS|XL|XXL|[2-5]L|[SML]';
-  const pairRe=new RegExp(`(${sizePattern})\\s*(?:x|:|-|/|／)?\\s*(\\d+)`,'gi');
+  const clean=String(line).normalize('NFKC').replace(/[＊*×✕]/g,'x').replace(/[：=]/g,':').trim();
+  const sizePattern='KID\\s*110|KID\\s*130|XXL|2XS|XS|XL|[2-5]L|[SML]';
+  const pairRe=new RegExp(`(?<![A-Za-z0-9])(${sizePattern})\\s*(?:x|:|-|/)?\\s*(\\d+)(?![\\d.])(?:\\s*(?:件|個))?`,'gi');
   const matches=[...clean.matchAll(pairRe)];
-  if(matches.length){
-    const prefix=clean.slice(0,matches[0].index).replace(/^(品名|款式|商品)\s*[:：]\s*/,'').trim();
-    const prefixInfo=parseShirtPrefix(prefix,productInput,inferredProduct,colorInput);
-    return matches.map(match=>({
-      productName:prefixInfo.productName,
-      color:prefixInfo.color,
-      size:normalizeShirtSize(match[1]),
-      qty:parseInt(match[2],10)||1
-    }));
-  }
-  const parts=clean.split(/\s*[,\t，、\/／]\s*|\s+/).filter(Boolean);
-  if(parts.length<2)return [];
-  const qtyIndex=[...parts].reverse().findIndex(part=>/^\d+$/.test(part));
-  if(qtyIndex<0)return [];
-  const realQtyIndex=parts.length-1-qtyIndex;
-  const qty=parseInt(parts[realQtyIndex],10)||1;
-  const before=parts.slice(0,realQtyIndex);
-  if(!before.length)return [];
-  const maybeSize=before.pop()||'';
-  if(!isShirtSize(maybeSize))return [];
-  const prefixInfo=parseShirtPrefix(before.join(' '),productInput,inferredProduct,colorInput);
-  return [{productName:prefixInfo.productName,color:prefixInfo.color,size:normalizeShirtSize(maybeSize),qty}];
+  let product=inferredProduct,color=colorInput,previousEnd=0;
+  const rows=[];
+  matches.forEach(match=>{
+    const prefix=clean.slice(previousEnd,match.index).replace(/^[\s,，、;；/]+|[\s,，、;；/]+$/g,'').replace(/^(品名|款式|商品)\s*[:：]\s*/,'').trim();
+    previousEnd=match.index+match[0].length;
+    const info=parseShirtPrefix(prefix,productInput,product,color);
+    product=info.productName;color=info.color;
+    const qty=Number(match[2]);
+    if(qty>0)rows.push({productName:product,color,size:normalizeShirtSize(match[1]),qty});
+  });
+  return rows;
 }
 function parseShirtPrefix(prefix,productInput='',inferredProduct='',colorInput=''){
   prefix=String(prefix||'').replace(/[，、,／/]+$/g,'').trim();
   const fallbackColor=colorInput||'（未填）';
-  const words=prefix.split(/\s+/).filter(Boolean);
   if(!prefix)return {productName:productInput||inferredProduct||'',color:fallbackColor};
-  if(!productInput&&words.length>=2){
-    return {productName:words.slice(0,-1).join(' '),color:words[words.length-1]||fallbackColor};
-  }
-  return {productName:productInput||inferredProduct||'',color:prefix||fallbackColor};
+  // A product can be attached directly to its color, e.g. 短T黑色M*5.
+  const garment=prefix.match(/^(.*?(?:短T|長T|T恤|上衣|排汗衫|帽T|POLO|背心|衣服))\s*(.*)$/i);
+  if(garment)return {productName:productInput||garment[1],color:garment[2]||fallbackColor};
+  const words=prefix.split(/\s+/).filter(Boolean);
+  if(!productInput&&!inferredProduct&&words.length>=2)return {productName:words.slice(0,-1).join(' '),color:words.at(-1)};
+  return {productName:productInput||inferredProduct||'',color:prefix};
 }
 function normalizeShirtSize(size){
   return String(size||'').toUpperCase().replace(/\s+/g,'');
