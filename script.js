@@ -345,6 +345,12 @@ ID：@tkc3939y`
   {
     category: "rush",
     label: "急件",
+    title: "急件費用連結",
+    text: `急件費用連結：\nhttps://reurl.cc/WzgzOD`
+  },
+  {
+    category: "rush",
+    label: "急件",
     title: "毛巾 / 方巾 / 頭巾急件",
     text: `如果緊急的話，就是每天中午前確認，每天下午寄出。
 
